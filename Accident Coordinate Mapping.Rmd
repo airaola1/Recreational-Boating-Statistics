@@ -1,0 +1,201 @@
+---
+title: "Accident Coordinate Mapping"
+author: "Andrew Iraola"
+date: "1/3/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Plotting LAT/LONGS for Accident Data from BARD
+```{r}
+#Loading necessary packages
+library(tidyverse)
+library(janitor)
+library(readxl)
+library(maps)
+library(ggdark)
+```
+
+### Reading in our Dataset
+```{r}
+ReleasableAccidents2018 <- read_excel("Documents/ReleasableAccidents2018.xlsx")
+
+BARD <- ReleasableAccidents2018
+```
+
+### Running a Count of NA Values by State
+```{r}
+#I noticed a lot of "NA" values for the LAT/LONG columns for most states. This query will tell us how many coordinates were successfully recorded for each state out of their total accidents recorded. Ex. Arkansas has 17 LAT/LONG observations to work with, and only 5 NAs. However, for most states, this is not the case. 
+BARD %>%
+  group_by(State) %>%
+  count(Latitude!="NA")
+```
+
+### Filtering to Focus Specifically on Florida
+```{r}
+# I also noticed Florida has a fair amount of data to work with. Out of 607 reported accidents, 54 of them have coordinate data to work with. This is still an abysmal 8 percent of the total, but still... something to work with.
+Coordinates <- BARD %>%
+  select(State, Latitude, Longitude) %>%
+  filter(State=="FL")
+```
+
+### Reading in our Map Data
+```{r}
+map_borders_FL <- map_data("state", region = "Florida")
+map_borders_MI <- map_data("state", region = "Michigan")
+```
+
+# Merging our Two Datasets: Florida Coordinate Data with our Map Data
+```{r}
+#Let's plot it up!
+ggplot() +
+  #Plotting Florida borders
+  geom_polygon(data=map_borders_FL, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Coordinates, aes(x=Longitude, y=Latitude, color="Individual Accident Recorded")) +
+               labs(title="Reported Recreational Boating Accidents in Florida (2018)", 
+                    size="Individual Accident",
+                    subtitle ="Excludes the 553 for which no data was recorded") + 
+  dark_mode(theme_minimal()) + 
+  theme(text=element_text(family="Rockwell", color="green"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title=element_blank())
+```
+
+#### Focusing Now On Only Accidents Where Death Was Recorded
+```{r}
+#Great Work! If I do say so, myself. However, I'm still bummed about all those missing observations. Turns out, if I filter by accidents that had at least one fatality, the LAT/LONG data is much more robust. Let's do that!
+Fatality_Coordinates_FL <- BARD %>%
+  select(State, Latitude, Longitude, `Number of Deaths`) %>%
+  filter(State=="FL") %>%
+  filter(`Number of Deaths`>0)
+```
+
+### Graph It Up!
+```{r}
+#Let's plot it up!
+  ggplot() +
+  #Plotting Florida borders
+  geom_polygon(data=map_borders_FL, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_FL, aes(x=Longitude, y=Latitude,  size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Fatalities in Florida (2018)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="green"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="green")) 
+#+ ggsave("Florida Fatalities Mapped.png")
+```
+
+### Now, Let's do the same for Michigan
+```{r}
+#Now, lets do this for Michigan
+Fatality_Coordinates_MI <- BARD %>%
+  select(State, Latitude, Longitude, `Number of Deaths`) %>%
+  filter(State=="MI") %>%
+  filter(`Number of Deaths`>0)
+```
+
+```{r}
+#Let's plot it up!
+  ggplot() +
+  #Plotting Michigan borders
+  geom_polygon(data=map_borders_MI, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_MI, aes(x=Longitude, y=Latitude,  size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Fatalities in Michigan (2018)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2)) + 
+  theme(text=element_text(family="Rockwell", color="green"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="green")) 
+#+ ggsave("Michigan Fatalities Mapped.png")
+```
+
+```{r}
+# Now Let's try mapping out the same plot as above, but with county lines. 
+library(ggmap)
+
+mibox <- make_bbox(lon = Fatality_Coordinates_MI$Longitude, lat = Fatality_Coordinates_MI$Latitude, f=.1)
+
+mibox
+#Now when we gram the map, ggmap will try to fit it into that bounding box. Let's try!
+# First let's get the map. By default, it gets it from Google. I want it to be a satellite map
+mi_map <- get_map(location=mibox, maptype="terrain", source="google")
+
+
+# Woah! Looks great!
+ggmap(mi_map) + geom_point(data=Fatality_Coordinates_MI, mapping =aes(x=Longitude, y = Latitude), color="red") + labs(title="Reported Recreational Boating\n Fatalities in Michigan (2018)") +
+   theme(text=element_text(family="Rockwell", color="black"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank())
+#+ ggsave("Michigan Fatalities Mapped2.png")
+```
+
+### Now, Let's Try Mapping the Southern Region of the US
+```{r}
+states <- map_data("state")
+
+Fatality_Coordinates_South <- BARD %>%
+  select(State, Latitude, Longitude, `Number of Deaths`) %>%
+  filter(State==c("MS", "SC", "LA", "GA", "AL", "FL")) %>%
+  filter(`Number of Deaths`>0)
+
+map_borders_south <- subset(states, region %in% c("florida", "south carolina", "georgia", "louisiana", "mississippi", "alabama"))
+
+ggplot(data=map_borders_south) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+
+ggplot() +
+  geom_polygon(data=map_borders_south, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_South, aes(x=Longitude, y=Latitude,  size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Fatalities\n in Southern Region (2018)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("Southern Fatalities Mapped.png")
+
+```
+I'm pretty happy with this. It gives us a way to display regional fatalities YOY. 
+
+
+```{r}
+#NOW, let's try to map these states via Google Maps
+southbox <- make_bbox(lon=Fatality_Coordinates_South$Longitude, lat=Fatality_Coordinates_South$Latitude, f=.1)
+
+south_map <- get_map(location=southbox, maptype = "terrain", source="google")
+
+ggmap(south_map) + geom_point(data=Fatality_Coordinates_South, mapping = aes(x=Longitude, y=Latitude, size=`Number of Deaths`), color="red") +
+labs(title="Reported Recreational Boating Fatalities\n in Southern Region (2018)") +
+   theme(text=element_text(family="Rockwell", color="black"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank()) +
+      scale_size_continuous(breaks=c(1,2,3))  
+   #+ggsave("Southern Fatalities Mapped.png")
+```
+
+
+

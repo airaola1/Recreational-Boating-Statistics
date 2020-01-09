@@ -1,0 +1,157 @@
+---
+title: "BARD Network Graph Work"
+author: "Andrew Iraola"
+date: "12/30/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(rvest)
+library(stringr)
+library(dplyr)
+library(ggplot2)
+library(colorRamps)
+require(SnowballC)
+require(tidyr)
+require(gridExtra)
+
+require(tidytext)
+require(RColorBrewer)
+require(wordcloud)
+```
+
+```{r}
+library(readxl)
+
+ReleasableAccidents2018 <- read_excel("Documents/ReleasableAccidents2018.xlsx")
+
+BARD <- ReleasableAccidents2018   
+
+Narrative <- BARD %>%
+  select(RedactedNarrative)
+```
+
+```{r}
+#Let's first separate making two words per line
+narrative_bigrams <- Narrative %>%
+  unnest_tokens(bigram, RedactedNarrative, token="ngrams", n=2)
+
+# Let's now count which words are most commonly found together
+narrative_bigrams %>%
+  count(bigram, sort=TRUE)
+```
+
+```{r}
+narrative_bigrams_separated <- narrative_bigrams %>%
+  separate(bigram, c("word1", "word2"), sep=" ")
+
+narrative_bigrams_filtered <- narrative_bigrams_separated %>%
+  filter(!word1 %in% stop_words$word) %>%
+  filter(!word2 %in% stop_words$word) 
+  
+
+#New Bigram Count with common words filtered out
+narrative_bigram_counts <- narrative_bigrams_filtered %>%
+  count(word1, word2, sort=TRUE)
+narrative_bigram_counts
+
+narrative_bigrams_united <- narrative_bigrams_filtered %>%
+  unite(bigram, word1, word2, sep=" ")
+narrative_bigrams_united
+```
+
+```{r}
+library(igraph)
+library(tm)
+narrative_bigram_counts
+
+#Filter for only relatively common combinations
+bigram_graph <- narrative_bigram_counts %>%
+  filter(n>20) %>%
+  graph_from_data_frame()
+
+bigram_graph
+```
+```{r}
+library(ggraph)
+set.seed(2017)
+
+ggraph(bigram_graph, layout="fr") +
+  geom_edge_link() +
+  geom_node_point() + 
+  geom_node_text(aes(label=name), vjust=1, hjust=1)
+```
+
+```{r}
+#Well given that was quite hard to read, let's try a smaller version
+bigram_graph2 <- narrative_bigram_counts %>%
+  filter(n>50) %>%
+  graph_from_data_frame()
+
+library(ggraph)
+set.seed(2017)
+
+ggraph(bigram_graph2, layout="fr") +
+  geom_edge_link() +
+  geom_node_point() + 
+  geom_node_text(aes(label=name), vjust=1, hjust=1, color="black")
+```
+
+```{r}
+set.seed(2016)
+
+a <- grid::arrow(type = "closed", length = unit(.15, "inches"))
+
+ggraph(bigram_graph2, layout="fr") +
+  geom_edge_link(aes(edge_alpha = n), show.legend = FALSE,
+                 arrow = a, end_cap = circle(.07, 'inches')) +
+  geom_node_point(color="lightblue", size=5) +
+  geom_node_text(aes(label=name), vjust=1, hjust=1, color="black") +
+  theme_void()
+```
+
+```{r}
+library(widyr)
+#Count words co-occuring within reports
+word_pairs <-narrative_bigram_counts %>%
+  pairwise_count(word1, word2, sort=TRUE)
+word_pairs
+
+#Lets look at what words come up most often with `_____`
+word_pairs %>%
+  filter(item1=="pwc")
+```
+
+```{r}
+#The below function lets us find the phi coefficient between words based on how often they appear in the same
+word_cors <- narrative_bigram_counts %>%
+  filter(n() >=20) %>%
+  pairwise_cor(word1, word2, sort=TRUE)
+
+#word_cors
+# WEll this is pretty useless as a summary function, as the first umteen pages are all related to time(s)
+```
+
+```{r}
+word_cors %>%
+  filter(item1=="alcohol")
+```
+
+```{r}
+# Bar Graph of any words we want to examine, and the top words most commonly associated.
+# Rendered as a grid of four bar graphs
+word_cors %>%
+  filter(item1 %in% c("drowned", "kayak", "alcohol", "collision")) %>%
+  group_by(item1) %>%
+  top_n(6) %>%
+  ungroup() %>%
+  mutate(item2 = reorder(item2, correlation)) %>%
+  ggplot(aes(item2, correlation)) +
+  geom_bar(stat="identity") +
+  facet_wrap(~ item1, scales = "free") +
+  coord_flip()
+```
