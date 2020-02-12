@@ -21,7 +21,7 @@ library(ggdark)
 
 ### Reading in our Dataset
 ```{r}
-ReleasableAccidents2018 <- read_excel("Documents/ReleasableAccidents2018.xlsx")
+ReleasableAccidents2018 <- read_excel("2018BARDCoordinateData.xlsx")
 
 BARD <- ReleasableAccidents2018
 ```
@@ -38,7 +38,7 @@ BARD %>%
 ```{r}
 # I also noticed Florida has a fair amount of data to work with. Out of 607 reported accidents, 54 of them have coordinate data to work with. This is still an abysmal 8 percent of the total, but still... something to work with.
 Coordinates <- BARD %>%
-  select(State, Latitude, Longitude) %>%
+  select(State, Latitude, Longitude, AccidentCause1) %>%
   filter(State=="FL")
 ```
 
@@ -72,7 +72,7 @@ ggplot() +
 ```{r}
 #Great Work! If I do say so, myself. However, I'm still bummed about all those missing observations. Turns out, if I filter by accidents that had at least one fatality, the LAT/LONG data is much more robust. Let's do that!
 Fatality_Coordinates_FL <- BARD %>%
-  select(State, Latitude, Longitude, `Number of Deaths`) %>%
+  select(State, Latitude, Longitude, `Number of Deaths`, AccidentCause1, `PFD Worn?`, `Alcohol Involved?`, `Cause of Death`, `Type of Vessel`, `Operator Education`, `Operator Experience`) %>%
   filter(State=="FL") %>%
   filter(`Number of Deaths`>0)
 ```
@@ -84,8 +84,8 @@ Fatality_Coordinates_FL <- BARD %>%
   #Plotting Florida borders
   geom_polygon(data=map_borders_FL, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
-  geom_point(data=Fatality_Coordinates_FL, aes(x=Longitude, y=Latitude,  size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Fatalities in Florida (2018)") + 
+  geom_point(data=Fatality_Coordinates_FL, aes(x=Longitude, y=Latitude,  size=`Number of Deaths`, color=AccidentCause1)) +
+               labs(title="Recreational Boating Deaths in Florida (2018)") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="green"),
@@ -94,14 +94,152 @@ Fatality_Coordinates_FL <- BARD %>%
         axis.text = element_blank(),
         axis.ticks = element_blank(),
         legend.title = element_text(color="green")) 
-#+ ggsave("Florida Fatalities Mapped.png")
+#+ ggsave("Florida Deaths Mapped.png")
+```
+Now for PFDs
+```{r}
+#Let's plot it up!
+  ggplot() +
+  #Plotting Florida borders
+  geom_polygon(data=map_borders_FL, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_FL, aes(x=Longitude, y=Latitude,  size=`Number of Deaths`, color=`PFD Worn?`)) +
+               labs(title="Recreational Boating Deaths in Florida (2018)",
+                    subtitle = "PFDs were not worn in 81 percent of all fatalities") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="green"),
+        plot.title=element_text(hjust=0.0, size=12),
+        plot.subtitle = element_text(size=9),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="green"))  + 
+  # Let's annotate that three death incident
+  annotate("text", label = "Three Deaths in\n Capsizing Incident", size=2.7, hjust=0.3, vjust=2.5, color="green", family="Rockwell", x=-87.155, y=30.270) +
+  geom_curve(aes(x=-87.155, y=30.270, xend=-87, yend=29.7), arrow = arrow(length =unit(0.2, "cm")),
+             size=0.4, color="green", curvature = -0.4) + 
+  # Now Lets annotate the PWC Collision
+  annotate("text", label = "Two Deaths in\n PWC Collision", size=2.7, hjust=1.5, vjust=0,
+           color="green", family= "Rockwell", x=-82.57, y=27.967) + 
+  geom_curve(aes(x=-82.57, y=27.967, xend=-83, yend=28), arrow=arrow(length=unit(0.2, "cm")),
+             size=0.4, color="green", curvature=0)
+#+ ggsave("Florida PFD Deaths Mapped.png")
+```
+
+
+Now, for Alcohol's involvement
+```{r}
+#Let's plot it up!
+  ggplot() +
+  #Plotting Florida borders
+  geom_polygon(data=map_borders_FL, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_FL, aes(x=Longitude, y=Latitude,  size=`Number of Deaths`, color=`Alcohol Involved?`)) +
+               labs(title="Recreational Boating Deaths in Florida (2018)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="green"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="green")) 
+#+ ggsave("Florida Deaths Mapped.png")
+```
+Now, for Cause of Death 
+```{r}
+#Let's plot it up!
+  ggplot() +
+  #Plotting Florida borders
+  geom_polygon(data=map_borders_FL, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_FL, aes(x=Longitude, y=Latitude,  size=`Number of Deaths`, color=`Cause of Death`)) +
+               labs(title="Recreational Boating Deaths in Florida (2018)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="green"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="green")) +
+        guides(size = guide_legend(order=1),
+               color = guide_legend(order = 2))
+#+ ggsave("Florida CODs Deaths Mapped.png")
+```
+
+Now, for VesselType 
+```{r}
+#Let's plot it up!
+  ggplot() +
+  #Plotting Florida borders
+  geom_polygon(data=map_borders_FL, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_FL, aes(x=Longitude, y=Latitude,  size=`Number of Deaths`, color=`Type of Vessel`)) +
+               labs(title="Recreational Boating Deaths in Florida (2018)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="green"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="green")) +
+        guides(size = guide_legend(order=1),
+               color = guide_legend(order = 2))
+#+ ggsave("Florida VesselTypes Deaths Mapped.png")
+```
+
+```{r}
+#Let's plot it up!
+  ggplot() +
+  #Plotting Florida borders
+  geom_polygon(data=map_borders_FL, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_FL, aes(x=Longitude, y=Latitude,  size=`Number of Deaths`, color=`Operator Experience`)) +
+               labs(title="Recreational Boating Deaths in Florida (2018)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="green"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="green")) +
+        guides(size = guide_legend(order=1),
+               color = guide_legend(order = 2))
+#+ ggsave("Florida OpExperience Deaths Mapped.png")
+```
+
+```{r}
+#Let's plot it up!
+  ggplot() +
+  #Plotting Florida borders
+  geom_polygon(data=map_borders_FL, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_FL, aes(x=Longitude, y=Latitude,  size=`Number of Deaths`, color=`Operator Education`)) +
+               labs(title="Recreational Boating Deaths in Florida (2018)",
+                    caption = "Of the 29 accidents for which operator education status was known,\n     79 percent of them had no formal boating education (n=23)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="green"),
+        plot.title=element_text(hjust=0.0, size=12),
+        plot.caption = element_text(hjust=-0.5),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="green")) +
+        guides(size = guide_legend(order=1),
+               color = guide_legend(order = 2))
+#+ ggsave("Florida OpEducation Deaths Mapped.png")
 ```
 
 ### Now, Let's do the same for Michigan
 ```{r}
 #Now, lets do this for Michigan
 Fatality_Coordinates_MI <- BARD %>%
-  select(State, Latitude, Longitude, `Number of Deaths`) %>%
+  select(State, Latitude, Longitude, `Number of Deaths`, AccidentEvent1, `PFD Worn?`, `Cause of Death`, `Type of Vessel`, `Operator Experience`, `Operator Education`) %>%
   filter(State=="MI") %>%
   filter(`Number of Deaths`>0)
 ```
@@ -112,8 +250,8 @@ Fatality_Coordinates_MI <- BARD %>%
   #Plotting Michigan borders
   geom_polygon(data=map_borders_MI, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
-  geom_point(data=Fatality_Coordinates_MI, aes(x=Longitude, y=Latitude,  size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Fatalities in Michigan (2018)") + 
+  geom_point(data=Fatality_Coordinates_MI, aes(x=Longitude, y=Latitude,  size=`Number of Deaths`, color=AccidentEvent1)) +
+               labs(title="Recreational Boating Deaths in Michigan (2018)") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2)) + 
   theme(text=element_text(family="Rockwell", color="green"),
@@ -122,8 +260,111 @@ Fatality_Coordinates_MI <- BARD %>%
         axis.text = element_blank(),
         axis.ticks = element_blank(),
         legend.title = element_text(color="green")) 
-#+ ggsave("Michigan Fatalities Mapped.png")
+#+ ggsave("Michigan Deaths Mapped.png")
+
+# I'm going to put these same color categories in the following graphs that utilize Google Maps. However, I believe the best way to see specific colors is with this black background.
+# Might prove more difficult to see green/different similar hues with a green background from the satellite photo
 ```
+
+```{r}
+#Let's plot it up!
+  ggplot() +
+  #Plotting Michigan borders
+  geom_polygon(data=map_borders_MI, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_MI, aes(x=Longitude, y=Latitude,  size=`Number of Deaths`, color=`PFD Worn?`)) +
+               labs(title="Recreational Boating Deaths in Michigan (2018)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2)) + 
+  theme(text=element_text(family="Rockwell", color="green"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="green")) 
+#+ ggsave("Michigan PFD Deaths Mapped.png")
+```
+
+```{r}
+#Let's plot it up!
+  ggplot() +
+  #Plotting Michigan borders
+  geom_polygon(data=map_borders_MI, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_MI, aes(x=Longitude, y=Latitude,  size=`Number of Deaths`, color=`Cause of Death`)) +
+               labs(title="Recreational Boating Deaths in Michigan (2018)",
+                    subtitle = "Of the 20 cases in which cause of death was known,\ndrownings accounted for 85 percent of all fatalities") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2)) + 
+  theme(text=element_text(family="Rockwell", color="green"),
+        plot.title=element_text(hjust=0.0, size=12),
+        plot.subtitle =element_text(vjust=3,size=9),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="green")) 
+#+ ggsave("Michigan COD Deaths Mapped.png")
+```
+
+```{r}
+#Let's plot it up!
+  ggplot() +
+  #Plotting Michigan borders
+  geom_polygon(data=map_borders_MI, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_MI, aes(x=Longitude, y=Latitude,  size=`Number of Deaths`, color=`Type of Vessel`)) +
+               labs(title="Recreational Boating Deaths in Michigan (2018)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2)) + 
+  theme(text=element_text(family="Rockwell", color="green"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="green")) 
+#+ ggsave("Michigan VesselType Deaths Mapped.png")
+```
+
+```{r}
+#Let's plot it up!
+  ggplot() +
+  #Plotting Michigan borders
+  geom_polygon(data=map_borders_MI, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_MI, aes(x=Longitude, y=Latitude,  size=`Number of Deaths`, color=`Operator Experience`)) +
+               labs(title="Recreational Boating Deaths in Michigan (2018)",
+                    caption = "It is clear from our BARD data that operator experience is not being captured\nin a majority of incidences") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2)) + 
+  theme(text=element_text(family="Rockwell", color="green"),
+        plot.title=element_text(hjust=0.0, size=12),
+        plot.caption = element_text(hjust=0, size=9),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="green")) 
+#+ ggsave("Michigan OpExperience Deaths Mapped.png")
+```
+
+```{r}
+#Let's plot it up!
+  ggplot() +
+  #Plotting Michigan borders
+  geom_polygon(data=map_borders_MI, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_MI, aes(x=Longitude, y=Latitude,  size=`Number of Deaths`, color=`Operator Education`)) +
+               labs(title="Recreational Boating Deaths in Michigan (2018)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2)) + 
+  theme(text=element_text(family="Rockwell", color="green"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="green")) 
+#+ ggsave("Michigan education Deaths Mapped.png")
+```
+
 
 ```{r}
 # Now Let's try mapping out the same plot as above, but with county lines. 
@@ -136,15 +377,16 @@ mibox
 # First let's get the map. By default, it gets it from Google. I want it to be a satellite map
 mi_map <- get_map(location=mibox, maptype="terrain", source="google")
 
-
 # Woah! Looks great!
-ggmap(mi_map) + geom_point(data=Fatality_Coordinates_MI, mapping =aes(x=Longitude, y = Latitude), color="red") + labs(title="Reported Recreational Boating\n Fatalities in Michigan (2018)") +
+ggmap(mi_map) + geom_point(data=Fatality_Coordinates_MI, mapping =aes(x=Longitude, y = Latitude, size=`Number of Deaths`, color=`Cause of Death`)) + labs(title="Recreational Boating Deaths\nin Michigan (2018)", caption = "Of the 20 cases in which cause of death was known\ndrownings accounted for 85 percent of all fatalities") +
    theme(text=element_text(family="Rockwell", color="black"),
         plot.title=element_text(hjust=0.0, size=12),
+        plot.caption = element_text(hjust=0.6),
         axis.title = element_blank(),
         axis.text = element_blank(),
-        axis.ticks = element_blank())
-#+ ggsave("Michigan Fatalities Mapped2.png")
+        axis.ticks = element_blank()) + 
+  scale_size_continuous(breaks=c(1,2))
+#+ ggsave("Michigan Deaths Mapped2.png")
 ```
 
 ### Now, Let's Try Mapping the Southern Region of the US
@@ -152,8 +394,8 @@ ggmap(mi_map) + geom_point(data=Fatality_Coordinates_MI, mapping =aes(x=Longitud
 states <- map_data("state")
 
 Fatality_Coordinates_South <- BARD %>%
-  select(State, Latitude, Longitude, `Number of Deaths`) %>%
-  filter(State==c("MS", "SC", "LA", "GA", "AL", "FL")) %>%
+  select(State, Latitude, Longitude, `Number of Deaths`, `PFD Worn?`, `Cause of Death`) %>%
+filter(State %in% c("SC", "FL", "LA", "GA", "MS", "AL")) %>% 
   filter(`Number of Deaths`>0)
 
 map_borders_south <- subset(states, region %in% c("florida", "south carolina", "georgia", "louisiana", "mississippi", "alabama"))
@@ -165,7 +407,7 @@ ggplot() +
   geom_polygon(data=map_borders_south, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_South, aes(x=Longitude, y=Latitude,  size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Fatalities\n in Southern Region (2018)") + 
+               labs(title="Reported Recreational Boating Deaths\n in Southern Region (2018)") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -174,10 +416,9 @@ ggplot() +
         axis.text = element_blank(),
         axis.ticks = element_blank(),
         legend.title = element_text(color="white")) 
-#+ ggsave("Southern Fatalities Mapped.png")
-
+#+ ggsave("Southern Deaths Mapped.png")
 ```
-I'm pretty happy with this. It gives us a way to display regional fatalities YOY. 
+I'm pretty happy with this. It gives us a way to display regional Deaths. 
 
 
 ```{r}
@@ -186,16 +427,120 @@ southbox <- make_bbox(lon=Fatality_Coordinates_South$Longitude, lat=Fatality_Coo
 
 south_map <- get_map(location=southbox, maptype = "terrain", source="google")
 
-ggmap(south_map) + geom_point(data=Fatality_Coordinates_South, mapping = aes(x=Longitude, y=Latitude, size=`Number of Deaths`), color="red") +
-labs(title="Reported Recreational Boating Fatalities\n in Southern Region (2018)") +
+ggmap(south_map) + geom_point(data=Fatality_Coordinates_South, mapping = aes(x=Longitude, y=Latitude, size=`Number of Deaths`, color=`PFD Worn?`)) +
+labs(title="Recreational Boating Deaths in Southern Region (2018)") +
+   theme(text=element_text(family="Rockwell", color="black"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank()) + 
+      scale_size_continuous(breaks=c(1,2,3)) +
+        guides(size = guide_legend(order=1),
+               color = guide_legend(order = 2))
+  # +ggsave("Southern Deaths PFD Mapped.png")
+```
+
+```{r}
+#NOW, let's try to map these states via Google Maps
+southbox <- make_bbox(lon=Fatality_Coordinates_South$Longitude, lat=Fatality_Coordinates_South$Latitude, f=.1)
+
+south_map <- get_map(location=southbox, maptype = "terrain", source="google")
+
+ggmap(south_map) + geom_point(data=Fatality_Coordinates_South, mapping = aes(x=Longitude, y=Latitude, size=`Number of Deaths`, color=`Cause of Death`)) +
+labs(title="Recreational Boating Deaths in Southern Region (2018)", caption= "Of 121 fatalities in which cause of death was known,\n66% were listed as drownings, 28% were the result of trauma") +
    theme(text=element_text(family="Rockwell", color="black"),
         plot.title=element_text(hjust=0.0, size=12),
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank()) +
-      scale_size_continuous(breaks=c(1,2,3))  
-   #+ggsave("Southern Fatalities Mapped.png")
+      scale_size_continuous(breaks=c(1,2,3)) +
+        guides(size = guide_legend(order=1),
+               color = guide_legend(order = 2)) 
+  # +ggsave("Southern Deaths COD Mapped.png")
 ```
 
 
+
+### Now, Let's Try Mapping the Whole US
+```{r}
+states <- map_data("state")
+
+Fatality_Coordinates_ALL <- BARD %>%
+  select(State, Latitude, Longitude, `Number of Deaths`, `PFD Worn?`) %>%
+  filter(!State %in% c("AK", "AM", "PR", "HI")) %>%
+  filter(`Number of Deaths`>0) %>%
+  filter(!is.na(`PFD Worn?`))
+
+map_borders_all <- subset(states)
+
+ggplot(data=map_borders_all) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+
+ggplot() +
+  geom_polygon(data=map_borders_all, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_ALL, aes(x=Longitude, y=Latitude, color=`PFD Worn?`)) +
+               labs(title="Total Recreational Boating Deaths in the US (2018)",
+                    subtitle = "PFDs were not worn in 78 percent of all deaths") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        plot.subtitle=element_text(hjust=0.0, size=10),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("Total Number of Deaths Mapped.png")
+```
+
+```{r}
+#NOW, let's try to map these states via Google Maps
+USbox <- make_bbox(lon=Fatality_Coordinates_ALL$Longitude, lat=Fatality_Coordinates_ALL$Latitude, f=.1)
+
+US_map <- get_map(location=USbox, maptype = "terrain", source="google")
+
+ggmap(US_map) + geom_point(data=Fatality_Coordinates_ALL, mapping = aes(x=Longitude, y=Latitude, color=`PFD Worn?`)) +
+labs(title="Total Recreational Boating Deaths in US (2018)",
+     subtitle = "PFDs were not worn in 78 percent of known cases") +
+   theme(text=element_text(family="Rockwell", color="black"),
+        plot.title=element_text(hjust=0.0, size=12),
+        plot.subtitle=element_text(hjust=0.0, size=10),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank()) +
+      scale_size_continuous(breaks=c(1,2,3))  
+   #+ggsave("US Deaths GoogleMapped.png")
+```
+
+```{r}
+library(RColorBrewer) 
+
+#NOW, let's try to map these states via Google Maps
+USbox <- make_bbox(lon=Fatality_Coordinates_ALL$Longitude, lat=Fatality_Coordinates_ALL$Latitude, f=.1)
+
+US_map <- get_map(location=USbox, maptype = "terrain", source="google")
+
+
+US_map <- ggmap(US_map, extent="device", legend = "none") + stat_density2d(data=Fatality_Coordinates_ALL, mapping = aes(x=Longitude, y=Latitude, fill=..level.., alpha=..level..), geom = "polygon") 
+
+US_map <- US_map + scale_fill_gradientn(colours = rev(brewer.pal(5, "Spectral")))
+
+#Add the location points, color them red and define round shape
+US_map + geom_point(data=Fatality_Coordinates_ALL, aes(x=Longitude, y=Latitude), fill="red", shape=23, alpha=0.8) + guides(size=FALSE, alpha=FALSE) + ggtitle("Heat-Mapping Recreational Boating Fatalities (2018)")
+```
+
+```{r}
+southbox <- make_bbox(lon=Fatality_Coordinates_South$Longitude, lat=Fatality_Coordinates_South$Latitude, f=.1)
+
+south_map <- get_map(location=southbox, maptype = "terrain", source="google")
+
+south_map <-ggmap(south_map, extent = "device", legend = "none") + stat_density2d(data=Fatality_Coordinates_South, mapping = aes(x=Longitude, y=Latitude, fill=..level.., alpha=..level..), geom = "polygon")
+
+south_map <- south_map + scale_fill_gradientn(colours = rev(brewer.pal(5, "Spectral")))
+
+south_map + geom_point(data=Fatality_Coordinates_South, aes(x=Longitude, y=Latitude), fill="red", shape=23, alpha=0.5) +
+  guides(size=FALSE, alpha=FALSE, fill=FALSE) + ggtitle("Heat-Mapping Southern Recreational Boating Fatalities (2018)") +  theme(text=element_text(family="Rockwell", color="black"),
+        plot.title=element_text(vjust=0.3, size=12)) + ggsave("HeatMap_South.png")
+```
 
