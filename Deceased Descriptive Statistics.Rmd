@@ -1,0 +1,277 @@
+---
+title: 'Deceased Table: Descriptive Statistics'
+author: "Andrew Iraola"
+date: "6/2/2020"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Purpose
+The beauty of this `RMarkdown` approach is that anything we know we'll want to analyze in the future, we can write code for now. By replacing only a few lines of code at the start, we can evaluate entirely different/new datasets with this same tailored approach. Switching out datasets (ex. combining years, adding new BARD data, etc.), allows us to be able to run this same analysis for any dataset with a few clicks. 
+
+The primary goals of this approach are:
+
+1. Ease of reproducibility 
+2. Automation of analyses to negate potential user error
+
+## Section 1. Checking for Variable Missingness
+```{r, echo=FALSE, message=FALSE}
+library(readxl)
+library(ggplot2)
+library(dplyr)
+
+Deceased_Table <- read_excel("Documents/2019_Deceased.xlsx")
+
+BARDCoordinateData <- read_excel("Documents/2018BARDCoordinateData.xlsx")
+
+BARD <- BARDCoordinateData
+```
+
+The first thing we're going to do is check the dataset for missing observations across variables.
+This function returns a graph that shows variable missingness across the entire given dataset.
+This process helps us evaluate which variables can be analyzed in the following sections
+```{r, echo=FALSE}
+#' Checking a dataset for missing observations across variables
+#'
+#' This function returns a graph that shows variable missingness across the
+#' entire dataset.
+#'
+#' @param dataset A vector, matrix, data frame, or tibble.
+#'
+#' @importFrom magrittr %>%
+#'
+#' @return If there is no missing data the function will return a string
+#' informing you that there is no missing data. Otherwise a graph will
+#' appear showing the variable one the y axis and the percent missing on the x-axis.
+#'
+#' @export
+#'
+#' @examples
+#' check_missing_variables(cars) # no missing data
+#' check_missing_variables(airquality) # shows missing data
+check_missing_variables <- function(dataset) {
+
+  column_missing_data <- sapply(dataset, function(x) sum(is.na(x)))
+
+  columns <- colnames(dataset)
+
+  variable_missing_data <- as.data.frame(cbind(as.numeric(column_missing_data),
+                                               columns))
+
+  variable_missing_data$num_rows_NA <- as.numeric(as.character(variable_missing_data$V1))
+
+  number_of_variables <- variable_missing_data[variable_missing_data$V1 != 0, ]
+
+  if(all(variable_missing_data[, 1] == 0)) {
+    return("Yay! You have no missing data")
+  } else if(nrow(number_of_variables) > 10) {
+    variable_missing_data %>%
+      dplyr::mutate(proportion_missing = num_rows_NA / nrow(dataset),
+                    percent_missing = (proportion_missing * 100)) %>%
+      dplyr::arrange(desc(percent_missing)) %>%
+      dplyr::filter(percent_missing != 0) %>%
+      dplyr::mutate(columns = reorder(columns, percent_missing)) %>%
+      ggplot2::ggplot(ggplot2::aes(factor(columns), percent_missing, fill = percent_missing)) +
+      ggplot2::geom_col()  +
+      ggplot2::labs(x = "Original Variables", y ="Percentage of Observations that are Missing",
+                    fill = "Percent Missing") +
+      ggplot2::coord_flip() +
+      ggplot2::scale_fill_gradient2(limits = c(0, 100),
+                                    low = "light blue", high = "dark red",
+                                    mid = "light blue") +
+      ggplot2::scale_y_continuous(limits = c(0, 100))
+  } else {
+    variable_missing_data %>%
+      dplyr::mutate(proportion_missing = num_rows_NA / nrow(dataset),
+                    percent_missing = (proportion_missing * 100)) %>%
+      dplyr::arrange(desc(percent_missing)) %>%
+      dplyr::filter(percent_missing != 0) %>%
+      dplyr::mutate(columns = reorder(columns, percent_missing)) %>%
+      ggplot2::ggplot(ggplot2::aes(factor(columns), percent_missing, fill = percent_missing)) +
+      ggplot2::geom_col()  +
+      ggplot2::labs(x = "Original Variables", y ="Percentage of Observations That Are Missing",
+                    fill = "Percent Missing") +
+      ggplot2::coord_flip() +
+      ggplot2::scale_fill_gradient2(limits = c(0, 100),
+                                    low = "light blue", high = "dark red",
+                                    mid = "light blue") +
+      ggplot2::scale_y_continuous(limits = c(0, 100))
+  }
+}
+```
+
+```{r}
+check_missing_variables(Deceased_Table) # checking which variables are missing data
+```
+
+```{r}
+Deceased_Table %>%
+  ggplot(aes(x=DeceasedAge)) +
+  geom_histogram(bins=15, fill="dodgerblue", color="black")  +
+  scale_x_continuous(breaks=c(0,5,10,15,20,25,30,35,40, 45, 50, 55, 60, 65, 70, 75, 80)) +
+   labs(y = "Total Number of Deaths", fill="test", x = "Age", title = "Fatality Distribution by Age", subtitle = "Histogram comprised of 5 year bins")
+
+
+df_Age <- Deceased_Table %>%
+  group_by(DeceasedAge) %>%
+  summarise(counts = n())
+
+ggplot(df_Age, aes(x = DeceasedAge, y = counts)) +
+  geom_bar(fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+    labs(y = "Total Number of Deaths", fill="test", x = "Age", title = "Fatality Distribution by Age") + 
+  theme(axis.text.x = element_text(angle = 0, hjust = .5)) +
+  scale_x_continuous(breaks=c(0,5,10,15,20,25,30,35,40, 45, 50, 55, 60, 65, 70, 75, 80))
+```
+
+```{r}
+df_Gender <- Deceased_Table %>%
+  group_by(DeceasedGender) %>%
+  filter(DeceasedGender!="U") %>%
+  summarise(counts = n())
+
+
+ggplot(df_Gender, aes(x = DeceasedGender, y = counts)) +
+  geom_bar(fill = "#0073C2FF", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) + 
+ labs(y = "Total Deaths", fill="test", x = "Gender", title = "Number of Fatalities by Gender") +
+scale_x_discrete(breaks=c("F", "M"), labels=c("Female", "Male"))
+```
+
+```{r}
+# This takes a bit more data-cleaning, as some states had their accronym listed in lower-case. R does not recognize that so it lists two separate states (for instance, "FL" and "Fl"). 
+# Also, why don't we know the state in 42 instances? I'm sure this is something Susan can answer easily, but I'm noting it for my own purposes to revisit later.
+df_State <- Deceased_Table %>%
+  group_by(DeceasedState) %>%
+  summarise(counts = n())
+
+ggplot(df_State, aes(x = DeceasedState, y = counts)) +
+  geom_bar(fill = "#0073C2FF", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) + 
+ labs(y = "Total Deaths", fill="test", x = "State (Acronym)", title = "Number of Fatalities by State") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+Now, lets try something a bit more tricky. Let's look at what particular cities come up most often in the dataset. Because words are a 'character vector', this won't be as easy as running a count. ...Unless, we change the way R interprets words (as opposed to numerical vectors)
+
+```{r}
+library(tidyverse)
+library(tidytext)
+library(RColorBrewer)
+library(tm)
+
+Deceased_Cities <- Deceased_Table %>%
+  select(DeceasedCity)
+
+docs <- Corpus(VectorSource(Deceased_Cities))
+#inspect(docs)
+
+dtm <- TermDocumentMatrix(docs)
+m <- as.matrix(dtm)
+v <- sort(rowSums(m),decreasing=TRUE)
+d <- data.frame(word = names(v),freq=v)
+head(d, 10)
+
+#Interestingly enough, "Indianapolis" comes up 6 times in the reports. No other city comes close to this. (Obviously, we can disregard common words like city, beach, and fort, as these likely refer to multiple locales being grouped together)
+```
+
+```{r}
+df_BAC <- Deceased_Table %>%
+  group_by(DeceasedBAC) %>%
+  summarise(counts = n())
+
+
+ggplot(df_BAC, aes(x = DeceasedBAC)) +
+  geom_histogram(aes(x=DeceasedBAC), fill="dodgerblue", color="black", bins = 10) +
+ labs(y = "Total Deaths", x = "Blood Alcohol Content (BAC)", title = "Number of Fatalities by Reported BACs") +
+  scale_x_continuous(breaks=c(0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45))
+
+df_BAC
+```
+
+```{r}
+df_CauseofDeath <- Deceased_Table %>%
+  group_by(CauseofDeath) %>%
+  summarise(counts = n())
+
+ggplot(df_CauseofDeath, aes(x = CauseofDeath, y = counts)) +
+  geom_bar(fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+    labs(y = "Total Number of Deaths", fill="test", x = "Cause of Death", title = "Number of Fatalities by Cause of Death") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1))
+```
+
+```{r}
+df_PFDWorn2 <- Deceased_Table %>%
+  group_by(DeceasedPFDWorn) %>%
+  filter(DeceasedPFDWorn!="NA") %>%
+  summarise(counts = n())
+
+
+ggplot(df_PFDWorn2, aes(x = DeceasedPFDWorn, y = counts)) +
+  geom_bar(fill = "#0073C2FF", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) + 
+ labs(y = "Total Deaths", fill="test", x = "PFD Worn?", title = "Number of Fatalities by PFD Wear-Status") +
+scale_x_discrete(breaks=c("N", "Y"), labels=c("No", "Yes"))
+```
+```{r}
+df_AlcoholUse <- Deceased_Table %>%
+  group_by(AlcoholUse) %>%
+  filter(AlcoholUse!="NA") %>%
+  summarise(counts = n())
+
+
+ggplot(df_AlcoholUse, aes(x = AlcoholUse, y = counts)) +
+  geom_bar(fill = "#0073C2FF", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) + 
+ labs(y = "Total Deaths", fill="test", x = "Alcohol Use?", title = "Number of Fatalities by Alcohol Usage Reported") +
+scale_x_discrete(breaks=c("N", "Y"), labels=c("No", "Yes"))
+```
+
+```{r}
+df_DeceasedRole <- Deceased_Table %>%
+  group_by(DeceasedRole) %>%
+  filter(DeceasedRole!="NA") %>%
+  summarise(counts = n())
+
+
+ggplot(df_DeceasedRole, aes(x = DeceasedRole, y = counts)) +
+  geom_bar(fill = "#0073C2FF", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) + 
+ labs(y = "Total Deaths", fill="test", x = "Role of Deceased", title = "Number of Fatalities by Role of Deceased on Vessel") 
+```
+```{r}
+df_PropellerInjury <- Deceased_Table %>%
+  group_by(DeceasedPropellerInjury) %>%
+  filter(DeceasedPropellerInjury!="U") %>%
+  summarise(counts = n())
+
+
+ggplot(df_PropellerInjury, aes(x = DeceasedPropellerInjury, y = counts)) +
+  geom_bar(fill = "#0073C2FF", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) + 
+ labs(y = "Total Deaths", fill="test", x = "Propeller Injury?", title = "Number of Fatalities by Propeller Injury Status", subtitle = "Propeller injury was not a factor for 94 percent of fatalities for which status was known (2019)") +
+scale_x_discrete(breaks=c("N", "Y"), labels=c("No", "Yes"))
+```
+
+# Now...lets say we want to see what states the propeller injuries happened. In theory...it should have a similar distribution to the `Fatalities by State` graph..but we don't know til we investigate! 
+```{r}
+df_PropellerInjury2 <- Deceased_Table %>%
+  group_by(DeceasedPropellerInjury, DeceasedState) %>%
+  filter(DeceasedPropellerInjury=="Y") %>%
+  summarise(counts = n())
+
+
+ggplot(df_PropellerInjury2, aes(x = DeceasedState, y = counts)) +
+  geom_bar(fill = "#0073C2FF", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) + 
+ labs(y = "Total Deaths", fill="test", x = "State (Acronym)", title = "Number of Fatalities Associated with Propeller Injury by State (2019)") 
+```
+
+
+

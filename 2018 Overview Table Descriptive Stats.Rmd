@@ -1,0 +1,312 @@
+---
+title: "BARD Overview Table Descriptive Statistics (2018)"
+author: "Code and Analysis by Andrew Iraola"
+date: "5/1/2020"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Purpose
+The beauty of this `RMarkdown` approach is that anything we know we'll want to analyze in the future, we can write code for now. By replacing only a few lines of code at the start, we can evaluate entirely different/new datasets with this same tailored approach. Switching out datasets (ex. combining years, adding new BARD data, etc.), allows us to be able to run this same analysis for any dataset with a few clicks. 
+
+The primary goals of this approach are:
+
+1. Ease of reproducibility 
+2. Automation of analyses to negate potential user error
+
+## Section 1. Checking for Variable Missingness
+```{r, echo=FALSE, message=FALSE}
+library(readxl)
+library(ggplot2)
+library(dplyr)
+Overview <- read_excel("Documents/2018 Overview Table.xlsx")
+
+BARDCoordinateData <- read_excel("Documents/2018BARDCoordinateData.xlsx")
+
+BARD <- BARDCoordinateData
+```
+
+```{r, echo=FALSE, message=FALSE}
+Overview_deaths <- Overview %>%
+                    filter(NumberDeaths >=1)
+```
+The first thing we're going to do is check the dataset for missing observations across variables.
+This function returns a graph that shows variable missingness across the entire given dataset.
+This process helps us evaluate which variables can be analyzed in the following sections
+```{r, echo=FALSE}
+#' Checking a dataset for missing observations across variables
+#'
+#' This function returns a graph that shows variable missingness across the
+#' entire dataset.
+#'
+#' @param dataset A vector, matrix, data frame, or tibble.
+#'
+#' @importFrom magrittr %>%
+#'
+#' @return If there is no missing data the function will return a string
+#' informing you that there is no missing data. Otherwise a graph will
+#' appear showing the variable one the y axis and the percent missing on the x-axis.
+#'
+#' @export
+#'
+#' @examples
+#' check_missing_variables(cars) # no missing data
+#' check_missing_variables(airquality) # shows missing data
+check_missing_variables <- function(dataset) {
+
+  column_missing_data <- sapply(dataset, function(x) sum(is.na(x)))
+
+  columns <- colnames(dataset)
+
+  variable_missing_data <- as.data.frame(cbind(as.numeric(column_missing_data),
+                                               columns))
+
+  variable_missing_data$num_rows_NA <- as.numeric(as.character(variable_missing_data$V1))
+
+  number_of_variables <- variable_missing_data[variable_missing_data$V1 != 0, ]
+
+  if(all(variable_missing_data[, 1] == 0)) {
+    return("Yay! You have no missing data")
+  } else if(nrow(number_of_variables) > 10) {
+    variable_missing_data %>%
+      dplyr::mutate(proportion_missing = num_rows_NA / nrow(dataset),
+                    percent_missing = (proportion_missing * 100)) %>%
+      dplyr::arrange(desc(percent_missing)) %>%
+      dplyr::filter(percent_missing != 0) %>%
+      dplyr::mutate(columns = reorder(columns, percent_missing)) %>%
+      ggplot2::ggplot(ggplot2::aes(factor(columns), percent_missing, fill = percent_missing)) +
+      ggplot2::geom_col()  +
+      ggplot2::labs(x = "Original Variables", y ="Percentage of Observations that are Missing",
+                    fill = "Percent Missing") +
+      ggplot2::coord_flip() +
+      ggplot2::scale_fill_gradient2(limits = c(0, 100),
+                                    low = "light blue", high = "dark red",
+                                    mid = "light blue") +
+      ggplot2::scale_y_continuous(limits = c(0, 100))
+  } else {
+    variable_missing_data %>%
+      dplyr::mutate(proportion_missing = num_rows_NA / nrow(dataset),
+                    percent_missing = (proportion_missing * 100)) %>%
+      dplyr::arrange(desc(percent_missing)) %>%
+      dplyr::filter(percent_missing != 0) %>%
+      dplyr::mutate(columns = reorder(columns, percent_missing)) %>%
+      ggplot2::ggplot(ggplot2::aes(factor(columns), percent_missing, fill = percent_missing)) +
+      ggplot2::geom_col()  +
+      ggplot2::labs(x = "Original Variables", y ="Percentage of Observations That Are Missing",
+                    fill = "Percent Missing") +
+      ggplot2::coord_flip() +
+      ggplot2::scale_fill_gradient2(limits = c(0, 100),
+                                    low = "light blue", high = "dark red",
+                                    mid = "light blue") +
+      ggplot2::scale_y_continuous(limits = c(0, 100))
+  }
+}
+```
+
+```{r}
+check_missing_variables(Overview_deaths) # checking which variables are missing data
+```
+
+## Section 2. Quick Counts
+Now that we know what we can work with, let's make some basic tables and crosstabs. We'll utilize the `count` function primarily for this. (We're only doing this for several variables for the purpose of illustrating capabilities).
+```{r}
+Overview_deaths %>%
+  count(WaterConditions)
+
+Overview_deaths %>%
+  count(NumberDeaths)
+
+table(Overview_deaths$WaterConditions, Overview_deaths$NumberDeaths)
+```
+
+## Section 3. Key Graphs 
+Now, the interesting part..
+```{r}
+df_WaterConditions <- Overview_deaths %>%
+  group_by(WaterConditions) %>%
+  filter(WaterConditions!="Unknown") %>%
+  summarise(counts = n())
+
+ggplot(df_WaterConditions, aes(x = WaterConditions, y = counts)) +
+  geom_bar(fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+    labs(y = "Total Deaths", fill="test", x = "Water Conditions", title = "Number of Fatalities: by Water Conditions at Time of Incident")
+```
+
+```{r}
+df_drownings <- Overview_deaths %>%
+  group_by(NumberDrownings) %>%
+  summarise(counts = n())
+
+ggplot(df_drownings, aes(x = NumberDrownings, y = counts)) +
+  geom_bar(fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+    labs(y = "Total Deaths", fill="test", x = "Number of Drowning Reported", title = "Number of Fatalities")
+```
+
+```{r}
+df_DayofWeek <- Overview_deaths %>%
+  group_by(DayofWeek) %>%
+  summarise(counts = n())
+
+ggplot(df_DayofWeek, aes(x = DayofWeek, y = counts)) +
+  geom_bar(fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+     labs(y = "Total Number of Deaths", fill="test", x = "", title = "Number of Fatalities by Day of the Week")
+```
+
+```{r}
+df_CauseofDeath <- Overview_deaths %>%
+  group_by(CauseCat) %>%
+  summarise(counts = n())
+
+ggplot(df_CauseofDeath, aes(x = CauseCat, y = counts)) +
+  geom_bar(fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+    labs(y = "Total Number of Deaths", fill="test", x = "Primary Cause of Accident", title = "Number of Fatalities by Accident Cause") + 
+  theme(axis.text.x = element_text(angle = 15, hjust = 1))
+```
+
+```{r}
+df_TimeCat <- Overview_deaths %>%
+  group_by(TimeCat) %>%
+  summarise(counts = n())
+
+ggplot(df_TimeCat, aes(x = TimeCat, y = counts)) +
+  geom_bar(fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+    scale_x_discrete(limit = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13),
+                     labels = c("12:00am to 2:30am", "2:31am to 4:30am","4:31am to 6:30am", "6:31am to 8:30am",
+                                "8:31am to 10:30am", "10:31am to 12:30pm", "12:31pm to 2:30pm", "2:31pm to 4:30pm",
+                                "4:31pm to 6:30pm", "6:31pm to 8:30pm", "8:31pm to 10:30pm", "10:31 pm to 11:59 pm",
+                                "Unknown")) + 
+  theme(axis.text.x = element_text(angle = 55, hjust = 1)) + 
+  labs(x="Time Observed", y="Number of Fatalities", title = "Number of Fatalities by Time of Day")
+```
+
+```{r}
+df_BodyofWaterType <- Overview_deaths %>%
+  group_by(TypeOfBodyOfWater) %>%
+  summarise(counts = n())
+
+ggplot(df_BodyofWaterType, aes(x = TypeOfBodyOfWater, y = counts)) +
+  geom_bar(fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+ labs(y = "Total Deaths", fill="test", x = "Body of Water", title = "Number of Fatalities by Body of Water Type") +
+  theme(axis.text.x = element_text(angle = 55, hjust = 1))
+```
+
+There are many listed primary accident causes or `AccidentCause1`s. Let's get a quick sense of which causes are most common before graphing it below
+```{r}
+table(Overview_deaths$AccidentCause1)
+```
+Okay, given that..
+```{r}
+df_MainCause <- Overview_deaths %>%
+  group_by(AccidentCause1) %>%
+   filter(AccidentCause1=="Alcohol use"|AccidentCause1=="Operator inattention"|
+           AccidentCause1=="Operator inexperience"|AccidentCause1=="Hazardous waters") %>%
+  summarise(counts = n())
+
+ggplot(df_MainCause, aes(x = AccidentCause1, y = counts)) +
+  geom_bar(fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+labs(title="Primary Accident Cause of Fatalities", y= "Total Number of Deaths", x="Primary Accident Cause") 
+```
+
+For the sake of illustrating ad hoc requests that can be applied in code, I have created the example below. 
+Let's say we want to get a sense of how much each state reported in total damages. 
+```{r}
+Total_Damage_State <-Overview %>%
+  filter(TotalDamage>0) %>%
+  count(TotalDamage, State)
+
+# This will quickly inform us of the states with the highest damage amounts recorded 
+Total_Damage_State_Threshold <-Total_Damage_State %>%
+  #filter(TotalDamage>=10000) %>%
+  ggplot(aes(x=State, y=TotalDamage)) +
+  geom_col(fill="dodgerblue") +
+  scale_y_continuous(labels = scales::comma) 
+
+Total_Damage_State_Threshold1 <- Total_Damage_State %>%
+ # filter(TotalDamage>=10000) %>%
+  ggplot(aes(x = reorder(State, -TotalDamage), y = TotalDamage)) + geom_bar(stat = "identity") +
+   geom_col(fill="dodgerblue") +
+  scale_y_continuous(labels = scales::comma) +
+  labs(x="State (Acronym)", y="Total Damages Reported", title = "Total Damages Reported by State") + 
+  theme(axis.text.x = element_text(angle = 75, hjust = 1))
+
+Total_Damage_State_Threshold1
+```
+
+
+Lastly, given that we have robust coordinate data for fatalities in BARD, let's get a quick glimpse at what this can look like once plotted out
+```{r, echo=FALSE, message=FALSE}
+library(ggmap)
+library(ggdark)
+states <- map_data("state")
+
+Fatality_Coordinates_ALL <- BARD %>%
+  select(State, Latitude, Longitude, `Number of Deaths`, `PFD Worn?`) %>%
+  filter(!State %in% c("AK", "AM", "PR", "HI")) %>%
+  filter(`Number of Deaths`>0) %>%
+  filter(!is.na(`PFD Worn?`))
+
+map_borders_all <- subset(states)
+#ggplot(data=map_borders_all) + 
+# geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+
+#ggplot() +
+#  geom_polygon(data=map_borders_all, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+# Plotting Accident Coordinates Observed
+#  geom_point(data=Fatality_Coordinates_ALL, aes(x=Longitude, y=Latitude, color=`PFD Worn?`)) +
+#               labs(title="Total Recreational Boating Deaths in the US (2018)",
+#                    subtitle = "PFDs were not worn in 78 percent of all deaths") + 
+#  dark_mode(theme_minimal()) + 
+#  scale_size_continuous(breaks=c(1,2,3)) + 
+#  theme(text=element_text(family="Rockwell", color="white"),
+#        plot.title=element_text(hjust=0.0, size=12),
+#        plot.subtitle=element_text(hjust=0.0, size=10),
+#        axis.title = element_blank(),
+#        axis.text = element_blank(),
+#        axis.ticks = element_blank(),
+#        legend.title = element_text(color="white")) 
+                 
+USbox <- make_bbox(lon=Fatality_Coordinates_ALL$Longitude, lat=Fatality_Coordinates_ALL$Latitude, f=.1)
+US_map <- get_map(location=USbox, maptype = "terrain", source="google")
+ggmap(US_map) + geom_point(data=Fatality_Coordinates_ALL, mapping = aes(x=Longitude, y=Latitude, color=`PFD Worn?`)) +
+labs(title="Recreational Boating Deaths in the US (2018)",
+     subtitle = "PFDs were not worn in 78 percent of known cases") +
+   theme(text=element_text(family="Rockwell", color="black"),
+        plot.title=element_text(hjust=0.0, size=12),
+        plot.subtitle=element_text(hjust=0.0, size=10),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank()) +
+      scale_size_continuous(breaks=c(1,2,3)) 
+
+Fatality_Coordinates_South <- BARD %>%
+  select(State, Latitude, Longitude, `Number of Deaths`, `PFD Worn?`, `Cause of Death`) %>%
+filter(State %in% c("SC", "FL", "LA", "GA", "MS", "AL")) %>% 
+  filter(`Number of Deaths`>0)
+map_borders_south <- subset(states, region %in% c("florida", "south carolina", "georgia", "louisiana", "mississippi", "alabama"))
+southbox <- make_bbox(lon=Fatality_Coordinates_South$Longitude, lat=Fatality_Coordinates_South$Latitude, f=.1)
+south_map <- get_map(location=southbox, maptype = "terrain", source="google")
+ggmap(south_map) + geom_point(data=Fatality_Coordinates_South, mapping = aes(x=Longitude, y=Latitude, size=`Number of Deaths`, color=`PFD Worn?`)) +
+labs(title="Recreational Boating Deaths in Southern Region (2018)") +
+   theme(text=element_text(family="Rockwell", color="black"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank()) + 
+      scale_size_continuous(breaks=c(1,2,3)) +
+        guides(size = guide_legend(order=1),
+               color = guide_legend(order = 2))
+```
+
+
+

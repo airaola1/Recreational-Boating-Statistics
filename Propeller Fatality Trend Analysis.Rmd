@@ -1,0 +1,384 @@
+---
+title: "Propeller Deaths- Trend Analysis (2015-2019)"
+author: "Andrew Iraola"
+date: "6/3/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Propeller Deaths by State (2015-2019)
+We're going to look at the past five years of data for this analysis. All data sourced from BARD database tables, 2015-2019. Specifically, the "Deceased Table". 
+
+```{r, echo=FALSE, message=FALSE}
+library(readxl)
+library(ggplot2)
+library(dplyr)
+
+Deceased_Trend <- read_excel("Propeller Fatality Analysis_2019.xlsx", sheet=6)
+
+Deceased_2015 <- read_excel("Propeller Fatality Analysis_2019.xlsx", sheet=5)
+
+Deceased_2016 <- read_excel("Propeller Fatality Analysis_2019.xlsx", sheet=4)
+
+Deceased_2017 <- read_excel("Propeller Fatality Analysis_2019.xlsx", sheet=3)
+
+Deceased_2018 <- read_excel("Propeller Fatality Analysis_2019.xlsx", sheet=2)
+
+Deceased_2019 <- read_excel("Propeller Fatality Analysis_2019.xlsx", sheet=1)
+```
+
+```{r}
+df_PropellerFatality_2015 <- Deceased_2015 %>%
+  group_by(DeceasedPropstrike, DeceasedState) %>%
+  filter(DeceasedState!="NA") %>%
+  filter(DeceasedPropstrike=="Y") %>%
+  summarise(counts = n())
+
+
+Plot_2015 <- ggplot(df_PropellerFatality_2015, aes(x = DeceasedState, y = counts)) +
+  geom_bar(fill = "#0073C2FF", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) + 
+ labs(y = "Total Deaths", fill="test", x = "") +
+  scale_y_continuous(limits = c(0, 8), breaks = c(0,1,2,3,4,5,6,7,8)) + theme_minimal()
+
+Plot_2015
+```
+
+
+```{r}
+df_PropellerFatality_2016 <- Deceased_2016 %>%
+  group_by(DeceasedPropstrike, DeceasedState) %>%
+  filter(DeceasedState!="NA") %>%
+  filter(DeceasedPropstrike=="Y") %>%
+  summarise(counts = n())
+
+
+Plot_2016 <- ggplot(df_PropellerFatality_2016, aes(x = DeceasedState, y = counts)) +
+  geom_bar(fill = "#0073C2FF", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) + 
+ labs(y = "", fill="test", x = "") +
+  scale_y_continuous(limits = c(0, 8), breaks = c(0,1,2,3,4,5,6,7,8)) + theme_minimal()
+
+Plot_2016
+```
+
+```{r}
+df_PropellerFatality_2017 <- Deceased_2017 %>%
+  group_by(DeceasedPropellerInjury, DeceasedState) %>%
+  filter(DeceasedPropellerInjury=="Y") %>%
+  filter(DeceasedState!="NA") %>%
+  summarise(counts = n())
+
+
+Plot_2017 <- ggplot(df_PropellerFatality_2017, aes(x = DeceasedState, y = counts)) +
+  geom_bar(fill = "#0073C2FF", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) + 
+ labs(y = "", fill="test", x = "") +
+  scale_y_continuous(limits = c(0, 8), breaks = c(0,1,2,3,4,5,6,7,8)) + theme_minimal()
+
+Plot_2017
+```
+
+```{r}
+df_PropellerFatality_2018 <- Deceased_2018 %>%
+  group_by(DeceasedPropellerInjury, DeceasedState) %>%
+  filter(DeceasedPropellerInjury=="Y") %>%
+  filter(DeceasedState!="NA") %>%
+  summarise(counts = n())
+
+Plot_2018 <- ggplot(df_PropellerFatality_2018, aes(x = DeceasedState, y = counts)) +
+  geom_bar(fill = "#0073C2FF", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) + 
+ labs(y = "Total Deaths", fill="test", x="")  +
+  scale_y_continuous(limits = c(0, 8), breaks = c(0,1,2,3,4,5,6,7,8)) + theme_minimal()
+Plot_2018
+```
+
+```{r}
+df_PropellerFatality_2019 <- Deceased_2019 %>%
+  group_by(DeceasedPropellerInjury, DeceasedState) %>%
+  filter(DeceasedPropellerInjury=="Y") %>%
+  filter(DeceasedState!="NA") %>%
+  summarise(counts = n())
+
+Plot_2019 <- ggplot(df_PropellerFatality_2019, aes(x = DeceasedState, y = counts)) +
+  geom_bar(fill = "#0073C2FF", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) + 
+ labs(y = "", fill="test", x = "") +
+  scale_y_continuous(limits = c(0, 8), breaks = c(0,1,2,3,4,5,6,7,8)) + theme_minimal()
+
+Plot_2019
+```
+
+
+```{r}
+library("cowplot")
+plot_row <- plot_grid(Plot_2015, Plot_2016, Plot_2017, Plot_2018, Plot_2019,
+          labels = c("2015", "2016", "2017", "2018", "2019"), hjust = -5.5,
+          ncol = 3, nrow = 2)
+
+title <- ggdraw() + 
+  draw_label(
+    "Number of Fatalities Associated with Propeller Injury by State (2015-2019)",
+    fontface = 'bold',
+    x = 0,
+    hjust = 0
+  ) +
+  theme(
+    # add margin on the left of the drawing canvas,
+    # so title is aligned with left edge of first plot
+    plot.margin = margin(0, 0, 0, 7)
+  )
+
+Final_Plot <- plot_grid(
+  title, plot_row,
+  ncol = 1,
+  # rel_heights values control vertical title margins
+  rel_heights = c(0.1, 1)
+)
+
+Final_Plot
+```
+
+```{r}
+df_PropellerFatality_Trend <- Deceased_Trend %>%
+  group_by(DeceasedPropstrike, DeceasedState) %>%
+  filter(DeceasedPropstrike=="Y") %>%
+  filter(DeceasedState!="NA") %>%
+  summarise(counts = n()) %>%
+  filter(counts>=3)
+
+Plot_Trend <- ggplot(df_PropellerFatality_Trend, aes(x = DeceasedState, y = counts)) +
+  geom_bar(aes(reorder(DeceasedState, counts), counts), fill = "#0073C2FF", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3)  +
+  scale_y_continuous(limits = c(0, 30), breaks = c(0,5, 10, 15, 20, 25, 30)) +
+labs(y = "Total Deaths", fill="test", x = "State (Acronym)", title = "Number of Fatalities Associated with Propeller Injury by State (2015-2019)", subtitle = "Figure highlights states with three or more deaths over the past five years")+ theme_minimal()
+
+Plot_Trend
+```
+
+## Analysis Based on Type of Body of Water and Coordinate Data
+```{r}
+Propeller_Fatality_Analysis_2019 <- read_excel("Propeller Fatality Analysis_2019.xlsx", sheet = 1)
+
+Propeller_Fatality_Analysis_2018 <- read_excel("Propeller Fatality Analysis_2019.xlsx", sheet = 2)
+
+Propeller_Fatality_Analysis_2017 <- read_excel("Propeller Fatality Analysis_2019.xlsx", sheet = 3)
+
+Propeller_Fatality_Analysis_2016 <- read_excel("Propeller Fatality Analysis_2019.xlsx", sheet = 4)
+
+Propeller_Fatality_Analysis_2015 <- read_excel("Propeller Fatality Analysis_2019.xlsx", sheet = 5)
+
+Propeller_Fatality_Analysis_Trend <- read_excel("Propeller Fatality Analysis_2019.xlsx", sheet = 6)
+```
+
+```{r}
+df_Propeller_2015 <- Propeller_Fatality_Analysis_2015 %>%
+  group_by(DeceasedPropstrike, TypeOfBodyOfWater) %>%
+  filter(DeceasedPropstrike=="Y") %>%
+  summarise(counts = n())
+
+
+BodyofWater_2015 <- ggplot(df_Propeller_2015, aes(x = TypeOfBodyOfWater, y = counts)) +
+  geom_bar(fill = "#0073C2FF", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) + 
+ labs(y = "Total Deaths", fill="test", x = "") +
+  scale_y_continuous(limits = c(0, 20), breaks = c(0,5, 10, 15, 20)) + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) + theme_minimal()
+
+BodyofWater_2015
+```
+
+```{r}
+df_Propeller_2016 <- Propeller_Fatality_Analysis_2016 %>%
+  group_by(DeceasedPropstrike, TypeOfBodyOfWater) %>%
+  filter(DeceasedPropstrike=="Y") %>%
+  summarise(counts = n())
+
+
+BodyofWater_2016 <- ggplot(df_Propeller_2016, aes(x = TypeOfBodyOfWater, y = counts)) +
+  geom_bar(fill = "#0073C2FF", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) + 
+ labs(y = "", fill="test", x = "") +
+  scale_y_continuous(limits = c(0, 20), breaks = c(0, 5, 10, 15, 20))  + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) + theme_minimal()
+
+BodyofWater_2016
+```
+
+```{r}
+df_Propeller_2017 <- Propeller_Fatality_Analysis_2017 %>%
+  group_by(DeceasedPropellerInjury, TypeOfBodyOfWater) %>%
+  filter(DeceasedPropellerInjury=="Y") %>%
+  summarise(counts = n())
+
+
+BodyofWater_2017 <- ggplot(df_Propeller_2017, aes(x = TypeOfBodyOfWater, y = counts)) +
+  geom_bar(fill = "#0073C2FF", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) + 
+ labs(y = "", fill="test", x = "") +
+  scale_y_continuous(limits = c(0, 20), breaks = c(0,5, 10, 15, 20))  + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) + theme_minimal()
+
+BodyofWater_2017
+```
+
+```{r}
+df_Propeller_2018 <- Propeller_Fatality_Analysis_2018 %>%
+  group_by(DeceasedPropellerInjury, TypeOfBodyOfWater) %>%
+  filter(DeceasedPropellerInjury=="Y") %>%
+  summarise(counts = n())
+
+
+BodyofWater_2018 <- ggplot(df_Propeller_2018, aes(x = TypeOfBodyOfWater, y = counts)) +
+  geom_bar(fill = "#0073C2FF", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) + 
+ labs(y = "Total Deaths", fill="test", x = "") +
+  scale_y_continuous(limits = c(0, 20), breaks = c(0,5, 10, 15, 20)) + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) + theme_minimal()
+
+BodyofWater_2018
+```
+
+```{r}
+df_Propeller_2019 <- Propeller_Fatality_Analysis_2019 %>%
+  group_by(DeceasedPropellerInjury, TypeOfBodyOfWater) %>%
+  filter(DeceasedPropellerInjury=="Y") %>%
+  summarise(counts = n())
+
+
+BodyofWater_2019 <- ggplot(df_Propeller_2019, aes(x = TypeOfBodyOfWater, y = counts)) +
+  geom_bar(fill = "#0073C2FF", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) + 
+ labs(y = "", fill="test", x = "") +
+ scale_y_continuous(limits = c(0, 20), breaks = c(0,5, 10, 15, 20)) + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) + theme_minimal()
+
+BodyofWater_2019
+```
+
+```{r}
+library("cowplot")
+plot_row2 <- plot_grid(BodyofWater_2015, BodyofWater_2016, BodyofWater_2017, BodyofWater_2018, BodyofWater_2019,
+          labels = c("2015", "2016", "2017", "2018", "2019"), hjust = -5.5,
+          ncol = 3, nrow = 2)
+
+title2 <- ggdraw() + 
+  draw_label(
+    "Number of Fatalities Associated with Propeller Injury\nby Body of Water Type (2015-2019)",
+    fontface = 'bold',
+    x = 0,
+    hjust = 0
+  ) +
+  theme(
+    # add margin on the left of the drawing canvas,
+    # so title is aligned with left edge of first plot
+    plot.margin = margin(0, 0, 0, 7)
+  )
+
+Final_Plot2 <- plot_grid(
+  title2, plot_row2,
+  ncol = 1,
+  # rel_heights values control vertical title margins
+  rel_heights = c(0.1, 1)
+)
+
+Final_Plot2
+```
+
+```{r}
+df_PropellerFatality_Trend <- Propeller_Fatality_Analysis_Trend %>%
+  group_by(DeceasedPropstrike, TypeOfBodyOfWater) %>%
+  filter(DeceasedPropstrike=="Y") %>%
+  #filter(DeceasedState!="NA") %>%
+  summarise(counts = n()) 
+
+Plot_Trend2 <- ggplot(df_PropellerFatality_Trend, aes(x = TypeOfBodyOfWater, y = counts)) +
+  geom_bar(aes(reorder(TypeOfBodyOfWater, counts), counts),fill = "#0073C2FF", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3)  +
+  scale_y_continuous(limits = c(0, 70), breaks = c(0, 10, 20, 30, 40, 50, 60, 70)) +
+labs(y = "Total Deaths", fill="test", x = "Body of Water (Type)", title = "Number of Fatalities Associated with Propeller Injury by Type of Body of Water,\n(2015-2019)") + theme_minimal()
+
+Plot_Trend2
+
+###########################################################################################################
+
+df_PropellerInjury_Trend2 <- Propeller_Fatality_Analysis_Trend %>%
+  group_by(DeceasedPropstrike, TypeOfBodyOfWater) %>%
+  filter(DeceasedPropstrike=="Y") %>%
+  filter(DeceasedState!="NA") %>%
+  summarise(counts = n()/123)
+
+Plot_Trend3 <- ggplot(df_PropellerInjury_Trend2, aes(x = TypeOfBodyOfWater, y = counts)) +
+  geom_bar(fill = "#0073C2FF", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3,)  +
+  scale_y_continuous(limits=c(0, .6), breaks=c(0, .6), labels = scales::percent_format(accuracy = 1)) +
+labs(y = "Total Deaths", fill="test", x = "Body of Water (Type)", title = "Number of Fatalities Associated with Propeller Injury by Type of Body of Water,\n(2015-2019)") + theme_minimal()
+
+Plot_Trend3
+```
+
+### Now, Let's move onto Coordinate Analysis based on Body of Water Type
+```{r}
+#Loading necessary packages
+library(tidyverse)
+library(janitor)
+library(readxl)
+library(maps)
+library(ggdark)
+library(ggmap)
+```
+
+### Now, Let's Try Mapping the Whole US
+```{r}
+states <- map_data("state")
+
+Fatality_Coordinates_ALL <- Propeller_Fatality_Analysis_Trend %>%
+  
+  select(DeceasedPropstrike,DeceasedState, Latitude, Longitude, TypeOfBodyOfWater) %>%
+  filter(!DeceasedState %in% c("AK", "AM", "PR", "HI")) %>%
+  filter(DeceasedPropstrike=="Y") %>%
+  filter(TypeOfBodyOfWater=="Bay"|TypeOfBodyOfWater=="River"|TypeOfBodyOfWater=="Lake")
+
+map_borders_all <- subset(states)
+
+ggplot(data=map_borders_all) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_all, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_ALL, aes(x=Longitude, y=Latitude, color=TypeOfBodyOfWater)) +
+               labs(title="Recreational Boating Deaths in the US Associated with Propeller Strikes (2015-2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        plot.subtitle=element_text(hjust=0.0, size=10),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("Total Number of Deaths Mapped.png")
+```
+
+```{r}
+#NOW, let's try to map these states via Google Maps
+USbox <- make_bbox(lon=Fatality_Coordinates_ALL$Longitude, lat=Fatality_Coordinates_ALL$Latitude, f=.1)
+US_map <- get_map(location=USbox, maptype = "terrain", source="google")
+
+US_Map <-ggmap(US_map) + geom_point(data=Fatality_Coordinates_ALL, mapping = aes(x=Longitude, y=Latitude, color=TypeOfBodyOfWater), size=3) +
+labs(title="Recreational Boating Deaths in US \nAssociated with Propeller Strikes (2015-2018)") +
+   theme(text=element_text(family="Rockwell", color="black"),
+        plot.title=element_text(hjust=0.0, size=12),
+        plot.subtitle=element_text(hjust=0.0, size=10),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank()) +
+      scale_size_continuous(breaks=c(1,2,3)) +
+scale_color_brewer(palette="Dark2")
+
+US_Map
+```
