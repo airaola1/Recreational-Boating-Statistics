@@ -1,0 +1,383 @@
+---
+title: "Operator Education Analysis"
+author: "USCG: Recreational Boating Safety Division"
+date: "6/10/2020"
+output:
+  html_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Section 1: Fatal Accidents
+
+### Introduction
+
+We're going to examine different categories of vessel operators found within BARD that correspond to fatal accidents.
+Primarily focusing on boating safety education, let's begin by getting an idea of the operator education makeup for the 645 recreational boating deaths that occured in 2019.
+```{r, echo-FALSE, message=FALSE, include=FALSE}
+library(readxl)
+library(dplyr)
+library(ggplot2)
+```
+
+```{r, echo=FALSE}
+Operator_Education_2019 <- read_excel("Operator Education_2019.xlsx")
+
+table(Operator_Education_2019$OperatorEducation)
+```
+
+Given what we know about sample size, we shouldn't even attempt analyzing any category with less than 30 observations. Therein, today we'll focus on:
+
+1. No Education
+2. State Education
+
+Unfortunately, the largest category is `Unknown`. While it has a robust sample-size, we can't examine it for any takeaways, as we have no idea what type of education (if any) are found within that sub-group. 
+
+However, I'm content to press on with a comparison of `No education` to `State` education. If we find that state-based education has different types of accidents occuring proportionately when compared to no education--we may be able to improve something relatedly moving forward. 
+
+```{r, include=FALSE}
+No_Ed <- Operator_Education_2019 %>%
+  filter(OperatorEducation=="No education")
+
+State_Ed <-Operator_Education_2019 %>%
+  filter(OperatorEducation=="State")
+```
+
+### Key Takeaways
+
+#### 1. Cause of Death
+
+a. Those with no education were 7.9 percent more likely to have drowning listed as the cause of death, than those that took a state-based boater education
+
+b. Those with state-based education were 10 percent more likely to have trauma and five percent more likely to have hypothermia listed as the cause of death, than those with no boater education. 
+
+```{r, echo=FALSE}
+NoEdu_CauseofDeath_Percents <- No_Ed %>%
+  group_by(CauseofDeath) %>%
+  summarise(counts=n()) %>%
+  mutate("percent"=counts/208*100) %>%
+  filter(percent>=3)
+
+NoEdu_Plot1 <-NoEdu_CauseofDeath_Percents %>%
+  ggplot(aes(x=CauseofDeath, y=percent)) +
+  geom_bar(aes(reorder(CauseofDeath, percent), percent), fill="dodgerblue", stat = "identity")  +
+  labs(y="(%)", x="", title="Main Causes of Death: No Education", subtitle = "Figure highlights causes with three percent or more") + 
+  scale_y_continuous(limits = c(0,100)) +
+  geom_text(aes(label = round(percent,2)), vjust=-0.5)
+
+######################################################################################################################################
+State_CauseofDeath_Percents <- State_Ed %>%
+  group_by(CauseofDeath) %>%
+  summarize(counts=n()) %>%
+  mutate("percent1"=counts/54*100) %>%
+  filter(percent1>=3)
+
+StateEd_Plot1 <- State_CauseofDeath_Percents %>%
+   ggplot(aes(x=CauseofDeath, y=percent1)) +
+  geom_bar(aes(reorder(CauseofDeath, percent1), percent1), fill="red", stat = "identity") +
+  labs(y="(%)", x="", title="Main Causes of Death: State-Based Education", subtitle = "Figure highlights causes with three percent or more") + 
+  scale_y_continuous(limits = c(0,100)) +
+  geom_text(aes(label = round(percent1,2)), vjust=-0.5)
+
+NoEdu_Plot1
+StateEd_Plot1
+```
+
+#### 2. Water Conditions
+
+Those with state-based education were more likely to have fatal accidents in challenging water conditions than those with no boating education. Perhaps, those with state-based education felt more capable relative to the water conditions than those with no education; lending to a (potentially) false sense of security while on water. 
+
+```{r, echo=FALSE}
+NoEdu_WaterCondit_Percents <- No_Ed %>%
+  group_by(WaterConditions) %>%
+  summarise(counts=n()) %>%
+  mutate("percent"=counts/208*100)
+
+NoEdu_Plot2 <-NoEdu_WaterCondit_Percents %>%
+  ggplot(aes(x=WaterConditions, y=percent)) +
+  geom_bar(aes(reorder(WaterConditions, percent), percent), fill="dodgerblue", stat = "identity")  +
+  labs(y="(%)", x="", title="Water Conditions During Fatal Accident: No Education") + 
+  scale_y_continuous(limits = c(0,100)) +
+  geom_text(aes(label = round(percent,2)), vjust=-0.5)
+
+######################################################################################################################################
+State_WaterCondit_Percents <- State_Ed %>%
+  group_by(WaterConditions) %>%
+  summarize(counts=n()) %>%
+  mutate("percent1"=counts/54*100)
+
+StateEd_Plot2 <- State_WaterCondit_Percents %>%
+   ggplot(aes(x=WaterConditions, y=percent1)) +
+  geom_bar(aes(reorder(WaterConditions, percent1), percent1), fill="red", stat = "identity") +
+  labs(y="(%)", x="", title="Water Conditions During Fatal Accident: State-Based Education") + 
+  scale_y_continuous(limits = c(0,100)) +
+  geom_text(aes(label = round(percent1,2)), vjust=-0.5)
+
+NoEdu_Plot2
+StateEd_Plot2
+```
+
+#### 3. Primary Accident Event During Fatal Incidents
+
+a. The largest finding is that those with no education had capsizing events make up 20 percent of their group's total fatal accidents. Operators with state-based education only capsized in fatal accidents in 3.7 percent of their cases.
+   
+b. Those with state-based boater education were 3 percent less likely to fall overboard and 4.5 percent less likely to have flooding/swamping in fatal accident events than those with no education.
+
+c. Those with no boater education were 10.4 percent less likely to collide with another recreational vessel, 7.6 percent less likely to have a person depart from the vessel, and 3.5 percent less likely to have a person ejected from the vessel in fatal accident events.
+
+```{r, echo=FALSE}
+NoEdu_AccidentEvent_Percents <- No_Ed %>%
+  group_by(AccidentEvent1) %>%
+  summarise(counts=n()) %>%
+  mutate("percent"=counts/208*100) %>%
+  filter(percent>=5)
+
+NoEdu_Plot3 <-NoEdu_AccidentEvent_Percents %>%
+  ggplot(aes(x=AccidentEvent1, y=percent)) +
+  geom_bar(aes(reorder(AccidentEvent1, percent), percent), fill="dodgerblue", stat = "identity")  +
+  labs(y="(%)", x="", title="Primary Fatal Accident Event: No Education", subtitle= "Figure highlights events with 5 percent or more") + 
+  scale_y_continuous(limits = c(0,100)) +
+  geom_text(aes(label = round(percent,2)), vjust=-0.5)  + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1))
+
+######################################################################################################################################
+State_WaterCondit_Percents <- State_Ed %>%
+  group_by(AccidentEvent1) %>%
+  summarize(counts=n()) %>%
+  mutate("percent1"=counts/54*100) %>%
+  filter(percent1>=5)
+
+StateEd_Plot3 <- State_WaterCondit_Percents %>%
+   ggplot(aes(x=AccidentEvent1, y=percent1)) +
+  geom_bar(aes(reorder(AccidentEvent1, percent1), percent1), fill="red", stat = "identity") +
+  labs(y="(%)", x="", title="Primary Fatal Accident Event: State-Based Education", subtitle= "Figure highlights events with 5 percent or more") + 
+  scale_y_continuous(limits = c(0,100)) +
+  geom_text(aes(label = round(percent1,2)), vjust=-0.5)  + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1))
+
+NoEdu_Plot3
+StateEd_Plot3
+```
+
+#### 4. Primary Accident Cause During Fatal Incidents
+
+a. Operators with state-based education were 10.8 percent more likely to have alcohol listed as a primary fatal accident cause, than those with no boating safety education.
+
+b. Similarly, operators with state-based education were 7.7 percent more likely to have operator inattention, 4.9 percent more likely to have hazardous waters, and three percent more likely to have excessive speed listed as the primary fatal accident cause
+
+c. Operators with no experience were 4.4 percent more likely to have operator inexperience listed as a primary accident cause, than those with state-based education.  
+
+```{r, echo=FALSE}
+NoEdu_AccidentCause_Percents <- No_Ed %>%
+  group_by(AccidentCause1) %>%
+  summarise(counts=n()) %>%
+  mutate("percent"=counts/208*100) %>%
+  filter(percent>=5)
+
+NoEdu_Plot4 <-NoEdu_AccidentCause_Percents %>%
+  ggplot(aes(x=AccidentCause1, y=percent)) +
+  geom_bar(aes(reorder(AccidentCause1, percent), percent), fill="dodgerblue", stat = "identity")  +
+  labs(y="(%)", x="", title="Primary Fatal Accident Cause: No Education", subtitle= "Figure highlights events with 5 percent or more") + 
+  scale_y_continuous(limits = c(0,100)) +
+  geom_text(aes(label = round(percent,2)), vjust=-0.5)  + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1))
+
+######################################################################################################################################
+State_AccidentCause_Percents <- State_Ed %>%
+  group_by(AccidentCause1) %>%
+  summarize(counts=n()) %>%
+  mutate("percent1"=counts/54*100) %>%
+  filter(percent1>=5)
+
+StateEd_Plot4 <- State_AccidentCause_Percents %>%
+   ggplot(aes(x=AccidentCause1, y=percent1)) +
+  geom_bar(aes(reorder(AccidentCause1, percent1), percent1), fill="red", stat = "identity") +
+  labs(y="(%)", x="", title="Primary Fatal Accident Event: State-Based Education", subtitle= "Figure highlights events with 5 percent or more") + 
+  scale_y_continuous(limits = c(0,100)) +
+  geom_text(aes(label = round(percent1,2)), vjust=-0.5)  + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1))
+
+NoEdu_Plot4
+StateEd_Plot4
+```
+
+## Section 2: Injuries 
+
+### Introduction
+Now, we're going to look at accidents where at least one injury occured. In doing so, we'll replicate the same tables and charts as rendered above for fatal accidents. Let's begin by getting an idea of the operator education makeup for the 2,696 recreational boating injuries that occured in 2019.
+```{r, echo=FALSE}
+Operator_Education_Injuries <- read_excel("Operator Education Injury Query.xlsx")
+table(Operator_Education_Injuries$OperatorEducation)
+```
+
+Let's focus on the categories with the most observations.
+
+1. No Education
+2. State Education
+
+```{r, include=FALSE}
+No_Ed_Injuries <- Operator_Education_Injuries %>%
+  filter(OperatorEducation=="No education")
+
+State_Ed_Injuries <-Operator_Education_Injuries %>%
+  filter(OperatorEducation=="State")
+```
+### Key Takeaways
+
+#### 1. Type of Injury
+
+The types of injuries that occur are pretty similar proportionately between our no boating safety education and our state-based groups. The only noteworthy distinction is that operators with a state-based education were 8.8 percent more likely to have a cut injury occur while on water. 
+
+```{r, echo=FALSE}
+NoEdu_InjuryType_Percents <- No_Ed_Injuries %>%
+  group_by(InjuryType) %>%
+  summarise(counts=n()) %>%
+  mutate("percent"=counts/1056*100) %>%
+  filter(percent>=5)
+
+NoEdu_Plot5 <-NoEdu_InjuryType_Percents %>%
+  ggplot(aes(x=InjuryType, y=percent)) +
+  geom_bar(aes(reorder(InjuryType, percent), percent), fill="dodgerblue", stat = "identity")  +
+  labs(y="(%)", x="", title="Main Types of Injury: No Education", subtitle= "Figure highlights events with 5 percent or more") + 
+  scale_y_continuous(limits = c(0,100)) +
+  geom_text(aes(label = round(percent,2)), vjust=-0.5)  + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1))
+
+######################################################################################################################################
+StateEd_InjuryType_Percents <- State_Ed_Injuries %>%
+  group_by(InjuryType) %>%
+  summarise(counts=n()) %>%
+  mutate("percent1"=counts/476*100) %>%
+  filter(percent1>=5)
+
+StateEd_Plot5 <-StateEd_InjuryType_Percents %>%
+  ggplot(aes(x=InjuryType, y=percent1)) +
+  geom_bar(aes(reorder(InjuryType, percent1), percent1), fill="red", stat = "identity")  +
+  labs(y="(%)", x="", title="Main Types of Injury: State-Based Education", subtitle= "Figure highlights events with 5 percent or more") + 
+  scale_y_continuous(limits = c(0,100)) +
+  geom_text(aes(label = round(percent1,2)), vjust=-0.5)  + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1))
+
+NoEdu_Plot5
+StateEd_Plot5
+```
+
+#### 2. Water Conditions
+
+Unlike what we saw in Section 1 with fatal accidents, water conditions when an injury occured were very similar between our groups. 
+
+This undermines my earlier hypothesis that, perhaps, those with state-based education felt more confident in rougher waters due in part to a 'false sense of security while on water'. 
+
+```{r, echo=FALSE}
+NoEdu_WaterCondit_Injuries <- No_Ed_Injuries %>%
+  group_by(WaterConditions) %>%
+  summarise(counts=n()) %>%
+  mutate("percent"=counts/1056*100)
+
+NoEdu_Plot6 <-NoEdu_WaterCondit_Injuries %>%
+  ggplot(aes(x=WaterConditions, y=percent)) +
+  geom_bar(aes(reorder(WaterConditions, percent), percent), fill="dodgerblue", stat = "identity")  +
+  labs(y="(%)", x="", title="Water Conditions During Injury: No Education") + 
+  scale_y_continuous(limits = c(0,100)) +
+  geom_text(aes(label = round(percent,2)), vjust=-0.5)  + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1))
+
+######################################################################################################################################
+StateEd_WaterCondit_Injuries <- State_Ed_Injuries %>%
+  group_by(WaterConditions) %>%
+  summarise(counts=n()) %>%
+  mutate("percent1"=counts/476*100)
+
+StateEd_Plot6 <-StateEd_WaterCondit_Injuries %>%
+  ggplot(aes(x=WaterConditions, y=percent1)) +
+  geom_bar(aes(reorder(WaterConditions, percent1), percent1), fill="red", stat = "identity")  +
+  labs(y="(%)", x="", title="Water Conditions During Injury: State-Based Education") + 
+  scale_y_continuous(limits = c(0,100)) +
+  geom_text(aes(label = round(percent1,2)), vjust=-0.5)  + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1))
+
+NoEdu_Plot6
+StateEd_Plot6
+```
+
+#### 3. Primary Accident Event During Injury Incidents
+
+Again, very little discernible differences between our groups. 
+The types of accidents as they occur proportionately are nearly identical. 
+
+```{r, echo=FALSE}
+NoEdu_AccidentEvent_Injuries <- No_Ed_Injuries %>%
+  group_by(AccidentEvent1) %>%
+  summarise(counts=n()) %>%
+  mutate("percent"=counts/1056*100)  %>%
+  filter(percent>=5)
+
+NoEdu_Plot7 <-NoEdu_AccidentEvent_Injuries %>%
+  ggplot(aes(x=AccidentEvent1, y=percent)) +
+  geom_bar(aes(reorder(AccidentEvent1, percent), percent), fill="dodgerblue", stat = "identity")  +
+  labs(y="(%)", x="", title="Primary Accident Event During Injury: No Education", subtitle = "Figure highlights events with 5 percent or more") + 
+  scale_y_continuous(limits = c(0,100)) +
+  geom_text(aes(label = round(percent,2)), vjust=-0.5)  + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1))
+
+##################################################################################################################################
+StateEd_AccidentEvent_Injuries <- State_Ed_Injuries %>%
+  group_by(AccidentEvent1) %>%
+  summarise(counts=n()) %>%
+  mutate("percent1"=counts/476*100)  %>%
+  filter(percent1>=5)
+
+StateEd_Plot7 <-StateEd_AccidentEvent_Injuries %>%
+  ggplot(aes(x=AccidentEvent1, y=percent1)) +
+  geom_bar(aes(reorder(AccidentEvent1, percent1), percent1), fill="red", stat = "identity")  +
+  labs(y="(%)", x="", title="Primary Accident Event During Injury: State-Based Education", subtitle = "Figure highlights events with 5 percent or more") + 
+  scale_y_continuous(limits = c(0,100)) +
+  geom_text(aes(label = round(percent1,2)), vjust=-0.5)  + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1))
+
+NoEdu_Plot7
+StateEd_Plot7
+```
+
+#### 4. Primary Accident Cause During Injury Incidents
+
+While almost all the accident causes were remarkably similar proportionately between our two groups with regard to injuries, one thing stands out.
+
+Those that received state-based boating safety education were 4.8 percent more likley to have improper lookout as the primary accident cause, than those with no education. 
+
+```{r, echo=FALSE}
+NoEdu_AccidentCause_Injuries <- No_Ed_Injuries %>%
+  group_by(AccidentCause1) %>%
+  summarise(counts=n()) %>%
+  mutate("percent"=counts/1056*100)  %>%
+  filter(percent>=5)
+
+NoEdu_Plot8 <-NoEdu_AccidentCause_Injuries %>%
+  ggplot(aes(x=AccidentCause1, y=percent)) +
+  geom_bar(aes(reorder(AccidentCause1, percent), percent), fill="dodgerblue", stat = "identity")  +
+  labs(y="(%)", x="", title="Primary Accident Cause During Injury: No Education", subtitle = "Figure highlights events with 5 percent or more") + 
+  scale_y_continuous(limits = c(0,100)) +
+  geom_text(aes(label = round(percent,2)), vjust=-0.5)  + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1))
+
+##################################################################################################################################
+StateEd_AccidentCause_Injuries <- State_Ed_Injuries %>%
+  group_by(AccidentCause1) %>%
+  summarise(counts=n()) %>%
+  mutate("percent1"=counts/476*100)  %>%
+  filter(percent1>=5)
+
+StateEd_Plot8 <-StateEd_AccidentCause_Injuries %>%
+  ggplot(aes(x=AccidentCause1, y=percent1)) +
+  geom_bar(aes(reorder(AccidentCause1, percent1), percent1), fill="red", stat = "identity")  +
+  labs(y="(%)", x="", title="Primary Accident Cause During Injury: State-Based Education", subtitle = "Figure highlights events with 5 percent or more") + 
+  scale_y_continuous(limits = c(0,100)) +
+  geom_text(aes(label = round(percent1,2)), vjust=-0.5)  + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1))
+
+NoEdu_Plot8
+StateEd_Plot8
+```
+
