@@ -1,0 +1,1369 @@
+---
+title: "US Accident Location Analysis (2019)"
+author: "Andrew Iraola"
+date: "7/6/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Section 1: Creating Our Datasets by RBS Region
+```{r}
+#Loading necessary packages
+library(tidyverse)
+library(janitor)
+library(readxl)
+library(maps)
+library(ggdark)
+library(readxl)
+library(ggmap)
+
+BARDCoordinateData_2019 <- read_excel("Coordinate Data Query_2019.xlsx")
+
+BARD_2019 <- BARDCoordinateData_2019
+```
+
+### Running a Count of NA Values by Region/State
+```{r}
+#I noticed a lot of "NA" values for the LAT/LONG columns for most states. This query will tell us how many coordinates were successfully recorded for each state out of their total accidents recorded. Ex. Arkansas has 17 LAT/LONG observations to work with, and only 5 NAs. However, for most states, this is not the case. 
+BARD_2019 %>%
+  group_by(State) %>%
+  count(Latitude!="NA")
+```
+
+### District 1
+```{r}
+states <- map_data("state")
+Fatality_Coordinates_1 <- BARD_2019 %>%
+  select(State, Latitude, Longitude, `Number of Deaths`, `PFD Worn?`, `Cause of Death`, `Alcohol Involved?`,
+         `Main Cause of Accident`, `AccidentEvent1`, `Type of Vessel`, `Operator Experience`, `Operator Education`) %>%
+filter(State %in% c("ME", "VT", "NH", "MA", "NY", "CT", "RI")) %>% 
+  filter(`Number of Deaths`>0) %>%
+  filter(`PFD Worn?`!="NA") 
+
+map_borders_1 <- subset(states, region %in% c("maine", "vermont", "new hampshire", "massachusetts", "new york", "connecticut", "rhode island"))
+ggplot(data=map_borders_1) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_1, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_1, aes(x=Longitude, y=Latitude,  size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\n in District 1 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_1) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_1, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_1, aes(x=Longitude, y=Latitude, color=`PFD Worn?`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 1 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_1) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_1, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_1, aes(x=Longitude, y=Latitude, color=`Alcohol Involved?`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 1 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_1) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_1, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_1, aes(x=Longitude, y=Latitude, color=`Main Cause of Accident`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 1 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_1) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_1, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_1, aes(x=Longitude, y=Latitude, color=`AccidentEvent1`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 1 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_1) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_1, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_1, aes(x=Longitude, y=Latitude, color=`Cause of Death`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 1 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_1) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_1, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_1, aes(x=Longitude, y=Latitude, color=`Type of Vessel`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 1 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_1) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_1, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_1, aes(x=Longitude, y=Latitude, color=`Operator Experience`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 1 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_1) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_1, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_1, aes(x=Longitude, y=Latitude, color=`Operator Education`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 1 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+
+```
+
+### District 5
+```{r}
+states <- map_data("state")
+Fatality_Coordinates_5 <- BARD_2019 %>%
+  select(State, Latitude, Longitude, `Number of Deaths`, `PFD Worn?`, `Cause of Death`, `Alcohol Involved?`,
+         `Main Cause of Accident`, `AccidentEvent1`, `Type of Vessel`, `Operator Experience`, `Operator Education`) %>%
+filter(State %in% c("PA", "MD", "DE", "VA", "DC", "NC", "NJ")) %>% 
+  filter(`Number of Deaths`>0) %>%
+  filter(`PFD Worn?`!="NA") 
+
+map_borders_5 <- subset(states, region %in% c("pennsylvania", "maryland", "delaware", "north carolina", "new jersey", "district of columbia", "virginia"))
+
+ggplot(data=map_borders_5) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_5, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_5, aes(x=Longitude, y=Latitude,  size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 5 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_5) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_5, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_5, aes(x=Longitude, y=Latitude, color=`PFD Worn?`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 5 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_5) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_5, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_5, aes(x=Longitude, y=Latitude, color=`Alcohol Involved?`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 5 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_5) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_5, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_5, aes(x=Longitude, y=Latitude, color=`Main Cause of Accident`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 5 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_5) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_5, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_5, aes(x=Longitude, y=Latitude, color=`AccidentEvent1`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 5 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_5) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_5, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_5, aes(x=Longitude, y=Latitude, color=`Cause of Death`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 5 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_5) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_5, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_5, aes(x=Longitude, y=Latitude, color=`Type of Vessel`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 5 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_5) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_5, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_5, aes(x=Longitude, y=Latitude, color=`Operator Experience`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 5 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_5) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_5, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_5, aes(x=Longitude, y=Latitude, color=`Operator Education`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 5 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+```
+
+### District 7
+```{r}
+states <- map_data("state")
+Fatality_Coordinates_7 <- BARD_2019 %>%
+  select(State, Latitude, Longitude, `Number of Deaths`, `PFD Worn?`, `Cause of Death`, `Alcohol Involved?`,
+         `Main Cause of Accident`, `AccidentEvent1`, `Type of Vessel`, `Operator Experience`, `Operator Education`) %>%
+filter(State %in% c("SC", "GA", "FL")) %>% 
+  filter(`Number of Deaths`>0) %>%
+  filter(`PFD Worn?`!="NA") %>%
+  filter(`Alcohol Involved?`!="NA") %>%
+  filter(Longitude>=-85.65)
+
+map_borders_7 <- subset(states, region %in% c("south carolina", "georgia", "florida"))
+
+ggplot(data=map_borders_7) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_7, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_7, aes(x=Longitude, y=Latitude,  size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths in District 7 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_7) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_7, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_7, aes(x=Longitude, y=Latitude, color=`PFD Worn?`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths in District 7 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_7) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_7, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_7, aes(x=Longitude, y=Latitude, color=`Alcohol Involved?`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths in District 7 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_7) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_7, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_7, aes(x=Longitude, y=Latitude, color=`Main Cause of Accident`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths in District 7 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_7) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_7, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_7, aes(x=Longitude, y=Latitude, color=`AccidentEvent1`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths in District 7 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_7) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_7, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_7, aes(x=Longitude, y=Latitude, color=`Cause of Death`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths in District 7 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_7) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_7, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_7, aes(x=Longitude, y=Latitude, color=`Type of Vessel`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths in District 7 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_7) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_7, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_7, aes(x=Longitude, y=Latitude, color=`Operator Experience`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths in District 7 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_7) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_7, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_7, aes(x=Longitude, y=Latitude, color=`Operator Education`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths in District 7 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+```
+
+### District 8
+```{r}
+states <- map_data("state")
+Fatality_Coordinates_8 <- BARD_2019 %>%
+  select(State, Latitude, Longitude, `Number of Deaths`, `PFD Worn?`, `Cause of Death`, `Alcohol Involved?`,
+         `Main Cause of Accident`, `AccidentEvent1`, `Type of Vessel`, `Operator Experience`, `Operator Education`) %>%
+filter(State %in% c("ND", "WY", "SD", "MN", "NE", "CO", "KS", "NM", "TX", "OK", "IA", "MO", "AR", "LA", "IL", "IN", "OH", "PA", "WV", "KY", "TN", "MS", "AL", "GA", "FL")) %>% 
+  filter(`Number of Deaths`>0) %>%
+  filter(`PFD Worn?`!="NA") %>%
+  filter(`Alcohol Involved?` !="NA") %>%
+  filter(Longitude>=-117) %>%
+  filter(Longitude<=-83)
+
+map_borders_8 <- subset(states, region %in% c("north dakota", "wyoming", "south dakota", "minnesota", "nebraska", "colorado", "kansas", "new mexico", "texas", "oklahoma", "iowa", "montana", "arkansas", "louisiana", "indiana", "illinois", "ohio", "pennsylvania", "west virginia", "kentucky", "tennessee", "mississippi", "alabama", "georgia", "florida", "missouri"))
+
+ggplot(data=map_borders_8) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_8, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_8, aes(x=Longitude, y=Latitude,  size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths in District 8 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_8) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_8, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_8, aes(x=Longitude, y=Latitude, color=`PFD Worn?`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths in District 8 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_8) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_8, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_8, aes(x=Longitude, y=Latitude, color=`Alcohol Involved?`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths in District 8 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_8) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_8, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_8, aes(x=Longitude, y=Latitude, color=`Main Cause of Accident`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 8 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_8) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_8, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_8, aes(x=Longitude, y=Latitude, color=`AccidentEvent1`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths in District 8 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_8) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_8, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_8, aes(x=Longitude, y=Latitude, color=`Cause of Death`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths in District 8 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_8) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_8, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_8, aes(x=Longitude, y=Latitude, color=`Type of Vessel`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths in District 8 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_8) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_8, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_8, aes(x=Longitude, y=Latitude, color=`Operator Experience`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths in District 8 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_8) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_8, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_8, aes(x=Longitude, y=Latitude, color=`Operator Education`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths in District 8 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+```
+
+### District 9
+```{r}
+states <- map_data("state")
+Fatality_Coordinates_9 <- BARD_2019 %>%
+  select(State, Latitude, Longitude, `Number of Deaths`, `PFD Worn?`, `Cause of Death`, `Alcohol Involved?`,
+         `Main Cause of Accident`, `AccidentEvent1`, `Type of Vessel`, `Operator Experience`, `Operator Education`) %>%
+filter(State %in% c("MN", "WI", "IL", "IN", "MI", "OH", "PA", "NY")) %>% 
+  filter(`Number of Deaths`>0) %>%
+  filter(`PFD Worn?`!="NA") %>%
+  filter(Latitude>=40)
+
+map_borders_9 <- subset(states, region %in% c("minnesota", "wisconsin", "illinois", "indiana", "michigan", "ohio", "pennsylvania", "new york"))
+
+ggplot(data=map_borders_9) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_9, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_9, aes(x=Longitude, y=Latitude,  size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 9 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_9) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_9, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_9, aes(x=Longitude, y=Latitude, color=`PFD Worn?`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 9 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_9) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_9, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_9, aes(x=Longitude, y=Latitude, color=`Alcohol Involved?`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 9 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_9) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_9, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_9, aes(x=Longitude, y=Latitude, color=`Main Cause of Accident`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 9 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_9) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_9, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_9, aes(x=Longitude, y=Latitude, color=`AccidentEvent1`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 9 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_9) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_9, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_9, aes(x=Longitude, y=Latitude, color=`Cause of Death`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 9 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_9) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_9, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_9, aes(x=Longitude, y=Latitude, color=`Type of Vessel`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 9 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_9) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_9, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_9, aes(x=Longitude, y=Latitude, color=`Operator Experience`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 9 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_9) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_9, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_9, aes(x=Longitude, y=Latitude, color=`Operator Education`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 9 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+```
+
+### District 11
+```{r}
+states <- map_data("state")
+Fatality_Coordinates_11 <- BARD_2019 %>%
+  select(State, Latitude, Longitude, `Number of Deaths`, `PFD Worn?`, `Cause of Death`, `Alcohol Involved?`,
+         `Main Cause of Accident`, `AccidentEvent1`, `Type of Vessel`, `Operator Experience`, `Operator Education`) %>%
+filter(State %in% c("CA", "NV", "UT", "AZ")) %>% 
+  filter(`Number of Deaths`>0) %>%
+  filter(`PFD Worn?`!="NA") %>%
+  filter(`Alcohol Involved?` !="NA")
+
+map_borders_11 <- subset(states, region %in% c("california", "nevada", "utah", "arizona"))
+
+ggplot(data=map_borders_11) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_11, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_11, aes(x=Longitude, y=Latitude,  size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 11 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_11) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_11, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_11, aes(x=Longitude, y=Latitude, color=`PFD Worn?`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 11 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_11) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_11, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_11, aes(x=Longitude, y=Latitude, color=`Alcohol Involved?`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 11 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_11) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_11, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_11, aes(x=Longitude, y=Latitude, color=`Main Cause of Accident`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 11 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_11) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_11, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_11, aes(x=Longitude, y=Latitude, color=`AccidentEvent1`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 11 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_11) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_11, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_11, aes(x=Longitude, y=Latitude, color=`Cause of Death`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 11 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_11) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_11, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_11, aes(x=Longitude, y=Latitude, color=`Type of Vessel`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 11 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_11) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_11, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_11, aes(x=Longitude, y=Latitude, color=`Operator Experience`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 11 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_11) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_11, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_11, aes(x=Longitude, y=Latitude, color=`Operator Education`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 11 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+```
+
+### District 13
+```{r}
+states <- map_data("state")
+Fatality_Coordinates_13 <- BARD_2019 %>%
+  select(State, Latitude, Longitude, `Number of Deaths`, `PFD Worn?`, `Cause of Death`, `Alcohol Involved?`,
+         `Main Cause of Accident`, `AccidentEvent1`, `Type of Vessel`, `Operator Experience`, `Operator Education`) %>%
+filter(State %in% c("OR", "WA", "ID", "MT")) %>% 
+  filter(`Number of Deaths`>0) %>%
+  filter(`PFD Worn?`!="NA") %>%
+  filter(`Alcohol Involved?` !="NA")
+
+map_borders_13 <- subset(states, region %in% c("oregon", "washington", "idaho", "montana"))
+
+ggplot(data=map_borders_13) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_13, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_13, aes(x=Longitude, y=Latitude,  size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths in District 13 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_13) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_13, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_13, aes(x=Longitude, y=Latitude, color=`PFD Worn?`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths in District 13 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_13) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_13, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_13, aes(x=Longitude, y=Latitude, color=`Alcohol Involved?`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths in District 13 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_13) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_13, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_13, aes(x=Longitude, y=Latitude, color=`Main Cause of Accident`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\nin District 13 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_13) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_13, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_13, aes(x=Longitude, y=Latitude, color=`AccidentEvent1`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths in District 13 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_13) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_13, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_13, aes(x=Longitude, y=Latitude, color=`Cause of Death`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths in District 13 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_13) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_13, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_13, aes(x=Longitude, y=Latitude, color=`Type of Vessel`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths in District 13 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_13) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_13, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_13, aes(x=Longitude, y=Latitude, color=`Operator Experience`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths in District 13 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+
+ggplot(data=map_borders_13) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_13, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_13, aes(x=Longitude, y=Latitude, color=`Operator Education`,size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths in District 13 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+```
+
+### District 14
+This looks terrible, so I think we should scrap it altogether. Besides, only three deaths overall, so not much to be examined in a graph format. 
+```{r}
+states <- map_data("state")
+Fatality_Coordinates_14 <- BARD_2019 %>%
+  select(State, Latitude, Longitude, `Number of Deaths`, `PFD Worn?`, `Cause of Death`, `Alcohol Involved?`,
+         `Main Cause of Accident`, `AccidentEvent1`, `Type of Vessel`, `Operator Experience`, `Operator Education`) %>%
+filter(State %in% c("HI")) %>% 
+  filter(`Number of Deaths`>0) %>%
+  filter(`PFD Worn?`!="NA") 
+
+map_borders_14 <- subset(states, region %in% c("hawaii"))
+
+ggplot(data=map_borders_14) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_14, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_14, aes(x=Longitude, y=Latitude,  size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\n in District 14 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+```
+
+### District 17
+```{r}
+states <- map_data("state")
+Fatality_Coordinates_14 <- BARD_2019 %>%
+  select(State, Latitude, Longitude, `Number of Deaths`, `PFD Worn?`, `Cause of Death`, `Alcohol Involved?`,
+         `Main Cause of Accident`, `AccidentEvent1`, `Type of Vessel`, `Operator Experience`, `Operator Education`) %>%
+filter(State %in% c("AK")) %>% 
+  filter(`Number of Deaths`>0) %>%
+  filter(`PFD Worn?`!="NA") 
+
+map_borders_17 <- subset(states, region %in% c("alaska"))
+
+ggplot(data=map_borders_17) + 
+  geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
+ggplot() +
+  geom_polygon(data=map_borders_17, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
+  #Plotting Accident Coordinates Observed
+  geom_point(data=Fatality_Coordinates_17, aes(x=Longitude, y=Latitude,  size=`Number of Deaths`)) +
+               labs(title="Reported Recreational Boating Deaths\n in District 17 Region (2019)") + 
+  dark_mode(theme_minimal()) + 
+  scale_size_continuous(breaks=c(1,2,3)) + 
+  theme(text=element_text(family="Rockwell", color="white"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(color="white")) 
+#+ ggsave("District 1 Deaths Mapped.png")
+```
+
+```{r}
+#NOW, let's try to map these states via Google Maps
+District17 <- make_bbox(lon=Fatality_Coordinates_17$Longitude, lat=Fatality_Coordinates_17$Latitude, f=.1)
+
+District17_map <- get_map(location=District17, maptype = "terrain", source="google")
+
+ggmap(District17_map) + geom_point(data=Fatality_Coordinates_17, mapping = aes(x=Longitude, y=Latitude, size=`Number of Deaths`, color=`PFD Worn?`)) +
+labs(title="Recreational Boating Deaths in District 17 Region (2019)") +
+   theme(text=element_text(family="Rockwell", color="black"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank()) + 
+      scale_size_continuous(breaks=c(1,2,3)) +
+        guides(size = guide_legend(order=1),
+               color = guide_legend(order = 2))
+  # +ggsave("District 1  PFD Mapped.png")
+
+ggmap(District17_map) + geom_point(data=Fatality_Coordinates_17, mapping = aes(x=Longitude, y=Latitude, size=`Number of Deaths`, color=`Alcohol Involved?`)) +
+labs(title="Recreational Boating Deaths in District 17 Region (2019)") +
+   theme(text=element_text(family="Rockwell", color="black"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank()) + 
+      scale_size_continuous(breaks=c(1,2,3)) +
+        guides(size = guide_legend(order=1),
+               color = guide_legend(order = 2))
+  #+ggsave("District 1  Alcohol Mapped.png")
+
+ggmap(District17_map) + geom_point(data=Fatality_Coordinates_17, mapping = aes(x=Longitude, y=Latitude, size=`Number of Deaths`, color=`Main Cause of Accident`)) +
+labs(title="Recreational Boating Deaths in District 17 Region (2019)") +
+   theme(text=element_text(family="Rockwell", color="black"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank()) + 
+      scale_size_continuous(breaks=c(1,2,3)) +
+        guides(size = guide_legend(order=1),
+               color = guide_legend(order = 2))
+  #+ggsave("District 1  Accident Cause Mapped.png")
+
+ggmap(District17_map) + geom_point(data=Fatality_Coordinates_17, mapping = aes(x=Longitude, y=Latitude, size=`Number of Deaths`, color=`AccidentEvent1`)) +
+labs(title="Recreational Boating Deaths in District 17 Region (2019)") +
+   theme(text=element_text(family="Rockwell", color="black"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank()) + 
+      scale_size_continuous(breaks=c(1,2,3)) +
+        guides(size = guide_legend(order=1),
+               color = guide_legend(order = 2))
+  #+ggsave("District 1  Accident Cause Mapped.png")
+
+ggmap(District17_map) + geom_point(data=Fatality_Coordinates_17, mapping = aes(x=Longitude, y=Latitude, size=`Number of Deaths`, color=`Cause of Death`)) +
+labs(title="Recreational Boating Deaths in District 17 Region (2019)") +
+   theme(text=element_text(family="Rockwell", color="black"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank()) +
+      scale_size_continuous(breaks=c(1,2,3)) +
+        guides(size = guide_legend(order=1),
+               color = guide_legend(order = 2)) 
+  # +ggsave("District 1 Deaths COD Mapped.png")
+
+ggmap(District17_map) + geom_point(data=Fatality_Coordinates_17, mapping = aes(x=Longitude, y=Latitude, size=`Number of Deaths`, color=`Type of Vessel`)) +
+labs(title="Recreational Boating Deaths in District 17 Region (2019)") +
+   theme(text=element_text(family="Rockwell", color="black"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank()) +
+      scale_size_continuous(breaks=c(1,2,3)) +
+        guides(size = guide_legend(order=1),
+               color = guide_legend(order = 2)) 
+  # +ggsave("District 1 Deaths VesselType Mapped.png")
+
+ggmap(District17_map) + geom_point(data=Fatality_Coordinates_17, mapping = aes(x=Longitude, y=Latitude, size=`Number of Deaths`, color=`Operator Experience`)) +
+labs(title="Recreational Boating Deaths in District 17 Region (2019)") +
+   theme(text=element_text(family="Rockwell", color="black"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank()) +
+      scale_size_continuous(breaks=c(1,2,3)) +
+        guides(size = guide_legend(order=1),
+               color = guide_legend(order = 2)) 
+  # +ggsave("District 1 Deaths Experience Mapped.png")
+
+ggmap(District17_map) + geom_point(data=Fatality_Coordinates_17, mapping = aes(x=Longitude, y=Latitude, size=`Number of Deaths`, color=`Operator Education`)) +
+labs(title="Recreational Boating Deaths in District 17 Region (2019)") +
+   theme(text=element_text(family="Rockwell", color="black"),
+        plot.title=element_text(hjust=0.0, size=12),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank()) +
+      scale_size_continuous(breaks=c(1,2,3)) +
+        guides(size = guide_legend(order=1),
+               color = guide_legend(order = 2)) 
+  # +ggsave("District 1 Deaths Experience Mapped.png")
+```
