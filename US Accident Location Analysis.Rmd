@@ -35,6 +35,8 @@ BARD_2019 %>%
 
 ### District 1
 ```{r}
+# Note that this analysis diregards NA values or cases whereby we did not know if alchok was involved/PFD was worn
+
 states <- map_data("state")
 Fatality_Coordinates_1 <- BARD_2019 %>%
   select(State, Latitude, Longitude, `Number of Deaths`, `PFD Worn?`, `Cause of Death`, `Alcohol Involved?`,
@@ -67,7 +69,7 @@ ggplot() +
   geom_polygon(data=map_borders_1, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_1, aes(x=Longitude, y=Latitude, color=`PFD Worn?`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 1 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 1 Region (2019)", subtitle = "PFDs were not worn in 68 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -84,7 +86,7 @@ ggplot() +
   geom_polygon(data=map_borders_1, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_1, aes(x=Longitude, y=Latitude, color=`Alcohol Involved?`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 1 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 1 Region (2019)", subtitle = "Alcohol was involved in 36 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -101,7 +103,7 @@ ggplot() +
   geom_polygon(data=map_borders_1, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_1, aes(x=Longitude, y=Latitude, color=`Main Cause of Accident`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 1 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths\nin District 1 Region (2019)", subtitle = "Alcohol was the primary cause of accident in 16 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -118,7 +120,7 @@ ggplot() +
   geom_polygon(data=map_borders_1, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_1, aes(x=Longitude, y=Latitude, color=`AccidentEvent1`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 1 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 1 Region (2019)", subtitle = "Capsizing events accounted for 26 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -135,7 +137,7 @@ ggplot() +
   geom_polygon(data=map_borders_1, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_1, aes(x=Longitude, y=Latitude, color=`Cause of Death`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 1 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 1 Region (2019)", subtitle = "Drownings accounted for 65 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -152,7 +154,7 @@ ggplot() +
   geom_polygon(data=map_borders_1, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_1, aes(x=Longitude, y=Latitude, color=`Type of Vessel`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 1 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 1 Region (2019)", subtitle = "Open motorboat fatalities accounted for 42 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -169,7 +171,7 @@ ggplot() +
   geom_polygon(data=map_borders_1, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_1, aes(x=Longitude, y=Latitude, color=`Operator Experience`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 1 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 1 Region (2019)", subtitle = "Operator experience was unknown in 68 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -186,7 +188,7 @@ ggplot() +
   geom_polygon(data=map_borders_1, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_1, aes(x=Longitude, y=Latitude, color=`Operator Education`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 1 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 1 Region (2019)", subtitle = "Operator education was unknown in 71 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -195,9 +197,6 @@ ggplot() +
         axis.text = element_blank(),
         axis.ticks = element_blank(),
         legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
-
-
 ```
 
 ### District 5
@@ -218,7 +217,7 @@ ggplot() +
   geom_polygon(data=map_borders_5, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_5, aes(x=Longitude, y=Latitude,  size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 5 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 5 Region (2019)") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -235,7 +234,7 @@ ggplot() +
   geom_polygon(data=map_borders_5, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_5, aes(x=Longitude, y=Latitude, color=`PFD Worn?`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 5 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 5 Region (2019)", subtitle = "PFDS were not worn in 91 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -244,7 +243,7 @@ ggplot() +
         axis.text = element_blank(),
         axis.ticks = element_blank(),
         legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+
 
 ggplot(data=map_borders_5) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -252,7 +251,7 @@ ggplot() +
   geom_polygon(data=map_borders_5, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_5, aes(x=Longitude, y=Latitude, color=`Alcohol Involved?`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 5 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 5 Region (2019)", subtitle = "Alcohol was involved in 37 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -261,7 +260,6 @@ ggplot() +
         axis.text = element_blank(),
         axis.ticks = element_blank(),
         legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
 
 ggplot(data=map_borders_5) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -269,7 +267,7 @@ ggplot() +
   geom_polygon(data=map_borders_5, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_5, aes(x=Longitude, y=Latitude, color=`Main Cause of Accident`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 5 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 5 Region (2019)", subtitle = "Alcohol was the primary cause of accident in 29 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -286,7 +284,7 @@ ggplot() +
   geom_polygon(data=map_borders_5, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_5, aes(x=Longitude, y=Latitude, color=`AccidentEvent1`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 5 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 5 Region (2019)", subtitle = "Falls overboard were the primary event in 38 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -303,7 +301,7 @@ ggplot() +
   geom_polygon(data=map_borders_5, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_5, aes(x=Longitude, y=Latitude, color=`Cause of Death`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 5 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 5 Region (2019)", subtitle = "Drownings accounted for 83 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -320,7 +318,7 @@ ggplot() +
   geom_polygon(data=map_borders_5, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_5, aes(x=Longitude, y=Latitude, color=`Type of Vessel`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 5 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 5 Region (2019)", subtitle = "Open motorboat fatalities accounted for 57 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -337,7 +335,7 @@ ggplot() +
   geom_polygon(data=map_borders_5, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_5, aes(x=Longitude, y=Latitude, color=`Operator Experience`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 5 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 5 Region (2019)", subtitle = "Operator experience was unknown in 45 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -354,7 +352,7 @@ ggplot() +
   geom_polygon(data=map_borders_5, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_5, aes(x=Longitude, y=Latitude, color=`Operator Education`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 5 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 5 Region (2019)", subtitle = "Operator education was unknown in 42 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -368,6 +366,8 @@ ggplot() +
 
 ### District 7
 ```{r}
+# Note that this analysis ignores fatalities in the northwestern tip of Florida to reflect District layout. Although all of Florida is displayed on the graph, only dots (coordiantes) within District 7 are captured
+
 states <- map_data("state")
 Fatality_Coordinates_7 <- BARD_2019 %>%
   select(State, Latitude, Longitude, `Number of Deaths`, `PFD Worn?`, `Cause of Death`, `Alcohol Involved?`,
@@ -403,7 +403,7 @@ ggplot() +
   geom_polygon(data=map_borders_7, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_7, aes(x=Longitude, y=Latitude, color=`PFD Worn?`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths in District 7 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 7 Region (2019)", subtitle = "PFDs were not worn in 79 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -420,7 +420,7 @@ ggplot() +
   geom_polygon(data=map_borders_7, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_7, aes(x=Longitude, y=Latitude, color=`Alcohol Involved?`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths in District 7 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 7 Region (2019)", subtitle = "Alcohol was involved in 20 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -437,7 +437,7 @@ ggplot() +
   geom_polygon(data=map_borders_7, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_7, aes(x=Longitude, y=Latitude, color=`Main Cause of Accident`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths in District 7 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 7 Region (2019)", subtitle = "The primary cause of accident was unknown in 26 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -454,7 +454,7 @@ ggplot() +
   geom_polygon(data=map_borders_7, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_7, aes(x=Longitude, y=Latitude, color=`AccidentEvent1`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths in District 7 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 7 Region (2019)", subtitle = "Falls overboard were the primary event in 31 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -471,7 +471,7 @@ ggplot() +
   geom_polygon(data=map_borders_7, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_7, aes(x=Longitude, y=Latitude, color=`Cause of Death`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths in District 7 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 7 Region (2019)", subtitle = "Drownings accounted for 67 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -488,7 +488,7 @@ ggplot() +
   geom_polygon(data=map_borders_7, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_7, aes(x=Longitude, y=Latitude, color=`Type of Vessel`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths in District 7 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 7 Region (2019)", subtitle = "Open motorboat fatalities accounted for 59 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -505,7 +505,7 @@ ggplot() +
   geom_polygon(data=map_borders_7, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_7, aes(x=Longitude, y=Latitude, color=`Operator Experience`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths in District 7 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 7 Region (2019)", subtitle = "58 percent of operators had 101 to 500 hours of experience") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -522,7 +522,7 @@ ggplot() +
   geom_polygon(data=map_borders_7, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_7, aes(x=Longitude, y=Latitude, color=`Operator Education`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths in District 7 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 7 Region (2019)", subtitle = "Operator education was unknown in 42 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -536,6 +536,8 @@ ggplot() +
 
 ### District 8
 ```{r}
+# Note that the district has been cut to reflect the way its represented as an RBS district 
+
 states <- map_data("state")
 Fatality_Coordinates_8 <- BARD_2019 %>%
   select(State, Latitude, Longitude, `Number of Deaths`, `PFD Worn?`, `Cause of Death`, `Alcohol Involved?`,
@@ -572,7 +574,7 @@ ggplot() +
   geom_polygon(data=map_borders_8, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_8, aes(x=Longitude, y=Latitude, color=`PFD Worn?`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths in District 8 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 8 Region (2019)", subtitle = "PFDs were not worn in 83 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -589,7 +591,7 @@ ggplot() +
   geom_polygon(data=map_borders_8, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_8, aes(x=Longitude, y=Latitude, color=`Alcohol Involved?`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths in District 8 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 8 Region (2019)", subtitle = "Alcohol was involved in 29 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -606,7 +608,7 @@ ggplot() +
   geom_polygon(data=map_borders_8, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_8, aes(x=Longitude, y=Latitude, color=`Main Cause of Accident`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 8 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 8 Region (2019)", subtitle = "Alcohol was the primary cause of accident in 16 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -623,7 +625,7 @@ ggplot() +
   geom_polygon(data=map_borders_8, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_8, aes(x=Longitude, y=Latitude, color=`AccidentEvent1`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths in District 8 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 8 Region (2019)", subtitle = "Falls overboard were the primary event in 30 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -640,7 +642,7 @@ ggplot() +
   geom_polygon(data=map_borders_8, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_8, aes(x=Longitude, y=Latitude, color=`Cause of Death`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths in District 8 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 8 Region (2019)", subtitle = "Drownings accounted for 79 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -657,7 +659,7 @@ ggplot() +
   geom_polygon(data=map_borders_8, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_8, aes(x=Longitude, y=Latitude, color=`Type of Vessel`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths in District 8 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 8 Region (2019)", subtitle = "Open motorboat fatalities accounted for 54 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -674,7 +676,7 @@ ggplot() +
   geom_polygon(data=map_borders_8, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_8, aes(x=Longitude, y=Latitude, color=`Operator Experience`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths in District 8 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 8 Region (2019)", subtitle = "Operator experience was unknown in 34 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -691,7 +693,7 @@ ggplot() +
   geom_polygon(data=map_borders_8, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_8, aes(x=Longitude, y=Latitude, color=`Operator Education`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths in District 8 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 8 Region (2019)", subtitle = "Operator education was unknown in 46 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -705,6 +707,9 @@ ggplot() +
 
 ### District 9
 ```{r}
+# Note: Map coordinate cutoff have been altered
+# Reminder to note that PFD worn excludes NA values as does `Alcohol involved` coordinates
+
 states <- map_data("state")
 Fatality_Coordinates_9 <- BARD_2019 %>%
   select(State, Latitude, Longitude, `Number of Deaths`, `PFD Worn?`, `Cause of Death`, `Alcohol Involved?`,
@@ -722,7 +727,7 @@ ggplot() +
   geom_polygon(data=map_borders_9, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_9, aes(x=Longitude, y=Latitude,  size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 9 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 9 Region (2019)") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -739,7 +744,7 @@ ggplot() +
   geom_polygon(data=map_borders_9, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_9, aes(x=Longitude, y=Latitude, color=`PFD Worn?`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 9 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 9 Region (2019)", subtitle = "PFDs were not worn in 88 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -756,7 +761,7 @@ ggplot() +
   geom_polygon(data=map_borders_9, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_9, aes(x=Longitude, y=Latitude, color=`Alcohol Involved?`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 9 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 9 Region (2019)", subtitle = "Alcohol was involved in 32 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -773,7 +778,7 @@ ggplot() +
   geom_polygon(data=map_borders_9, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_9, aes(x=Longitude, y=Latitude, color=`Main Cause of Accident`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 9 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 9 Region (2019)", subtitle = "The primary cause of accident was unknown in 21 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -790,7 +795,7 @@ ggplot() +
   geom_polygon(data=map_borders_9, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_9, aes(x=Longitude, y=Latitude, color=`AccidentEvent1`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 9 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 9 Region (2019)", subtitle = "Falls overboard were the primary event in 42 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -807,7 +812,7 @@ ggplot() +
   geom_polygon(data=map_borders_9, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_9, aes(x=Longitude, y=Latitude, color=`Cause of Death`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 9 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 9 Region (2019)", subtitle = "Drownings accounted for 82 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -824,7 +829,7 @@ ggplot() +
   geom_polygon(data=map_borders_9, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_9, aes(x=Longitude, y=Latitude, color=`Type of Vessel`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 9 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 9 Region (2019)", subtitle = "Open motorboat fatalities accounted for 46 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -841,7 +846,7 @@ ggplot() +
   geom_polygon(data=map_borders_9, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_9, aes(x=Longitude, y=Latitude, color=`Operator Experience`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 9 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 9 Region (2019)", subtitle = "Operator experience was unknown in 63 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -858,7 +863,7 @@ ggplot() +
   geom_polygon(data=map_borders_9, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_9, aes(x=Longitude, y=Latitude, color=`Operator Education`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 9 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 9 Region (2019)", subtitle = "Operator education was unknown in 60 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -889,7 +894,7 @@ ggplot() +
   geom_polygon(data=map_borders_11, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_11, aes(x=Longitude, y=Latitude,  size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 11 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 11 Region (2019)") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -906,7 +911,7 @@ ggplot() +
   geom_polygon(data=map_borders_11, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_11, aes(x=Longitude, y=Latitude, color=`PFD Worn?`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 11 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 11 Region (2019)", subtitle = "PFDs were not worn in 73 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -923,7 +928,7 @@ ggplot() +
   geom_polygon(data=map_borders_11, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_11, aes(x=Longitude, y=Latitude, color=`Alcohol Involved?`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 11 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 11 Region (2019)", subtitle = "Alcohol was involved in 18 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -940,7 +945,7 @@ ggplot() +
   geom_polygon(data=map_borders_11, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_11, aes(x=Longitude, y=Latitude, color=`Main Cause of Accident`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 11 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 11 Region (2019)", subtitle = "The primary cause of accident was unknown in 20 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -957,7 +962,7 @@ ggplot() +
   geom_polygon(data=map_borders_11, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_11, aes(x=Longitude, y=Latitude, color=`AccidentEvent1`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 11 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 11 Region (2019)", subtitle = "Falls overboard were the primary event in 30 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -974,7 +979,7 @@ ggplot() +
   geom_polygon(data=map_borders_11, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_11, aes(x=Longitude, y=Latitude, color=`Cause of Death`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 11 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 11 Region (2019)", subtitle = "Drownings accounted for 55 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -991,7 +996,7 @@ ggplot() +
   geom_polygon(data=map_borders_11, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_11, aes(x=Longitude, y=Latitude, color=`Type of Vessel`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 11 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 11 Region (2019)", subtitle = "Open motorboat fatalities accounted for 42 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -1008,7 +1013,7 @@ ggplot() +
   geom_polygon(data=map_borders_11, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_11, aes(x=Longitude, y=Latitude, color=`Operator Experience`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 11 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 11 Region (2019)", subtitle = "Operator experience was unknown in 47 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -1025,7 +1030,7 @@ ggplot() +
   geom_polygon(data=map_borders_11, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_11, aes(x=Longitude, y=Latitude, color=`Operator Education`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 11 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 11 Region (2019)", subtitle = "Operator education was unknown in 53 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -1073,7 +1078,7 @@ ggplot() +
   geom_polygon(data=map_borders_13, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_13, aes(x=Longitude, y=Latitude, color=`PFD Worn?`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths in District 13 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 13 Region (2019)", subtitle = "PFDs were not worn in 67 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -1090,7 +1095,7 @@ ggplot() +
   geom_polygon(data=map_borders_13, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_13, aes(x=Longitude, y=Latitude, color=`Alcohol Involved?`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths in District 13 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 13 Region (2019)", subtitle = "Alcohol was involved in 24 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -1107,7 +1112,7 @@ ggplot() +
   geom_polygon(data=map_borders_13, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_13, aes(x=Longitude, y=Latitude, color=`Main Cause of Accident`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 13 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths\nin District 13 Region (2019)", subtitle = "Alcohol use was the primary cause of accident in 24 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -1124,7 +1129,7 @@ ggplot() +
   geom_polygon(data=map_borders_13, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_13, aes(x=Longitude, y=Latitude, color=`AccidentEvent1`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths in District 13 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 13 Region (2019)", subtitle = "Capsizing and falls overboard both accounted for in 33 percent of cases respectively") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -1141,7 +1146,7 @@ ggplot() +
   geom_polygon(data=map_borders_13, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_13, aes(x=Longitude, y=Latitude, color=`Cause of Death`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths in District 13 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 13 Region (2019)", subtitle = "Drownings accounted for 86 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -1158,7 +1163,7 @@ ggplot() +
   geom_polygon(data=map_borders_13, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_13, aes(x=Longitude, y=Latitude, color=`Type of Vessel`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths in District 13 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 13 Region (2019)", subtitle = "Open motorboat fatalities accounted for 21 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -1175,7 +1180,7 @@ ggplot() +
   geom_polygon(data=map_borders_13, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_13, aes(x=Longitude, y=Latitude, color=`Operator Experience`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths in District 13 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 13 Region (2019)", subtitle = "Operator experience was unknown in 66 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -1192,7 +1197,7 @@ ggplot() +
   geom_polygon(data=map_borders_13, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_13, aes(x=Longitude, y=Latitude, color=`Operator Education`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths in District 13 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 13 Region (2019)", subtitle = "Operator education was unknown in 59 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -1238,7 +1243,7 @@ ggplot() +
 ### District 17
 ```{r}
 states <- map_data("state")
-Fatality_Coordinates_14 <- BARD_2019 %>%
+Fatality_Coordinates_17 <- BARD_2019 %>%
   select(State, Latitude, Longitude, `Number of Deaths`, `PFD Worn?`, `Cause of Death`, `Alcohol Involved?`,
          `Main Cause of Accident`, `AccidentEvent1`, `Type of Vessel`, `Operator Experience`, `Operator Education`) %>%
 filter(State %in% c("AK")) %>% 
@@ -1253,7 +1258,7 @@ ggplot() +
   geom_polygon(data=map_borders_17, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_17, aes(x=Longitude, y=Latitude,  size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\n in District 17 Region (2019)") + 
+               labs(title="Reported Recreational Boating Deaths in District 17 Region (2019)") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -1272,7 +1277,7 @@ District17 <- make_bbox(lon=Fatality_Coordinates_17$Longitude, lat=Fatality_Coor
 District17_map <- get_map(location=District17, maptype = "terrain", source="google")
 
 ggmap(District17_map) + geom_point(data=Fatality_Coordinates_17, mapping = aes(x=Longitude, y=Latitude, size=`Number of Deaths`, color=`PFD Worn?`)) +
-labs(title="Recreational Boating Deaths in District 17 Region (2019)") +
+labs(title="Recreational Boating Deaths in District 17 Region (2019)", subtitle = "PFDs were not worn in 67 percent of cases") +
    theme(text=element_text(family="Rockwell", color="black"),
         plot.title=element_text(hjust=0.0, size=12),
         axis.title = element_blank(),
@@ -1284,7 +1289,7 @@ labs(title="Recreational Boating Deaths in District 17 Region (2019)") +
   # +ggsave("District 1  PFD Mapped.png")
 
 ggmap(District17_map) + geom_point(data=Fatality_Coordinates_17, mapping = aes(x=Longitude, y=Latitude, size=`Number of Deaths`, color=`Alcohol Involved?`)) +
-labs(title="Recreational Boating Deaths in District 17 Region (2019)") +
+labs(title="Recreational Boating Deaths in District 17 Region (2019)", subtitle = "Alcohol was involved in 8 percent of cases") +
    theme(text=element_text(family="Rockwell", color="black"),
         plot.title=element_text(hjust=0.0, size=12),
         axis.title = element_blank(),
@@ -1296,7 +1301,7 @@ labs(title="Recreational Boating Deaths in District 17 Region (2019)") +
   #+ggsave("District 1  Alcohol Mapped.png")
 
 ggmap(District17_map) + geom_point(data=Fatality_Coordinates_17, mapping = aes(x=Longitude, y=Latitude, size=`Number of Deaths`, color=`Main Cause of Accident`)) +
-labs(title="Recreational Boating Deaths in District 17 Region (2019)") +
+labs(title="Recreational Boating Deaths in District 17 Region (2019)", subtitle = "The primary cause of accident was listed as 'other' in 25 percent of cases") +
    theme(text=element_text(family="Rockwell", color="black"),
         plot.title=element_text(hjust=0.0, size=12),
         axis.title = element_blank(),
@@ -1308,7 +1313,7 @@ labs(title="Recreational Boating Deaths in District 17 Region (2019)") +
   #+ggsave("District 1  Accident Cause Mapped.png")
 
 ggmap(District17_map) + geom_point(data=Fatality_Coordinates_17, mapping = aes(x=Longitude, y=Latitude, size=`Number of Deaths`, color=`AccidentEvent1`)) +
-labs(title="Recreational Boating Deaths in District 17 Region (2019)") +
+labs(title="Recreational Boating Deaths in District 17 Region (2019)", subtitle = "The primary accident event was listed as 'other' in 25 percent of cases") +
    theme(text=element_text(family="Rockwell", color="black"),
         plot.title=element_text(hjust=0.0, size=12),
         axis.title = element_blank(),
@@ -1320,7 +1325,7 @@ labs(title="Recreational Boating Deaths in District 17 Region (2019)") +
   #+ggsave("District 1  Accident Cause Mapped.png")
 
 ggmap(District17_map) + geom_point(data=Fatality_Coordinates_17, mapping = aes(x=Longitude, y=Latitude, size=`Number of Deaths`, color=`Cause of Death`)) +
-labs(title="Recreational Boating Deaths in District 17 Region (2019)") +
+labs(title="Recreational Boating Deaths in District 17 Region (2019)", subtitle = "Drownings accounted for 83 percent of cases") +
    theme(text=element_text(family="Rockwell", color="black"),
         plot.title=element_text(hjust=0.0, size=12),
         axis.title = element_blank(),
@@ -1332,7 +1337,7 @@ labs(title="Recreational Boating Deaths in District 17 Region (2019)") +
   # +ggsave("District 1 Deaths COD Mapped.png")
 
 ggmap(District17_map) + geom_point(data=Fatality_Coordinates_17, mapping = aes(x=Longitude, y=Latitude, size=`Number of Deaths`, color=`Type of Vessel`)) +
-labs(title="Recreational Boating Deaths in District 17 Region (2019)") +
+labs(title="Recreational Boating Deaths in District 17 Region (2019)", subtitle = "Canoe fatalities accounted for 50 percent of cases") +
    theme(text=element_text(family="Rockwell", color="black"),
         plot.title=element_text(hjust=0.0, size=12),
         axis.title = element_blank(),
@@ -1344,7 +1349,7 @@ labs(title="Recreational Boating Deaths in District 17 Region (2019)") +
   # +ggsave("District 1 Deaths VesselType Mapped.png")
 
 ggmap(District17_map) + geom_point(data=Fatality_Coordinates_17, mapping = aes(x=Longitude, y=Latitude, size=`Number of Deaths`, color=`Operator Experience`)) +
-labs(title="Recreational Boating Deaths in District 17 Region (2019)") +
+labs(title="Recreational Boating Deaths in District 17 Region (2019)", subtitle = "Operator experience was unknown in 92 percent of cases") +
    theme(text=element_text(family="Rockwell", color="black"),
         plot.title=element_text(hjust=0.0, size=12),
         axis.title = element_blank(),
@@ -1356,7 +1361,7 @@ labs(title="Recreational Boating Deaths in District 17 Region (2019)") +
   # +ggsave("District 1 Deaths Experience Mapped.png")
 
 ggmap(District17_map) + geom_point(data=Fatality_Coordinates_17, mapping = aes(x=Longitude, y=Latitude, size=`Number of Deaths`, color=`Operator Education`)) +
-labs(title="Recreational Boating Deaths in District 17 Region (2019)") +
+labs(title="Recreational Boating Deaths in District 17 Region (2019)", subtitle = "Operator education was unknown in 75 percent of cases") +
    theme(text=element_text(family="Rockwell", color="black"),
         plot.title=element_text(hjust=0.0, size=12),
         axis.title = element_blank(),
