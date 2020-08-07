@@ -45,6 +45,45 @@ filter(State %in% c("ME", "VT", "NH", "MA", "NY", "CT", "RI")) %>%
   filter(`Number of Deaths`>0) %>%
   filter(`PFD Worn?`!="NA") 
 
+# Collapsing categories so that graphs are more readable with fewer colors to analyze
+# Opeartion of Vessel Category
+Fatality_Coordinates_1$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_1$`Main Cause of Accident`=="Alcohol use" | Fatality_Coordinates_1$`Main Cause of Accident`=="Excessive speed" | Fatality_Coordinates_1$`Main Cause of Accident`=="Improper lookout" | Fatality_Coordinates_1$`Main Cause of Accident`=="Navigation rules violation" | Fatality_Coordinates_1$`Main Cause of Accident`=="Operator inattention" | Fatality_Coordinates_1$`Main Cause of Accident`=="Operator inexperience" | Fatality_Coordinates_1$`Main Cause of Accident`=="Drug use" | Fatality_Coordinates_1$`Main Cause of Accident`=="Failure to vent" | Fatality_Coordinates_1$`Main Cause of Accident`=="Inadequate onboard navigation lights" | Fatality_Coordinates_1$`Main Cause of Accident`=="Restricted vision" | Fatality_Coordinates_1$`Main Cause of Accident`=="Sharp turn" | Fatality_Coordinates_1$`Main Cause of Accident`=="Starting in gear", paste("Operation of vessel"), Fatality_Coordinates_1$`Main Cause of Accident`)
+
+# Environment Category 
+Fatality_Coordinates_1$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_1$`Main Cause of Accident`=="Hazardous waters" | Fatality_Coordinates_1$`Main Cause of Accident`=="Weather" | Fatality_Coordinates_1$`Main Cause of Accident`=="Congested waters" | Fatality_Coordinates_1$`Main Cause of Accident`=="Dam/lock" | Fatality_Coordinates_1$`Main Cause of Accident`=="Force of wave/wake" | Fatality_Coordinates_1$`Main Cause of Accident`=="Missing/inadequate navigation aid", paste("Environment"), Fatality_Coordinates_1$`Main Cause of Accident`)
+
+# Failure of boat or boat equipment 
+Fatality_Coordinates_1$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_1$`Main Cause of Accident`=="Machinery failure" | Fatality_Coordinates_1$`Main Cause of Accident`=="Equipment failure" | Fatality_Coordinates_1$`Main Cause of Accident`=="Hull failure", paste("Failure of boat or boat equipment"), Fatality_Coordinates_1$`Main Cause of Accident`)
+
+# Loading of passengers or gear catgegory
+Fatality_Coordinates_1$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_1$`Main Cause of Accident`=="Improper loading" | Fatality_Coordinates_1$`Main Cause of Accident`=="Overloading" | Fatality_Coordinates_1$`Main Cause of Accident`=="Improper anchoring" | Fatality_Coordinates_1$`Main Cause of Accident`=="People on gunwale, bow or transom", paste("Loading of passengers or gear"), Fatality_Coordinates_1$`Main Cause of Accident`)
+
+# Miscellaneous category
+Fatality_Coordinates_1$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_1$`Main Cause of Accident`=="Other" | Fatality_Coordinates_1$`Main Cause of Accident`=="Sudden medical condition" | Fatality_Coordinates_1$`Main Cause of Accident`=="Unknown" | Fatality_Coordinates_1$`Main Cause of Accident`=="Carbon monoxide exposure" | Fatality_Coordinates_1$`Main Cause of Accident`=="Ignition of fuel or vapor", paste("Miscellaneous"), Fatality_Coordinates_1$`Main Cause of Accident`)
+
+# Collapsing our AccidentEvent1 into broader categories
+# General collision/grounding
+Fatality_Coordinates_1$AccidentEvent1 <- ifelse(Fatality_Coordinates_1$AccidentEvent1=="Collision with fixed object" | Fatality_Coordinates_1$AccidentEvent1=="Collision with recreational vessel" | Fatality_Coordinates_1$AccidentEvent1=="Collision with submerged object" | Fatality_Coordinates_1$AccidentEvent1=="Grounding", paste("Collision/Grounding"), Fatality_Coordinates_1$AccidentEvent1)
+
+# General departing/ejected from vessel
+Fatality_Coordinates_1$AccidentEvent1 <- ifelse(Fatality_Coordinates_1$AccidentEvent1=="Person departed vessel" | Fatality_Coordinates_1$AccidentEvent1=="Person ejected from vessel", paste("Person departed/ejected from vessel"), Fatality_Coordinates_1$AccidentEvent1)
+
+# Placing AccidentEvent1s that rarely happen into an "Other" category
+Fatality_Coordinates_1$AccidentEvent1 <- ifelse(Fatality_Coordinates_1$AccidentEvent1=="Skier mishap" | Fatality_Coordinates_1$AccidentEvent1=="Other" | Fatality_Coordinates_1$AccidentEvent1=="Person struck by propeller" | Fatality_Coordinates_1$AccidentEvent1=="Fall in vessel", paste("Other"), Fatality_Coordinates_1$AccidentEvent1)
+
+# Collapsing our Type of Vessel category into Motorized, Non-Motorized, and paddlecraft
+# We'll start with the motorized
+Fatality_Coordinates_1$`Type of Vessel` <- ifelse(Fatality_Coordinates_1$`Type of Vessel`=="Airboat" | Fatality_Coordinates_1$`Type of Vessel`=="Cabin motorboat" | Fatality_Coordinates_1$`Type of Vessel`=="Open motorboat"| Fatality_Coordinates_1$`Type of Vessel`=="Personal watercraft"| Fatality_Coordinates_1$`Type of Vessel`=="Pontoon", paste("Motorized"), Fatality_Coordinates_1$`Type of Vessel` )
+
+# Non-Motorized
+Fatality_Coordinates_1$`Type of Vessel` <- ifelse(Fatality_Coordinates_1$`Type of Vessel`=="Houseboat" | Fatality_Coordinates_1$`Type of Vessel`=="Auxiliary sail" | Fatality_Coordinates_1$`Type of Vessel`=="Inflatable"| Fatality_Coordinates_1$`Type of Vessel`=="Sail (only)", paste("Non-motorized"), Fatality_Coordinates_1$`Type of Vessel` )
+
+# Paddlecraft
+Fatality_Coordinates_1$`Type of Vessel` <- ifelse(Fatality_Coordinates_1$`Type of Vessel`=="Canoe" | Fatality_Coordinates_1$`Type of Vessel`=="Kayak" | Fatality_Coordinates_1$`Type of Vessel`=="Rowboat"| Fatality_Coordinates_1$`Type of Vessel`=="Standup Paddleboard", paste("Paddlecraft"), Fatality_Coordinates_1$`Type of Vessel` )
+
+
+# Drawing our map borders
+
 map_borders_1 <- subset(states, region %in% c("maine", "vermont", "new hampshire", "massachusetts", "new york", "connecticut", "rhode island"))
 ggplot(data=map_borders_1) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -103,7 +142,7 @@ ggplot() +
   geom_polygon(data=map_borders_1, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_1, aes(x=Longitude, y=Latitude, color=`Main Cause of Accident`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 1 Region (2019)", subtitle = "Alcohol was the primary cause of accident in 16 percent of cases") + 
+               labs(title="Reported Recreational Boating Deaths in District 1 Region (2019)", subtitle = "Operation of vessel was the primary cause of accident in 45 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -154,7 +193,7 @@ ggplot() +
   geom_polygon(data=map_borders_1, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_1, aes(x=Longitude, y=Latitude, color=`Type of Vessel`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths in District 1 Region (2019)", subtitle = "Open motorboat fatalities accounted for 42 percent of cases") + 
+               labs(title="Reported Recreational Boating Deaths in District 1 Region (2019)", subtitle = "Motorized vessel fatalities accounted for 61 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -179,8 +218,11 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+  scale_colour_hue(breaks=c("Under 10 hours", "10 to 100 hours", "101 to 500 hours", "Over 500 hours", "No operator", "Unknown"))
+
+
+
 
 ggplot(data=map_borders_1) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -208,6 +250,44 @@ Fatality_Coordinates_5 <- BARD_2019 %>%
 filter(State %in% c("PA", "MD", "DE", "VA", "DC", "NC", "NJ")) %>% 
   filter(`Number of Deaths`>0) %>%
   filter(`PFD Worn?`!="NA") 
+
+# Collapsing categories so that graphs are more readable with fewer colors to analyze
+
+# Opeartion of Vessel Category
+Fatality_Coordinates_5$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_5$`Main Cause of Accident`=="Alcohol use" | Fatality_Coordinates_5$`Main Cause of Accident`=="Excessive speed" | Fatality_Coordinates_5$`Main Cause of Accident`=="Improper lookout" | Fatality_Coordinates_5$`Main Cause of Accident`=="Navigation rules violation" | Fatality_Coordinates_5$`Main Cause of Accident`=="Operator inattention" | Fatality_Coordinates_5$`Main Cause of Accident`=="Operator inexperience" | Fatality_Coordinates_5$`Main Cause of Accident`=="Drug use" | Fatality_Coordinates_5$`Main Cause of Accident`=="Failure to vent" | Fatality_Coordinates_5$`Main Cause of Accident`=="Inadequate onboard navigation lights" | Fatality_Coordinates_5$`Main Cause of Accident`=="Restricted vision" | Fatality_Coordinates_5$`Main Cause of Accident`=="Sharp turn" | Fatality_Coordinates_5$`Main Cause of Accident`=="Starting in gear", paste("Operation of vessel"), Fatality_Coordinates_5$`Main Cause of Accident`)
+
+# Environment Category 
+Fatality_Coordinates_5$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_5$`Main Cause of Accident`=="Hazardous waters" | Fatality_Coordinates_5$`Main Cause of Accident`=="Weather" | Fatality_Coordinates_5$`Main Cause of Accident`=="Congested waters" | Fatality_Coordinates_5$`Main Cause of Accident`=="Dam/lock" | Fatality_Coordinates_5$`Main Cause of Accident`=="Force of wake/wave" | Fatality_Coordinates_5$`Main Cause of Accident`=="Missing/inadequate navigation aid", paste("Environment"), Fatality_Coordinates_5$`Main Cause of Accident`)
+
+# Failure of boat or boat equipment 
+Fatality_Coordinates_5$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_5$`Main Cause of Accident`=="Machinery failure" | Fatality_Coordinates_5$`Main Cause of Accident`=="Equipment failure" | Fatality_Coordinates_5$`Main Cause of Accident`=="Hull failure", paste("Failure of boat or boat equipment"), Fatality_Coordinates_5$`Main Cause of Accident`)
+
+# Loading of passengers or gear catgegory
+Fatality_Coordinates_5$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_5$`Main Cause of Accident`=="Improper loading" | Fatality_Coordinates_5$`Main Cause of Accident`=="Overloading" | Fatality_Coordinates_5$`Main Cause of Accident`=="Improper anchoring" | Fatality_Coordinates_5$`Main Cause of Accident`=="People on gunwale, bow, or transom", paste("Loading of passengers or gear"), Fatality_Coordinates_5$`Main Cause of Accident`)
+
+# Miscellaneous category
+Fatality_Coordinates_5$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_5$`Main Cause of Accident`=="Other" | Fatality_Coordinates_5$`Main Cause of Accident`=="Sudden medical condition" | Fatality_Coordinates_5$`Main Cause of Accident`=="Unknown" | Fatality_Coordinates_5$`Main Cause of Accident`=="Carbon monoxide exposure" | Fatality_Coordinates_5$`Main Cause of Accident`=="Ignition of fuel or vapor", paste("Miscellaneous"), Fatality_Coordinates_5$`Main Cause of Accident`)
+
+# Collapsing our AccidentEvent1 into broader categories
+# General collision/grounding
+Fatality_Coordinates_5$AccidentEvent1 <- ifelse(Fatality_Coordinates_5$AccidentEvent1=="Collision with fixed object" | Fatality_Coordinates_5$AccidentEvent1=="Collision with recreational vessel" | Fatality_Coordinates_5$AccidentEvent1=="Collision with submerged object" | Fatality_Coordinates_5$AccidentEvent1=="Grounding", paste("Collision/Grounding"), Fatality_Coordinates_5$AccidentEvent1)
+
+# General departing/ejected from vessel
+Fatality_Coordinates_5$AccidentEvent1 <- ifelse(Fatality_Coordinates_5$AccidentEvent1=="Person departed vessel" | Fatality_Coordinates_5$AccidentEvent1=="Person ejected from vessel", paste("Person departed/ejected from vessel"), Fatality_Coordinates_5$AccidentEvent1)
+
+# Placing AccidentEvent1s that rarely happen into an "Other" category
+Fatality_Coordinates_5$AccidentEvent1 <- ifelse(Fatality_Coordinates_5$AccidentEvent1=="Skier mishap" | Fatality_Coordinates_5$AccidentEvent1=="Other" | Fatality_Coordinates_5$AccidentEvent1=="Person struck by propeller" | Fatality_Coordinates_5$AccidentEvent1=="Fall in vessel", paste("Other"), Fatality_Coordinates_5$AccidentEvent1)
+
+# Collapsing our Type of Vessel category into Motorized, Non-Motorized, and paddlecraft
+# We'll start with the motorized
+Fatality_Coordinates_5$`Type of Vessel` <- ifelse(Fatality_Coordinates_5$`Type of Vessel`=="Airboat" | Fatality_Coordinates_5$`Type of Vessel`=="Cabin motorboat" | Fatality_Coordinates_5$`Type of Vessel`=="Open motorboat"| Fatality_Coordinates_5$`Type of Vessel`=="Personal watercraft"| Fatality_Coordinates_5$`Type of Vessel`=="Pontoon", paste("Motorized"), Fatality_Coordinates_5$`Type of Vessel` )
+
+# Non-Motorized
+Fatality_Coordinates_5$`Type of Vessel` <- ifelse(Fatality_Coordinates_5$`Type of Vessel`=="Houseboat" | Fatality_Coordinates_5$`Type of Vessel`=="Auxiliary sail" | Fatality_Coordinates_5$`Type of Vessel`=="Inflatable"| Fatality_Coordinates_5$`Type of Vessel`=="Sail (only)", paste("Non-motorized"), Fatality_Coordinates_5$`Type of Vessel` )
+
+# Paddlecraft
+Fatality_Coordinates_5$`Type of Vessel` <- ifelse(Fatality_Coordinates_5$`Type of Vessel`=="Canoe" | Fatality_Coordinates_5$`Type of Vessel`=="Kayak" | Fatality_Coordinates_5$`Type of Vessel`=="Rowboat"| Fatality_Coordinates_5$`Type of Vessel`=="Standup Paddleboard", paste("Paddlecraft"), Fatality_Coordinates_5$`Type of Vessel` )
+
 
 map_borders_5 <- subset(states, region %in% c("pennsylvania", "maryland", "delaware", "north carolina", "new jersey", "district of columbia", "virginia"))
 
@@ -267,7 +347,7 @@ ggplot() +
   geom_polygon(data=map_borders_5, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_5, aes(x=Longitude, y=Latitude, color=`Main Cause of Accident`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths in District 5 Region (2019)", subtitle = "Alcohol was the primary cause of accident in 29 percent of cases") + 
+               labs(title="Reported Recreational Boating Deaths in District 5 Region (2019)", subtitle = "Operation of vessel was the primary cause of accident in 51 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -318,7 +398,7 @@ ggplot() +
   geom_polygon(data=map_borders_5, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_5, aes(x=Longitude, y=Latitude, color=`Type of Vessel`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths in District 5 Region (2019)", subtitle = "Open motorboat fatalities accounted for 57 percent of cases") + 
+               labs(title="Reported Recreational Boating Deaths in District 5 Region (2019)", subtitle = "Motorized vessel fatalities accounted for 72 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -343,8 +423,8 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+  scale_colour_hue(breaks=c("Under 10 hours", "10 to 100 hours", "101 to 500 hours", "Over 500 hours", "No operator", "Unknown"))
 
 ggplot(data=map_borders_5) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -377,6 +457,44 @@ filter(State %in% c("SC", "GA", "FL")) %>%
   filter(`PFD Worn?`!="NA") %>%
   filter(`Alcohol Involved?`!="NA") %>%
   filter(Longitude>=-85.65)
+
+# Collapsing categories so that graphs are more readable with fewer colors to analyze
+
+# Opeartion of Vessel Category
+Fatality_Coordinates_7$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_7$`Main Cause of Accident`=="Alcohol use" | Fatality_Coordinates_7$`Main Cause of Accident`=="Excessive speed" | Fatality_Coordinates_7$`Main Cause of Accident`=="Improper lookout" | Fatality_Coordinates_7$`Main Cause of Accident`=="Navigation rules violation" | Fatality_Coordinates_7$`Main Cause of Accident`=="Operator inattention" | Fatality_Coordinates_7$`Main Cause of Accident`=="Operator inexperience" | Fatality_Coordinates_7$`Main Cause of Accident`=="Drug use" | Fatality_Coordinates_7$`Main Cause of Accident`=="Failure to vent" | Fatality_Coordinates_7$`Main Cause of Accident`=="Inadequate onboard navigation lights" | Fatality_Coordinates_7$`Main Cause of Accident`=="Restricted vision" | Fatality_Coordinates_7$`Main Cause of Accident`=="Sharp turn" | Fatality_Coordinates_7$`Main Cause of Accident`=="Starting in gear", paste("Operation of vessel"), Fatality_Coordinates_7$`Main Cause of Accident`)
+
+# Environment Category 
+Fatality_Coordinates_7$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_7$`Main Cause of Accident`=="Hazardous waters" | Fatality_Coordinates_7$`Main Cause of Accident`=="Weather" | Fatality_Coordinates_7$`Main Cause of Accident`=="Congested waters" | Fatality_Coordinates_7$`Main Cause of Accident`=="Dam/lock" | Fatality_Coordinates_7$`Main Cause of Accident`=="Force of wake/wave" | Fatality_Coordinates_7$`Main Cause of Accident`=="Missing/inadequate navigation aid", paste("Environment"), Fatality_Coordinates_7$`Main Cause of Accident`)
+
+# Failure of boat or boat equipment 
+Fatality_Coordinates_7$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_7$`Main Cause of Accident`=="Machinery failure" | Fatality_Coordinates_7$`Main Cause of Accident`=="Equipment failure" | Fatality_Coordinates_7$`Main Cause of Accident`=="Hull failure", paste("Failure of boat or boat equipment"), Fatality_Coordinates_7$`Main Cause of Accident`)
+
+# Loading of passengers or gear catgegory
+Fatality_Coordinates_7$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_7$`Main Cause of Accident`=="Improper loading" | Fatality_Coordinates_7$`Main Cause of Accident`=="Overloading" | Fatality_Coordinates_7$`Main Cause of Accident`=="Improper anchoring" | Fatality_Coordinates_7$`Main Cause of Accident`=="People on gunwale, bow, or transom", paste("Loading of passengers or gear"), Fatality_Coordinates_7$`Main Cause of Accident`)
+
+# Miscellaneous category
+Fatality_Coordinates_7$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_7$`Main Cause of Accident`=="Other" | Fatality_Coordinates_7$`Main Cause of Accident`=="Sudden medical condition" | Fatality_Coordinates_7$`Main Cause of Accident`=="Unknown" | Fatality_Coordinates_7$`Main Cause of Accident`=="Carbon monoxide exposure" | Fatality_Coordinates_7$`Main Cause of Accident`=="Ignition of fuel or vapor", paste("Miscellaneous"), Fatality_Coordinates_7$`Main Cause of Accident`)
+
+# Collapsing our AccidentEvent1 into broader categories
+# General collision/grounding
+Fatality_Coordinates_7$AccidentEvent1 <- ifelse(Fatality_Coordinates_7$AccidentEvent1=="Collision with fixed object" | Fatality_Coordinates_7$AccidentEvent1=="Collision with recreational vessel" | Fatality_Coordinates_7$AccidentEvent1=="Collision with submerged object" | Fatality_Coordinates_7$AccidentEvent1=="Grounding"| Fatality_Coordinates_7$AccidentEvent1=="Collision with floating object", paste("Collision/Grounding"), Fatality_Coordinates_7$AccidentEvent1)
+
+# General departing/ejected from vessel
+Fatality_Coordinates_7$AccidentEvent1 <- ifelse(Fatality_Coordinates_7$AccidentEvent1=="Person departed vessel" | Fatality_Coordinates_7$AccidentEvent1=="Person ejected from vessel", paste("Person departed/ejected from vessel"), Fatality_Coordinates_7$AccidentEvent1)
+
+# Placing AccidentEvent1s that rarely happen into an "Other" category
+Fatality_Coordinates_7$AccidentEvent1 <- ifelse(Fatality_Coordinates_7$AccidentEvent1=="Skier mishap" | Fatality_Coordinates_7$AccidentEvent1=="Other" | Fatality_Coordinates_7$AccidentEvent1=="Person struck by propeller" | Fatality_Coordinates_7$AccidentEvent1=="Fall in vessel", paste("Other"), Fatality_Coordinates_7$AccidentEvent1)
+
+# Collapsing our Type of Vessel category into Motorized, Non-Motorized, and paddlecraft
+# We'll start with the motorized
+Fatality_Coordinates_7$`Type of Vessel` <- ifelse(Fatality_Coordinates_7$`Type of Vessel`=="Airboat" | Fatality_Coordinates_7$`Type of Vessel`=="Cabin motorboat" | Fatality_Coordinates_7$`Type of Vessel`=="Open motorboat"| Fatality_Coordinates_7$`Type of Vessel`=="Personal watercraft"| Fatality_Coordinates_7$`Type of Vessel`=="Pontoon", paste("Motorized"), Fatality_Coordinates_7$`Type of Vessel` )
+
+# Non-Motorized
+Fatality_Coordinates_7$`Type of Vessel` <- ifelse(Fatality_Coordinates_7$`Type of Vessel`=="Houseboat" | Fatality_Coordinates_7$`Type of Vessel`=="Auxiliary sail" | Fatality_Coordinates_7$`Type of Vessel`=="Inflatable"| Fatality_Coordinates_7$`Type of Vessel`=="Sail (only)", paste("Non-motorized"), Fatality_Coordinates_7$`Type of Vessel` )
+
+# Paddlecraft
+Fatality_Coordinates_7$`Type of Vessel` <- ifelse(Fatality_Coordinates_7$`Type of Vessel`=="Canoe" | Fatality_Coordinates_7$`Type of Vessel`=="Kayak" | Fatality_Coordinates_7$`Type of Vessel`=="Rowboat"| Fatality_Coordinates_7$`Type of Vessel`=="Standup Paddleboard", paste("Paddlecraft"), Fatality_Coordinates_7$`Type of Vessel` )
+
 
 map_borders_7 <- subset(states, region %in% c("south carolina", "georgia", "florida"))
 
@@ -437,7 +555,7 @@ ggplot() +
   geom_polygon(data=map_borders_7, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_7, aes(x=Longitude, y=Latitude, color=`Main Cause of Accident`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths in District 7 Region (2019)", subtitle = "The primary cause of accident was unknown in 26 percent of cases") + 
+               labs(title="Reported Recreational Boating Deaths in District 7 Region (2019)", subtitle = "Operation of vessel was the primary cause of accident in 47 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -488,7 +606,7 @@ ggplot() +
   geom_polygon(data=map_borders_7, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_7, aes(x=Longitude, y=Latitude, color=`Type of Vessel`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths in District 7 Region (2019)", subtitle = "Open motorboat fatalities accounted for 59 percent of cases") + 
+               labs(title="Reported Recreational Boating Deaths in District 7 Region (2019)", subtitle = "Motorized vessel fatalities accounted for 78 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -513,8 +631,8 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+  scale_colour_hue(breaks=c("Under 10 hours", "10 to 100 hours", "101 to 500 hours", "Over 500 hours", "No operator", "Unknown"))
 
 ggplot(data=map_borders_7) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -548,6 +666,44 @@ filter(State %in% c("ND", "WY", "SD", "MN", "NE", "CO", "KS", "NM", "TX", "OK", 
   filter(`Alcohol Involved?` !="NA") %>%
   filter(Longitude>=-117) %>%
   filter(Longitude<=-83)
+
+# Collapsing categories so that graphs are more readable with fewer colors to analyze
+
+# Opeartion of Vessel Category
+Fatality_Coordinates_8$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_8$`Main Cause of Accident`=="Alcohol use" | Fatality_Coordinates_8$`Main Cause of Accident`=="Excessive speed" | Fatality_Coordinates_8$`Main Cause of Accident`=="Improper lookout" | Fatality_Coordinates_8$`Main Cause of Accident`=="Navigation rules violation" | Fatality_Coordinates_8$`Main Cause of Accident`=="Operator inattention" | Fatality_Coordinates_8$`Main Cause of Accident`=="Operator inexperience" | Fatality_Coordinates_8$`Main Cause of Accident`=="Drug use" | Fatality_Coordinates_8$`Main Cause of Accident`=="Failure to vent" | Fatality_Coordinates_8$`Main Cause of Accident`=="Inadequate onboard navigation lights" | Fatality_Coordinates_8$`Main Cause of Accident`=="Restricted vision" | Fatality_Coordinates_8$`Main Cause of Accident`=="Sharp turn" | Fatality_Coordinates_8$`Main Cause of Accident`=="Starting in gear", paste("Operation of vessel"), Fatality_Coordinates_8$`Main Cause of Accident`)
+
+# Environment Category 
+Fatality_Coordinates_8$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_8$`Main Cause of Accident`=="Hazardous waters" | Fatality_Coordinates_8$`Main Cause of Accident`=="Weather" | Fatality_Coordinates_8$`Main Cause of Accident`=="Congested waters" | Fatality_Coordinates_8$`Main Cause of Accident`=="Dam/lock" | Fatality_Coordinates_8$`Main Cause of Accident`=="Force of wake/wave" | Fatality_Coordinates_8$`Main Cause of Accident`=="Missing/inadequate navigation aid", paste("Environment"), Fatality_Coordinates_8$`Main Cause of Accident`)
+
+# Failure of boat or boat equipment 
+Fatality_Coordinates_8$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_8$`Main Cause of Accident`=="Machinery failure" | Fatality_Coordinates_8$`Main Cause of Accident`=="Equipment failure" | Fatality_Coordinates_8$`Main Cause of Accident`=="Hull failure", paste("Failure of boat or boat equipment"), Fatality_Coordinates_8$`Main Cause of Accident`)
+
+# Loading of passengers or gear catgegory
+Fatality_Coordinates_8$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_8$`Main Cause of Accident`=="Improper loading" | Fatality_Coordinates_8$`Main Cause of Accident`=="Overloading" | Fatality_Coordinates_8$`Main Cause of Accident`=="Improper anchoring" | Fatality_Coordinates_8$`Main Cause of Accident`=="People on gunwale, bow, or transom", paste("Loading of passengers or gear"), Fatality_Coordinates_8$`Main Cause of Accident`)
+
+# Miscellaneous category
+Fatality_Coordinates_8$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_8$`Main Cause of Accident`=="Other" | Fatality_Coordinates_8$`Main Cause of Accident`=="Sudden medical condition" | Fatality_Coordinates_8$`Main Cause of Accident`=="Unknown" | Fatality_Coordinates_8$`Main Cause of Accident`=="Carbon monoxide exposure" | Fatality_Coordinates_8$`Main Cause of Accident`=="Ignition of fuel or vapor", paste("Miscellaneous"), Fatality_Coordinates_8$`Main Cause of Accident`)
+
+# Collapsing our AccidentEvent1 into broader categories
+# General collision/grounding
+Fatality_Coordinates_8$AccidentEvent1 <- ifelse(Fatality_Coordinates_8$AccidentEvent1=="Collision with fixed object" | Fatality_Coordinates_8$AccidentEvent1=="Collision with recreational vessel" | Fatality_Coordinates_8$AccidentEvent1=="Collision with submerged object" | Fatality_Coordinates_8$AccidentEvent1=="Grounding" | Fatality_Coordinates_8$AccidentEvent1=="Collision with floating object" | Fatality_Coordinates_8$AccidentEvent1=="Collision with commercial vessel", paste("Collision/Grounding"), Fatality_Coordinates_8$AccidentEvent1)
+
+# General departing/ejected from vessel
+Fatality_Coordinates_8$AccidentEvent1 <- ifelse(Fatality_Coordinates_8$AccidentEvent1=="Person departed vessel" | Fatality_Coordinates_8$AccidentEvent1=="Person ejected from vessel", paste("Person departed/ejected from vessel"), Fatality_Coordinates_8$AccidentEvent1)
+
+# Placing AccidentEvent1s that rarely happen into an "Other" category
+Fatality_Coordinates_8$AccidentEvent1 <- ifelse(Fatality_Coordinates_8$AccidentEvent1=="Skier mishap" | Fatality_Coordinates_8$AccidentEvent1=="Other" | Fatality_Coordinates_8$AccidentEvent1=="Person struck by propeller", paste("Other"), Fatality_Coordinates_8$AccidentEvent1)
+
+# Collapsing our Type of Vessel category into Motorized, Non-Motorized, and paddlecraft
+# We'll start with the motorized
+Fatality_Coordinates_8$`Type of Vessel` <- ifelse(Fatality_Coordinates_8$`Type of Vessel`=="Airboat" | Fatality_Coordinates_8$`Type of Vessel`=="Cabin motorboat" | Fatality_Coordinates_8$`Type of Vessel`=="Open motorboat"| Fatality_Coordinates_8$`Type of Vessel`=="Personal watercraft"| Fatality_Coordinates_8$`Type of Vessel`=="Pontoon", paste("Motorized"), Fatality_Coordinates_8$`Type of Vessel` )
+
+# Non-Motorized
+Fatality_Coordinates_8$`Type of Vessel` <- ifelse(Fatality_Coordinates_8$`Type of Vessel`=="Houseboat" | Fatality_Coordinates_8$`Type of Vessel`=="Auxiliary sail" | Fatality_Coordinates_8$`Type of Vessel`=="Inflatable"| Fatality_Coordinates_8$`Type of Vessel`=="Sail (only)", paste("Non-motorized"), Fatality_Coordinates_8$`Type of Vessel` )
+
+# Paddlecraft
+Fatality_Coordinates_8$`Type of Vessel` <- ifelse(Fatality_Coordinates_8$`Type of Vessel`=="Canoe" | Fatality_Coordinates_8$`Type of Vessel`=="Kayak" | Fatality_Coordinates_8$`Type of Vessel`=="Rowboat"| Fatality_Coordinates_8$`Type of Vessel`=="Standup Paddleboard", paste("Paddlecraft"), Fatality_Coordinates_8$`Type of Vessel` )
+
 
 map_borders_8 <- subset(states, region %in% c("north dakota", "wyoming", "south dakota", "minnesota", "nebraska", "colorado", "kansas", "new mexico", "texas", "oklahoma", "iowa", "montana", "arkansas", "louisiana", "indiana", "illinois", "ohio", "pennsylvania", "west virginia", "kentucky", "tennessee", "mississippi", "alabama", "georgia", "florida", "missouri"))
 
@@ -608,7 +764,7 @@ ggplot() +
   geom_polygon(data=map_borders_8, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_8, aes(x=Longitude, y=Latitude, color=`Main Cause of Accident`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths in District 8 Region (2019)", subtitle = "Alcohol was the primary cause of accident in 16 percent of cases") + 
+               labs(title="Reported Recreational Boating Deaths in District 8 Region (2019)", subtitle = "Operation of vessel was the primary cause of accident in 42 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -659,7 +815,7 @@ ggplot() +
   geom_polygon(data=map_borders_8, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_8, aes(x=Longitude, y=Latitude, color=`Type of Vessel`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths in District 8 Region (2019)", subtitle = "Open motorboat fatalities accounted for 54 percent of cases") + 
+               labs(title="Reported Recreational Boating Deaths in District 8 Region (2019)", subtitle = "Motorized vessel fatalities accounted for 74 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -684,8 +840,8 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+  scale_colour_hue(breaks=c("Under 10 hours", "10 to 100 hours", "101 to 500 hours", "Over 500 hours", "No operator", "Unknown"))
 
 ggplot(data=map_borders_8) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -718,6 +874,44 @@ filter(State %in% c("MN", "WI", "IL", "IN", "MI", "OH", "PA", "NY")) %>%
   filter(`Number of Deaths`>0) %>%
   filter(`PFD Worn?`!="NA") %>%
   filter(Latitude>=40)
+
+# Collapsing categories so that graphs are more readable with fewer colors to analyze
+
+# Opeartion of Vessel Category
+Fatality_Coordinates_9$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_9$`Main Cause of Accident`=="Alcohol use" | Fatality_Coordinates_9$`Main Cause of Accident`=="Excessive speed" | Fatality_Coordinates_9$`Main Cause of Accident`=="Improper lookout" | Fatality_Coordinates_9$`Main Cause of Accident`=="Navigation rules violation" | Fatality_Coordinates_9$`Main Cause of Accident`=="Operator inattention" | Fatality_Coordinates_9$`Main Cause of Accident`=="Operator inexperience" | Fatality_Coordinates_9$`Main Cause of Accident`=="Drug use" | Fatality_Coordinates_9$`Main Cause of Accident`=="Failure to vent" | Fatality_Coordinates_9$`Main Cause of Accident`=="Inadequate onboard navigation lights" | Fatality_Coordinates_9$`Main Cause of Accident`=="Restricted vision" | Fatality_Coordinates_9$`Main Cause of Accident`=="Sharp turn" | Fatality_Coordinates_9$`Main Cause of Accident`=="Starting in gear", paste("Operation of vessel"), Fatality_Coordinates_9$`Main Cause of Accident`)
+
+# Environment Category 
+Fatality_Coordinates_9$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_9$`Main Cause of Accident`=="Hazardous waters" | Fatality_Coordinates_9$`Main Cause of Accident`=="Weather" | Fatality_Coordinates_9$`Main Cause of Accident`=="Congested waters" | Fatality_Coordinates_9$`Main Cause of Accident`=="Dam/lock" | Fatality_Coordinates_9$`Main Cause of Accident`=="Force of wake/wave" | Fatality_Coordinates_9$`Main Cause of Accident`=="Missing/inadequate navigation aid", paste("Environment"), Fatality_Coordinates_9$`Main Cause of Accident`)
+
+# Failure of boat or boat equipment 
+Fatality_Coordinates_9$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_9$`Main Cause of Accident`=="Machinery failure" | Fatality_Coordinates_9$`Main Cause of Accident`=="Equipment failure" | Fatality_Coordinates_9$`Main Cause of Accident`=="Hull failure", paste("Failure of boat or boat equipment"), Fatality_Coordinates_9$`Main Cause of Accident`)
+
+# Loading of passengers or gear catgegory
+Fatality_Coordinates_9$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_9$`Main Cause of Accident`=="Improper loading" | Fatality_Coordinates_9$`Main Cause of Accident`=="Overloading" | Fatality_Coordinates_9$`Main Cause of Accident`=="Improper anchoring" | Fatality_Coordinates_9$`Main Cause of Accident`=="People on gunwale, bow, or transom", paste("Loading of passengers or gear"), Fatality_Coordinates_9$`Main Cause of Accident`)
+
+# Miscellaneous category
+Fatality_Coordinates_9$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_9$`Main Cause of Accident`=="Other" | Fatality_Coordinates_9$`Main Cause of Accident`=="Sudden medical condition" | Fatality_Coordinates_9$`Main Cause of Accident`=="Unknown" | Fatality_Coordinates_9$`Main Cause of Accident`=="Carbon monoxide exposure" | Fatality_Coordinates_9$`Main Cause of Accident`=="Ignition of fuel or vapor", paste("Miscellaneous"), Fatality_Coordinates_9$`Main Cause of Accident`)
+
+# Collapsing our AccidentEvent1 into broader categories
+# General collision/grounding
+Fatality_Coordinates_9$AccidentEvent1 <- ifelse(Fatality_Coordinates_9$AccidentEvent1=="Collision with fixed object" | Fatality_Coordinates_9$AccidentEvent1=="Collision with recreational vessel" | Fatality_Coordinates_9$AccidentEvent1=="Collision with submerged object" | Fatality_Coordinates_9$AccidentEvent1=="Grounding" | Fatality_Coordinates_9$AccidentEvent1=="Collision with floating object" | Fatality_Coordinates_9$AccidentEvent1=="Collision with commercial vessel", paste("Collision/Grounding"), Fatality_Coordinates_9$AccidentEvent1)
+
+# General departing/ejected from vessel
+Fatality_Coordinates_9$AccidentEvent1 <- ifelse(Fatality_Coordinates_9$AccidentEvent1=="Person departed vessel" | Fatality_Coordinates_9$AccidentEvent1=="Person ejected from vessel", paste("Person departed/ejected from vessel"), Fatality_Coordinates_9$AccidentEvent1)
+
+# Placing AccidentEvent1s that rarely happen into an "Other" category
+Fatality_Coordinates_9$AccidentEvent1 <- ifelse(Fatality_Coordinates_9$AccidentEvent1=="Skier mishap" | Fatality_Coordinates_9$AccidentEvent1=="Other" | Fatality_Coordinates_9$AccidentEvent1=="Person struck by propeller" | Fatality_Coordinates_9$AccidentEvent1=="Carbon monoxide exposure", paste("Other"), Fatality_Coordinates_9$AccidentEvent1)
+
+# Collapsing our Type of Vessel category into Motorized, Non-Motorized, and paddlecraft
+# We'll start with the motorized
+Fatality_Coordinates_9$`Type of Vessel` <- ifelse(Fatality_Coordinates_9$`Type of Vessel`=="Airboat" | Fatality_Coordinates_9$`Type of Vessel`=="Cabin motorboat" | Fatality_Coordinates_9$`Type of Vessel`=="Open motorboat"| Fatality_Coordinates_9$`Type of Vessel`=="Personal watercraft"| Fatality_Coordinates_9$`Type of Vessel`=="Pontoon", paste("Motorized"), Fatality_Coordinates_9$`Type of Vessel` )
+
+# Non-Motorized
+Fatality_Coordinates_9$`Type of Vessel` <- ifelse(Fatality_Coordinates_9$`Type of Vessel`=="Houseboat" | Fatality_Coordinates_9$`Type of Vessel`=="Auxiliary sail" | Fatality_Coordinates_9$`Type of Vessel`=="Inflatable"| Fatality_Coordinates_9$`Type of Vessel`=="Sail (only)", paste("Non-motorized"), Fatality_Coordinates_9$`Type of Vessel` )
+
+# Paddlecraft
+Fatality_Coordinates_9$`Type of Vessel` <- ifelse(Fatality_Coordinates_9$`Type of Vessel`=="Canoe" | Fatality_Coordinates_9$`Type of Vessel`=="Kayak" | Fatality_Coordinates_9$`Type of Vessel`=="Rowboat"| Fatality_Coordinates_9$`Type of Vessel`=="Standup Paddleboard", paste("Paddlecraft"), Fatality_Coordinates_9$`Type of Vessel` )
+
 
 map_borders_9 <- subset(states, region %in% c("minnesota", "wisconsin", "illinois", "indiana", "michigan", "ohio", "pennsylvania", "new york"))
 
@@ -778,7 +972,7 @@ ggplot() +
   geom_polygon(data=map_borders_9, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_9, aes(x=Longitude, y=Latitude, color=`Main Cause of Accident`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths in District 9 Region (2019)", subtitle = "The primary cause of accident was unknown in 21 percent of cases") + 
+               labs(title="Reported Recreational Boating Deaths in District 9 Region (2019)", subtitle = "Operation of vessel was the primary cause of accident in 44 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -829,7 +1023,7 @@ ggplot() +
   geom_polygon(data=map_borders_9, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_9, aes(x=Longitude, y=Latitude, color=`Type of Vessel`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths in District 9 Region (2019)", subtitle = "Open motorboat fatalities accounted for 46 percent of cases") + 
+               labs(title="Reported Recreational Boating Deaths in District 9 Region (2019)", subtitle = "Motorized vessel fatalities accounted for 69 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -854,8 +1048,8 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+  scale_colour_hue(breaks=c("Under 10 hours", "10 to 100 hours", "101 to 500 hours", "Over 500 hours", "No operator", "Unknown"))
 
 ggplot(data=map_borders_9) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -885,6 +1079,47 @@ filter(State %in% c("CA", "NV", "UT", "AZ")) %>%
   filter(`Number of Deaths`>0) %>%
   filter(`PFD Worn?`!="NA") %>%
   filter(`Alcohol Involved?` !="NA")
+
+# Collapsing categories so that graphs are more readable with fewer colors to analyze
+
+# Opeartion of Vessel Category
+Fatality_Coordinates_11$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_11$`Main Cause of Accident`=="Alcohol use" | Fatality_Coordinates_11$`Main Cause of Accident`=="Excessive speed" | Fatality_Coordinates_11$`Main Cause of Accident`=="Improper lookout" | Fatality_Coordinates_11$`Main Cause of Accident`=="Navigation rules violation" | Fatality_Coordinates_11$`Main Cause of Accident`=="Operator inattention" | Fatality_Coordinates_11$`Main Cause of Accident`=="Operator inexperience" | Fatality_Coordinates_11$`Main Cause of Accident`=="Drug use" | Fatality_Coordinates_11$`Main Cause of Accident`=="Failure to vent" | Fatality_Coordinates_11$`Main Cause of Accident`=="Inadequate onboard navigation lights" | Fatality_Coordinates_11$`Main Cause of Accident`=="Restricted vision" | Fatality_Coordinates_11$`Main Cause of Accident`=="Sharp turn" | Fatality_Coordinates_11$`Main Cause of Accident`=="Starting in gear", paste("Operation of vessel"), Fatality_Coordinates_11$`Main Cause of Accident`)
+
+# Environment Category 
+Fatality_Coordinates_11$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_11$`Main Cause of Accident`=="Hazardous waters" | Fatality_Coordinates_11$`Main Cause of Accident`=="Weather" | Fatality_Coordinates_11$`Main Cause of Accident`=="Congested waters" | Fatality_Coordinates_11$`Main Cause of Accident`=="Dam/lock" | Fatality_Coordinates_11$`Main Cause of Accident`=="Force of wake/wave" | Fatality_Coordinates_11$`Main Cause of Accident`=="Missing/inadequate navigation aid", paste("Environment"), Fatality_Coordinates_11$`Main Cause of Accident`)
+
+# Failure of boat or boat equipment 
+Fatality_Coordinates_11$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_11$`Main Cause of Accident`=="Machinery failure" | Fatality_Coordinates_11$`Main Cause of Accident`=="Equipment failure" | Fatality_Coordinates_11$`Main Cause of Accident`=="Hull failure", paste("Failure of boat or boat equipment"), Fatality_Coordinates_11$`Main Cause of Accident`)
+
+# Loading of passengers or gear catgegory
+Fatality_Coordinates_11$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_11$`Main Cause of Accident`=="Improper loading" | Fatality_Coordinates_11$`Main Cause of Accident`=="Overloading" | Fatality_Coordinates_11$`Main Cause of Accident`=="Improper anchoring" | Fatality_Coordinates_11$`Main Cause of Accident`=="People on gunwale, bow, or transom", paste("Loading of passengers or gear"), Fatality_Coordinates_11$`Main Cause of Accident`)
+
+# Miscellaneous category
+Fatality_Coordinates_11$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_11$`Main Cause of Accident`=="Other" | Fatality_Coordinates_11$`Main Cause of Accident`=="Sudden medical condition" | Fatality_Coordinates_11$`Main Cause of Accident`=="Unknown" | Fatality_Coordinates_11$`Main Cause of Accident`=="Carbon monoxide exposure" | Fatality_Coordinates_11$`Main Cause of Accident`=="Ignition of fuel or vapor", paste("Miscellaneous"), Fatality_Coordinates_11$`Main Cause of Accident`)
+
+# Collapsing our AccidentEvent1 into broader categories
+# General collision/grounding
+Fatality_Coordinates_11$AccidentEvent1 <- ifelse(Fatality_Coordinates_11$AccidentEvent1=="Collision with fixed object" | Fatality_Coordinates_11$AccidentEvent1=="Collision with recreational vessel" | Fatality_Coordinates_11$AccidentEvent1=="Collision with submerged object" | Fatality_Coordinates_11$AccidentEvent1=="Grounding" | Fatality_Coordinates_11$AccidentEvent1=="Collision with floating object" | Fatality_Coordinates_11$AccidentEvent1=="Collision with commercial vessel", paste("Collision/Grounding"), Fatality_Coordinates_11$AccidentEvent1)
+
+# General departing/ejected from vessel
+Fatality_Coordinates_11$AccidentEvent1 <- ifelse(Fatality_Coordinates_11$AccidentEvent1=="Person departed vessel" | Fatality_Coordinates_11$AccidentEvent1=="Person ejected from vessel", paste("Person departed/ejected from vessel"), Fatality_Coordinates_11$AccidentEvent1)
+
+# Placing AccidentEvent1s that rarely happen into an "Other" category
+Fatality_Coordinates_11$AccidentEvent1 <- ifelse(Fatality_Coordinates_11$AccidentEvent1=="Skier mishap" | Fatality_Coordinates_11$AccidentEvent1=="Other" | Fatality_Coordinates_11$AccidentEvent1=="Person struck by propeller" | Fatality_Coordinates_11$AccidentEvent1=="Carbon monoxide exposure"| Fatality_Coordinates_11$AccidentEvent1=="Fire/explosion (non-fuel)" | Fatality_Coordinates_11$AccidentEvent1=="Fall in vessel", paste("Other"), Fatality_Coordinates_11$AccidentEvent1)
+
+# Collapsing our Type of Vessel category into Motorized, Non-Motorized, and paddlecraft
+# We'll start with the motorized
+Fatality_Coordinates_11$`Type of Vessel` <- ifelse(Fatality_Coordinates_11$`Type of Vessel`=="Airboat" | Fatality_Coordinates_11$`Type of Vessel`=="Cabin motorboat" | Fatality_Coordinates_11$`Type of Vessel`=="Open motorboat"| Fatality_Coordinates_11$`Type of Vessel`=="Personal watercraft"| Fatality_Coordinates_11$`Type of Vessel`=="Pontoon", paste("Motorized"), Fatality_Coordinates_11$`Type of Vessel` )
+
+# Non-Motorized
+Fatality_Coordinates_11$`Type of Vessel` <- ifelse(Fatality_Coordinates_11$`Type of Vessel`=="Houseboat" | Fatality_Coordinates_11$`Type of Vessel`=="Auxiliary sail" | Fatality_Coordinates_11$`Type of Vessel`=="Inflatable"| Fatality_Coordinates_11$`Type of Vessel`=="Sail (only)", paste("Non-motorized"), Fatality_Coordinates_11$`Type of Vessel` )
+
+# Paddlecraft
+Fatality_Coordinates_11$`Type of Vessel` <- ifelse(Fatality_Coordinates_11$`Type of Vessel`=="Canoe" | Fatality_Coordinates_11$`Type of Vessel`=="Kayak" | Fatality_Coordinates_11$`Type of Vessel`=="Rowboat"| Fatality_Coordinates_11$`Type of Vessel`=="Standup Paddleboard", paste("Paddlecraft"), Fatality_Coordinates_11$`Type of Vessel` )
+
+# Other
+Fatality_Coordinates_11$`Type of Vessel` <- ifelse(Fatality_Coordinates_11$`Type of Vessel`=="Unknown", paste("Other"), Fatality_Coordinates_11$`Type of Vessel`)
+
 
 map_borders_11 <- subset(states, region %in% c("california", "nevada", "utah", "arizona"))
 
@@ -945,7 +1180,7 @@ ggplot() +
   geom_polygon(data=map_borders_11, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_11, aes(x=Longitude, y=Latitude, color=`Main Cause of Accident`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths in District 11 Region (2019)", subtitle = "The primary cause of accident was unknown in 20 percent of cases") + 
+               labs(title="Reported Recreational Boating Deaths in District 11 Region (2019)", subtitle = "Operation of vessel was the primary cause of accident in 43 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -996,7 +1231,7 @@ ggplot() +
   geom_polygon(data=map_borders_11, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_11, aes(x=Longitude, y=Latitude, color=`Type of Vessel`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths in District 11 Region (2019)", subtitle = "Open motorboat fatalities accounted for 42 percent of cases") + 
+               labs(title="Reported Recreational Boating Deaths in District 11 Region (2019)", subtitle = "Motorized vessel fatalities accounted for 62 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -1021,8 +1256,8 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+  scale_colour_hue(breaks=c("Under 10 hours", "10 to 100 hours", "101 to 500 hours", "Over 500 hours", "No operator", "Unknown"))
 
 ggplot(data=map_borders_11) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -1052,6 +1287,44 @@ filter(State %in% c("OR", "WA", "ID", "MT")) %>%
   filter(`Number of Deaths`>0) %>%
   filter(`PFD Worn?`!="NA") %>%
   filter(`Alcohol Involved?` !="NA")
+
+# Collapsing categories so that graphs are more readable with fewer colors to analyze
+
+# Opeartion of Vessel Category
+Fatality_Coordinates_13$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_13$`Main Cause of Accident`=="Alcohol use" | Fatality_Coordinates_13$`Main Cause of Accident`=="Excessive speed" | Fatality_Coordinates_13$`Main Cause of Accident`=="Improper lookout" | Fatality_Coordinates_13$`Main Cause of Accident`=="Navigation rules violation" | Fatality_Coordinates_13$`Main Cause of Accident`=="Operator inattention" | Fatality_Coordinates_13$`Main Cause of Accident`=="Operator inexperience" | Fatality_Coordinates_13$`Main Cause of Accident`=="Drug use" | Fatality_Coordinates_13$`Main Cause of Accident`=="Failure to vent" | Fatality_Coordinates_13$`Main Cause of Accident`=="Inadequate onboard navigation lights" | Fatality_Coordinates_13$`Main Cause of Accident`=="Restricted vision" | Fatality_Coordinates_13$`Main Cause of Accident`=="Sharp turn" | Fatality_Coordinates_13$`Main Cause of Accident`=="Starting in gear", paste("Operation of vessel"), Fatality_Coordinates_13$`Main Cause of Accident`)
+
+# Environment Category 
+Fatality_Coordinates_13$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_13$`Main Cause of Accident`=="Hazardous waters" | Fatality_Coordinates_13$`Main Cause of Accident`=="Weather" | Fatality_Coordinates_13$`Main Cause of Accident`=="Congested waters" | Fatality_Coordinates_13$`Main Cause of Accident`=="Dam/lock" | Fatality_Coordinates_13$`Main Cause of Accident`=="Force of wake/wave" | Fatality_Coordinates_13$`Main Cause of Accident`=="Missing/inadequate navigation aid", paste("Environment"), Fatality_Coordinates_13$`Main Cause of Accident`)
+
+# Failure of boat or boat equipment 
+Fatality_Coordinates_13$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_13$`Main Cause of Accident`=="Machinery failure" | Fatality_Coordinates_13$`Main Cause of Accident`=="Equipment failure" | Fatality_Coordinates_13$`Main Cause of Accident`=="Hull failure", paste("Failure of boat or boat equipment"), Fatality_Coordinates_13$`Main Cause of Accident`)
+
+# Loading of passengers or gear catgegory
+Fatality_Coordinates_13$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_13$`Main Cause of Accident`=="Improper loading" | Fatality_Coordinates_13$`Main Cause of Accident`=="Overloading" | Fatality_Coordinates_13$`Main Cause of Accident`=="Improper anchoring" | Fatality_Coordinates_13$`Main Cause of Accident`=="People on gunwale, bow, or transom", paste("Loading of passengers or gear"), Fatality_Coordinates_13$`Main Cause of Accident`)
+
+# Miscellaneous category
+Fatality_Coordinates_13$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_13$`Main Cause of Accident`=="Other" | Fatality_Coordinates_13$`Main Cause of Accident`=="Sudden medical condition" | Fatality_Coordinates_13$`Main Cause of Accident`=="Unknown" | Fatality_Coordinates_13$`Main Cause of Accident`=="Carbon monoxide exposure" | Fatality_Coordinates_13$`Main Cause of Accident`=="Ignition of fuel or vapor", paste("Miscellaneous"), Fatality_Coordinates_13$`Main Cause of Accident`)
+
+# Collapsing our AccidentEvent1 into broader categories
+# General collision/grounding
+Fatality_Coordinates_13$AccidentEvent1 <- ifelse(Fatality_Coordinates_13$AccidentEvent1=="Collision with fixed object" | Fatality_Coordinates_13$AccidentEvent1=="Collision with recreational vessel" | Fatality_Coordinates_13$AccidentEvent1=="Collision with submerged object" | Fatality_Coordinates_13$AccidentEvent1=="Grounding" | Fatality_Coordinates_13$AccidentEvent1=="Collision with floating object" | Fatality_Coordinates_13$AccidentEvent1=="Collision with commercial vessel", paste("Collision/Grounding"), Fatality_Coordinates_13$AccidentEvent1)
+
+# General departing/ejected from vessel
+Fatality_Coordinates_13$AccidentEvent1 <- ifelse(Fatality_Coordinates_13$AccidentEvent1=="Person departed vessel" | Fatality_Coordinates_13$AccidentEvent1=="Person ejected from vessel", paste("Person departed/ejected from vessel"), Fatality_Coordinates_13$AccidentEvent1)
+
+# Placing AccidentEvent1s that rarely happen into an "Other" category
+Fatality_Coordinates_13$AccidentEvent1 <- ifelse(Fatality_Coordinates_13$AccidentEvent1=="Skier mishap" | Fatality_Coordinates_13$AccidentEvent1=="Other" | Fatality_Coordinates_13$AccidentEvent1=="Person struck by propeller" | Fatality_Coordinates_13$AccidentEvent1=="Carbon monoxide exposure"| Fatality_Coordinates_13$AccidentEvent1=="Fire/explosion (non-fuel)" | Fatality_Coordinates_13$AccidentEvent1=="Fall in vessel", paste("Other"), Fatality_Coordinates_13$AccidentEvent1)
+
+# Collapsing our Type of Vessel category into Motorized, Non-Motorized, and paddlecraft
+# We'll start with the motorized
+Fatality_Coordinates_13$`Type of Vessel` <- ifelse(Fatality_Coordinates_13$`Type of Vessel`=="Airboat" | Fatality_Coordinates_13$`Type of Vessel`=="Cabin motorboat" | Fatality_Coordinates_13$`Type of Vessel`=="Open motorboat"| Fatality_Coordinates_13$`Type of Vessel`=="Personal watercraft"| Fatality_Coordinates_13$`Type of Vessel`=="Pontoon", paste("Motorized"), Fatality_Coordinates_13$`Type of Vessel` )
+
+# Non-Motorized
+Fatality_Coordinates_13$`Type of Vessel` <- ifelse(Fatality_Coordinates_13$`Type of Vessel`=="Houseboat" | Fatality_Coordinates_13$`Type of Vessel`=="Auxiliary sail" | Fatality_Coordinates_13$`Type of Vessel`=="Inflatable"| Fatality_Coordinates_13$`Type of Vessel`=="Sail (only)", paste("Non-motorized"), Fatality_Coordinates_13$`Type of Vessel` )
+
+# Paddlecraft
+Fatality_Coordinates_13$`Type of Vessel` <- ifelse(Fatality_Coordinates_13$`Type of Vessel`=="Canoe" | Fatality_Coordinates_13$`Type of Vessel`=="Kayak" | Fatality_Coordinates_13$`Type of Vessel`=="Rowboat"| Fatality_Coordinates_13$`Type of Vessel`=="Standup Paddleboard", paste("Paddlecraft"), Fatality_Coordinates_13$`Type of Vessel`)
+
 
 map_borders_13 <- subset(states, region %in% c("oregon", "washington", "idaho", "montana"))
 
@@ -1112,7 +1385,7 @@ ggplot() +
   geom_polygon(data=map_borders_13, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_13, aes(x=Longitude, y=Latitude, color=`Main Cause of Accident`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths\nin District 13 Region (2019)", subtitle = "Alcohol use was the primary cause of accident in 24 percent of cases") + 
+               labs(title="Reported Recreational Boating Deaths in District 13 Region (2019)", subtitle = "Operation of vessel was the primary cause of accident in 45 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -1129,7 +1402,7 @@ ggplot() +
   geom_polygon(data=map_borders_13, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_13, aes(x=Longitude, y=Latitude, color=`AccidentEvent1`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths in District 13 Region (2019)", subtitle = "Capsizing and falls overboard both accounted for in 33 percent of cases respectively") + 
+               labs(title="Reported Recreational Boating Deaths in District 13 Region (2019)", subtitle = "Capsizing and falls overboard both accounted for 33 percent of cases respectively") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -1163,7 +1436,7 @@ ggplot() +
   geom_polygon(data=map_borders_13, aes(x=long, y=lat, group = group), color="black", fill="#303030", size=1.15) + 
   #Plotting Accident Coordinates Observed
   geom_point(data=Fatality_Coordinates_13, aes(x=Longitude, y=Latitude, color=`Type of Vessel`,size=`Number of Deaths`)) +
-               labs(title="Reported Recreational Boating Deaths in District 13 Region (2019)", subtitle = "Open motorboat fatalities accounted for 21 percent of cases") + 
+               labs(title="Reported Recreational Boating Deaths in District 13 Region (2019)", subtitle = "Motorized vessel fatalities accounted for 41 percent of cases") + 
   dark_mode(theme_minimal()) + 
   scale_size_continuous(breaks=c(1,2,3)) + 
   theme(text=element_text(family="Rockwell", color="white"),
@@ -1188,8 +1461,8 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+  scale_colour_hue(breaks=c("Under 10 hours", "10 to 100 hours", "101 to 500 hours", "Over 500 hours", "No operator", "Unknown"))
 
 ggplot(data=map_borders_13) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -1220,6 +1493,8 @@ filter(State %in% c("HI")) %>%
   filter(`Number of Deaths`>0) %>%
   filter(`PFD Worn?`!="NA") 
 
+
+
 map_borders_14 <- subset(states, region %in% c("hawaii"))
 
 ggplot(data=map_borders_14) + 
@@ -1249,6 +1524,44 @@ Fatality_Coordinates_17 <- BARD_2019 %>%
 filter(State %in% c("AK")) %>% 
   filter(`Number of Deaths`>0) %>%
   filter(`PFD Worn?`!="NA") 
+
+# Collapsing categories so that graphs are more readable with fewer colors to analyze
+
+# Opeartion of Vessel Category
+Fatality_Coordinates_17$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_17$`Main Cause of Accident`=="Alcohol use" | Fatality_Coordinates_17$`Main Cause of Accident`=="Excessive speed" | Fatality_Coordinates_17$`Main Cause of Accident`=="Improper lookout" | Fatality_Coordinates_17$`Main Cause of Accident`=="Navigation rules violation" | Fatality_Coordinates_17$`Main Cause of Accident`=="Operator inattention" | Fatality_Coordinates_17$`Main Cause of Accident`=="Operator inexperience" | Fatality_Coordinates_17$`Main Cause of Accident`=="Drug use" | Fatality_Coordinates_17$`Main Cause of Accident`=="Failure to vent" | Fatality_Coordinates_17$`Main Cause of Accident`=="Inadequate onboard navigation lights" | Fatality_Coordinates_17$`Main Cause of Accident`=="Restricted vision" | Fatality_Coordinates_17$`Main Cause of Accident`=="Sharp turn" | Fatality_Coordinates_17$`Main Cause of Accident`=="Starting in gear", paste("Operation of vessel"), Fatality_Coordinates_17$`Main Cause of Accident`)
+
+# Environment Category 
+Fatality_Coordinates_17$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_17$`Main Cause of Accident`=="Hazardous waters" | Fatality_Coordinates_17$`Main Cause of Accident`=="Weather" | Fatality_Coordinates_17$`Main Cause of Accident`=="Congested waters" | Fatality_Coordinates_17$`Main Cause of Accident`=="Dam/lock" | Fatality_Coordinates_17$`Main Cause of Accident`=="Force of wake/wave" | Fatality_Coordinates_17$`Main Cause of Accident`=="Missing/inadequate navigation aid", paste("Environment"), Fatality_Coordinates_17$`Main Cause of Accident`)
+
+# Failure of boat or boat equipment 
+Fatality_Coordinates_17$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_17$`Main Cause of Accident`=="Machinery failure" | Fatality_Coordinates_17$`Main Cause of Accident`=="Equipment failure" | Fatality_Coordinates_17$`Main Cause of Accident`=="Hull failure", paste("Failure of boat or boat equipment"), Fatality_Coordinates_17$`Main Cause of Accident`)
+
+# Loading of passengers or gear catgegory
+Fatality_Coordinates_17$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_17$`Main Cause of Accident`=="Improper loading" | Fatality_Coordinates_17$`Main Cause of Accident`=="Overloading" | Fatality_Coordinates_17$`Main Cause of Accident`=="Improper anchoring" | Fatality_Coordinates_17$`Main Cause of Accident`=="People on gunwale, bow, or transom", paste("Loading of passengers or gear"), Fatality_Coordinates_17$`Main Cause of Accident`)
+
+# Miscellaneous category
+Fatality_Coordinates_17$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_17$`Main Cause of Accident`=="Other" | Fatality_Coordinates_17$`Main Cause of Accident`=="Sudden medical condition" | Fatality_Coordinates_17$`Main Cause of Accident`=="Unknown" | Fatality_Coordinates_17$`Main Cause of Accident`=="Carbon monoxide exposure" | Fatality_Coordinates_17$`Main Cause of Accident`=="Ignition of fuel or vapor", paste("Miscellaneous"), Fatality_Coordinates_17$`Main Cause of Accident`)
+
+# Collapsing our AccidentEvent1 into broader categories
+# General collision/grounding
+Fatality_Coordinates_17$AccidentEvent1 <- ifelse(Fatality_Coordinates_17$AccidentEvent1=="Collision with fixed object" | Fatality_Coordinates_17$AccidentEvent1=="Collision with recreational vessel" | Fatality_Coordinates_17$AccidentEvent1=="Collision with submerged object" | Fatality_Coordinates_17$AccidentEvent1=="Grounding" | Fatality_Coordinates_17$AccidentEvent1=="Collision with floating object" | Fatality_Coordinates_17$AccidentEvent1=="Collision with commercial vessel", paste("Collision/Grounding"), Fatality_Coordinates_17$AccidentEvent1)
+
+# General departing/ejected from vessel
+Fatality_Coordinates_17$AccidentEvent1 <- ifelse(Fatality_Coordinates_17$AccidentEvent1=="Person departed vessel" | Fatality_Coordinates_17$AccidentEvent1=="Person ejected from vessel", paste("Person departed/ejected from vessel"), Fatality_Coordinates_17$AccidentEvent1)
+
+# Placing AccidentEvent1s that rarely happen into an "Other" category
+Fatality_Coordinates_17$AccidentEvent1 <- ifelse(Fatality_Coordinates_17$AccidentEvent1=="Skier mishap" | Fatality_Coordinates_17$AccidentEvent1=="Other" | Fatality_Coordinates_17$AccidentEvent1=="Person struck by propeller" | Fatality_Coordinates_17$AccidentEvent1=="Carbon monoxide exposure"| Fatality_Coordinates_17$AccidentEvent1=="Fire/explosion (non-fuel)" | Fatality_Coordinates_17$AccidentEvent1=="Fall in vessel", paste("Other"), Fatality_Coordinates_17$AccidentEvent1)
+
+# Collapsing our Type of Vessel category into Motorized, Non-Motorized, and paddlecraft
+# We'll start with the motorized
+Fatality_Coordinates_17$`Type of Vessel` <- ifelse(Fatality_Coordinates_17$`Type of Vessel`=="Airboat" | Fatality_Coordinates_17$`Type of Vessel`=="Cabin motorboat" | Fatality_Coordinates_17$`Type of Vessel`=="Open motorboat"| Fatality_Coordinates_17$`Type of Vessel`=="Personal watercraft"| Fatality_Coordinates_17$`Type of Vessel`=="Pontoon", paste("Motorized"), Fatality_Coordinates_17$`Type of Vessel` )
+
+# Non-Motorized
+Fatality_Coordinates_17$`Type of Vessel` <- ifelse(Fatality_Coordinates_17$`Type of Vessel`=="Houseboat" | Fatality_Coordinates_17$`Type of Vessel`=="Auxiliary sail" | Fatality_Coordinates_17$`Type of Vessel`=="Inflatable"| Fatality_Coordinates_17$`Type of Vessel`=="Sail (only)", paste("Non-motorized"), Fatality_Coordinates_17$`Type of Vessel` )
+
+# Paddlecraft
+Fatality_Coordinates_17$`Type of Vessel` <- ifelse(Fatality_Coordinates_17$`Type of Vessel`=="Canoe" | Fatality_Coordinates_17$`Type of Vessel`=="Kayak" | Fatality_Coordinates_17$`Type of Vessel`=="Rowboat"| Fatality_Coordinates_17$`Type of Vessel`=="Standup Paddleboard", paste("Paddlecraft"), Fatality_Coordinates_17$`Type of Vessel`)
+
 
 map_borders_17 <- subset(states, region %in% c("alaska"))
 
@@ -1301,7 +1614,7 @@ labs(title="Recreational Boating Deaths in District 17 Region (2019)", subtitle 
   #+ggsave("District 1  Alcohol Mapped.png")
 
 ggmap(District17_map) + geom_point(data=Fatality_Coordinates_17, mapping = aes(x=Longitude, y=Latitude, size=`Number of Deaths`, color=`Main Cause of Accident`)) +
-labs(title="Recreational Boating Deaths in District 17 Region (2019)", subtitle = "The primary cause of accident was listed as 'other' in 25 percent of cases") +
+labs(title="Recreational Boating Deaths in District 17 Region (2019)", subtitle = "Operation of vessel was the primary cause of accident in 25 percent of cases") +
    theme(text=element_text(family="Rockwell", color="black"),
         plot.title=element_text(hjust=0.0, size=12),
         axis.title = element_blank(),
@@ -1313,7 +1626,7 @@ labs(title="Recreational Boating Deaths in District 17 Region (2019)", subtitle 
   #+ggsave("District 1  Accident Cause Mapped.png")
 
 ggmap(District17_map) + geom_point(data=Fatality_Coordinates_17, mapping = aes(x=Longitude, y=Latitude, size=`Number of Deaths`, color=`AccidentEvent1`)) +
-labs(title="Recreational Boating Deaths in District 17 Region (2019)", subtitle = "The primary accident event was listed as 'other' in 25 percent of cases") +
+labs(title="Recreational Boating Deaths in District 17 Region (2019)", subtitle = "The primary accident event was listed as 'other' in 33 percent of cases") +
    theme(text=element_text(family="Rockwell", color="black"),
         plot.title=element_text(hjust=0.0, size=12),
         axis.title = element_blank(),
@@ -1337,7 +1650,7 @@ labs(title="Recreational Boating Deaths in District 17 Region (2019)", subtitle 
   # +ggsave("District 1 Deaths COD Mapped.png")
 
 ggmap(District17_map) + geom_point(data=Fatality_Coordinates_17, mapping = aes(x=Longitude, y=Latitude, size=`Number of Deaths`, color=`Type of Vessel`)) +
-labs(title="Recreational Boating Deaths in District 17 Region (2019)", subtitle = "Canoe fatalities accounted for 50 percent of cases") +
+labs(title="Recreational Boating Deaths in District 17 Region (2019)", subtitle = "Paddlecraft fatalities accounted for 67 percent of cases") +
    theme(text=element_text(family="Rockwell", color="black"),
         plot.title=element_text(hjust=0.0, size=12),
         axis.title = element_blank(),
@@ -1357,8 +1670,8 @@ labs(title="Recreational Boating Deaths in District 17 Region (2019)", subtitle 
         axis.ticks = element_blank()) +
       scale_size_continuous(breaks=c(1,2,3)) +
         guides(size = guide_legend(order=1),
-               color = guide_legend(order = 2)) 
-  # +ggsave("District 1 Deaths Experience Mapped.png")
+               color = guide_legend(order = 2)) +
+  scale_colour_hue(breaks=c("Under 10 hours", "10 to 100 hours", "101 to 500 hours", "Over 500 hours", "No operator", "Unknown"))
 
 ggmap(District17_map) + geom_point(data=Fatality_Coordinates_17, mapping = aes(x=Longitude, y=Latitude, size=`Number of Deaths`, color=`Operator Education`)) +
 labs(title="Recreational Boating Deaths in District 17 Region (2019)", subtitle = "Operator education was unknown in 75 percent of cases") +
