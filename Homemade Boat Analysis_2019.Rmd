@@ -1,0 +1,362 @@
+---
+title: "Overview Table_2019"
+author: "Andrew Iraola"
+date: "8/27/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Vessel Table Descriptive Statistics for 2019
+```{r}
+library(readxl)
+library(dplyr)
+library(ggplot2)
+
+Vessel_Table <- read_excel("Vessel Table_2019.xlsx")
+
+Homemade_Table <- read_excel("Homemade Boat Query.xlsx")
+```
+           
+
+```{r}
+# First, let's look at the number of total incidents
+df_State1 <- Vessel_Table %>%
+  group_by(State) %>%
+  summarise(counts = n()) 
+
+ggplot(df_State1, aes(x = State, y = counts)) +
+  geom_bar(aes(reorder(State, counts), counts), fill = "#0073C2FF", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) + 
+ labs(y = "Number of Incidents", fill="test", x = "State (Acronym)", title = "Number of Vessel Incidents by State") +
+  theme(axis.text.x = element_text(angle = 65, hjust = 1)) 
+
+df_State2 <- Homemade_Table %>%
+  group_by(State) %>%
+  summarise(counts = n()) 
+
+ggplot(df_State2, aes(x = State, y = counts)) +
+  geom_bar(aes(reorder(State, counts), counts), fill = "#0073C2FF", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) + 
+ labs(y = "Number of Incidents", fill="test", x = "State (Acronym)", title = "Number of Homemade Vessel Incidents by State") +
+  theme(axis.text.x = element_text(angle = 65, hjust = 1)) 
+
+# Now, Lets examine the number of deaths 
+df_StateDeaths1 <- Vessel_Table %>%
+  group_by(State) %>%
+  filter(NumberDeaths >0) %>%
+  summarise(counts = n()) 
+
+ggplot(df_StateDeaths1, aes(x = State, y = counts)) +
+  geom_bar(aes(reorder(State, counts), counts), fill = "#0073C2FF", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) + 
+ labs(y = "Number of Deaths", fill="test", x = "State (Acronym)", title = "Number of Vessel Deaths by State") +
+  theme(axis.text.x = element_text(angle = 65, hjust = 1)) 
+
+df_StateDeaths2 <- Homemade_Table %>%
+  group_by(State) %>%
+  filter(NumberDeaths >0) %>%
+  summarise(counts = n()) 
+
+ggplot(df_StateDeaths2, aes(x = State, y = counts)) +
+  geom_bar(aes(reorder(State, counts), counts), fill = "#0073C2FF", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) + 
+ labs(y = "Number of Deaths", fill="test", x = "State (Acronym)", title = "Number of Homemade Vessel Deaths by State") +
+  theme(axis.text.x = element_text(angle = 65, hjust = 1)) 
+
+# Now, Lets examine the number of injuries 
+df_StateInjuries1 <- Vessel_Table %>%
+  group_by(State) %>%
+  filter(NumberInjured >0) %>%
+  summarise(counts = n()) 
+ 
+ggplot(df_StateInjuries1, aes(x = State, y = counts)) +
+  geom_bar(aes(reorder(State, counts), counts), fill = "#0073C2FF", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) + 
+ labs(y = "Number of Injured", fill="test", x = "State (Acronym)", title = "Number of Vessel Injuries by State") +
+  theme(axis.text.x = element_text(angle = 65, hjust = 1)) 
+
+
+df_StateInjuries2 <- Homemade_Table %>%
+  group_by(State) %>%
+  filter(NumberInjured >0) %>%
+  summarise(counts = n()) 
+ 
+ggplot(df_StateInjuries2, aes(x = State, y = counts)) +
+  geom_bar(aes(reorder(State, counts), counts), fill = "#0073C2FF", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) + 
+ labs(y = "Number of Injured", fill="test", x = "State (Acronym)", title = "Number of Vessel Injuries by State") +
+  theme(axis.text.x = element_text(angle = 65, hjust = 1)) 
+
+```
+
+```{r}
+#Analysis by Type of Body Of Water
+df_BodyofWaterType1 <- Vessel_Table %>%
+  group_by(TypeOfBodyOfWater) %>%
+  summarise(counts=n()) 
+ 
+BodyOfWaterType1 <-df_BodyofWaterType1 %>%
+  ggplot(aes(x=TypeOfBodyOfWater, y=counts)) +
+  geom_bar(aes(reorder(TypeOfBodyOfWater, -counts), counts), fill="dodgerblue", stat = "identity")  +
+  labs(y="Total Incidents", x="", title="Number of Incidents by Body of Water Type") + 
+  geom_text(aes(label = counts), vjust=-0.5)  + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1))
+
+BodyOfWaterType1
+
+df_BodyofWaterType2 <- Homemade_Table %>%
+  group_by(TypeOfBodyOfWater) %>%
+  summarise(counts=n()) 
+ 
+BodyOfWaterType2 <-df_BodyofWaterType2 %>%
+  ggplot(aes(x=TypeOfBodyOfWater, y=counts)) +
+  geom_bar(aes(reorder(TypeOfBodyOfWater, -counts), counts), fill="dodgerblue", stat = "identity")  +
+  labs(y="Total Incidents", x="", title="Number of Incidents by Body of Water Type") + 
+  geom_text(aes(label = counts), vjust=-0.5)  + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1))
+
+BodyOfWaterType2
+```
+
+```{r}
+# Let's look at the accident causes and events
+## We'll begin by looking at the `CauseCat` 
+df_CauseofIncident1 <- Vessel_Table %>%
+  group_by(CauseCat) %>%
+  summarise(counts = n())
+
+ggplot(df_CauseofIncident1, aes(x = CauseCat, y = counts)) +
+  geom_bar(aes(reorder(CauseCat, -counts), counts),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  labs(y = "Total Incidents", fill="test", x = "", title = "Number of Incidents by Cause Category") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+df_CauseofIncident2 <- Homemade_Table %>%
+  group_by(CauseCat) %>%
+  summarise(counts = n())
+
+ggplot(df_CauseofIncident2, aes(x = CauseCat, y = counts)) +
+  geom_bar(aes(reorder(CauseCat, -counts), counts),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  labs(y = "Total Incidents", fill="test", x = "", title = "Number of Homemade Vessel Incidents by Cause Category") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+
+```{r}
+# Next, we'll look at VesselCause1
+df_Cause1 <- Vessel_Table %>%
+  group_by(VesselCause1) %>%
+  summarise(counts = n()) 
+
+ggplot(df_Cause1, aes(x = VesselCause1, y = counts)) +
+  geom_bar(aes(reorder(VesselCause1, -counts), counts),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  labs(y = "Total Incidents", fill="test", x = "", title = "Number of Incidents by Primary Accident Cause") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+df_Cause2 <- Homemade_Table %>%
+  group_by(VesselCause1) %>%
+  summarise(counts = n()) 
+
+ggplot(df_Cause2, aes(x = VesselCause1, y = counts)) +
+  geom_bar(aes(reorder(VesselCause1, -counts), counts),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  labs(y = "Total Incidents", fill="test", x = "", title = "Number of Incidents by Primary Accident Cause") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r}
+# What do we know about the machinery/equipment failures that occured with homemade boats?
+table(Homemade_Table$MachineryFailure)
+table(Homemade_Table$`Final Dataset_OtherEquipmentFailure`)
+
+table(Homemade_Table$EquipmentFailure)
+table(Homemade_Table$`Final Dataset_OtherMachineryFailure`)
+
+table(Homemade_Table$OtherVesselCause)
+table(Homemade_Table$OtherVesselEvent)
+```
+
+```{r}
+# Let's look at the accident events
+df_Event1 <- Vessel_Table %>%
+  group_by(VesselEvent1) %>%
+  summarise(counts = n()) 
+
+ggplot(df_Event1, aes(x = VesselEvent1, y = counts)) +
+  geom_bar(aes(reorder(VesselEvent1, -counts), counts),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  labs(y = "Total Incidents", fill="test", x = "", title = "Number of Incidents by Primary Accident Event") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+
+
+df_Event2 <- Homemade_Table %>%
+  group_by(VesselEvent1) %>%
+  summarise(counts = n()) 
+
+ggplot(df_Event2, aes(x = VesselEvent1, y = counts)) +
+  geom_bar(aes(reorder(VesselEvent1, -counts), counts),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  labs(y = "Total Incidents", fill="test", x = "", title = "Number of Homemade Incidents by Primary Accident Event") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+```
+
+```{r}
+# Lets look at Operator Education
+df_Education1 <- Vessel_Table %>%
+  group_by(OperatorEducation) %>%
+  summarise(counts = n()) 
+
+ggplot(df_Education1, aes(x = OperatorEducation, y = counts)) +
+  geom_bar(aes(reorder(OperatorEducation, -counts), counts),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  labs(y = "Number of Incidents", fill="test", x = "", title = "Number of Incidents by Operator Education") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+
+
+df_Education2 <- Homemade_Table %>%
+  group_by(OperatorEducation) %>%
+  summarise(counts = n()) 
+
+ggplot(df_Education2, aes(x = OperatorEducation, y = counts)) +
+  geom_bar(aes(reorder(OperatorEducation, -counts), counts),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  labs(y = "Number of Incidents", fill="test", x = "", title = "Number of Homemade Vessel Incidents by Operator Education") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+```
+
+```{r}
+# Lets look at Operator Education
+df_Experience1 <- Vessel_Table %>%
+  group_by(OperatorExperience) %>%
+  summarise(counts = n()) 
+
+ggplot(df_Experience1, aes(x = OperatorExperience, y = counts)) +
+  geom_bar(aes(reorder(OperatorExperience, -counts), counts),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  labs(y = "Number of Incidents", fill="test", x = "", title = "Number of Incidents by Operator Experience") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+
+
+df_Experience2 <- Homemade_Table %>%
+  group_by(OperatorExperience) %>%
+  summarise(counts = n()) 
+
+ggplot(df_Experience2, aes(x = OperatorExperience, y = counts)) +
+  geom_bar(aes(reorder(OperatorExperience, -counts), counts),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  labs(y = "Number of Incidents", fill="test", x = "", title = "Number of Homemade Vessel Incidents by Operator Experience") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+```
+
+
+```{r}
+# Lets look at Operator Education
+df_VesselType1 <- Vessel_Table %>%
+  group_by(VesselType) %>%
+  summarise(counts = n()) 
+
+ggplot(df_VesselType1, aes(x = VesselType, y = counts)) +
+  geom_bar(aes(reorder(VesselType, -counts), counts),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  labs(y = "Number of Incidents", fill="test", x = "", title = "Number of Incidents by Vessel Type") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+```
+
+PUT THIS NEXT GRAPH INTO YOUR POWERPOINT ON MONDAY
+```{r}
+df_VesselType2 <- Homemade_Table %>%
+  group_by(VesselType) %>%
+  summarise(counts = n()) 
+
+ggplot(df_VesselType2, aes(x = VesselType, y = counts)) +
+  geom_bar(aes(reorder(VesselType, -counts), counts),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  labs(y = "Number of Incidents", fill="test", x = "", title = "Number of Homemade Boat Incidents by Vessel Type") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+```
+
+```{r}
+df_Hull2 <- Homemade_Table %>%
+  group_by(HullMaterial) %>%
+  summarise(counts = n()) 
+
+ggplot(df_Hull2, aes(x = HullMaterial, y = counts)) +
+  geom_bar(aes(reorder(HullMaterial, -counts), counts),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  labs(y = "Number of Incidents", fill="test", x = "", title = "Number of Homemade Vessel Incidents by Hull Material") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+
+df_Fuel2 <- Homemade_Table %>%
+  group_by(Fuel) %>%
+  summarise(counts = n()) 
+
+ggplot(df_Fuel2, aes(x = Fuel, y = counts)) +
+  geom_bar(aes(reorder(Fuel, -counts), counts),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  labs(y = "Number of Incidents", fill="test", x = "", title = "Number of Homemade Vessel Incidents by Fuel Type") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+
+```
+
+```{r}
+# Nothing particularly interesting here
+# Lets look at the operation at the time of incident
+df_Operation1 <- Vessel_Table %>%
+  group_by(Operation) %>%
+  summarise(counts = n()) 
+
+ggplot(df_Operation1, aes(x = Operation, y = counts)) +
+  geom_bar(aes(reorder(Operation, -counts), counts),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  labs(y = "Number of Incidents", fill="test", x = "", title = "Number of Incidents by Operation") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+
+
+df_Operation2 <- Homemade_Table %>%
+  group_by(Operation) %>%
+  summarise(counts = n()) 
+
+ggplot(df_Operation2, aes(x = Operation, y = counts)) +
+  geom_bar(aes(reorder(Operation, -counts), counts),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  labs(y = "Number of Incidents", fill="test", x = "", title = "Number of Homemade Vessel Incidents by Operation") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+```
+
+
+```{r}
+summary(Vessel_Table$Yearbuilt)
+summary(Homemade_Table$Yearbuilt)
+# The average year built for a vessel in BARD in 2019 was 2002. The average year built specifically focused on homemade vessels was 1989 (13 years prior)
+```
+
+
+```{r}
+df_Activity1 <- Vessel_Table %>%
+  group_by(Activity) %>%
+  summarise(counts = n()) 
+
+ggplot(df_Activity1, aes(x = Activity, y = counts)) +
+  geom_bar(aes(reorder(Activity, -counts), counts),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  labs(y = "Number of Incidents", fill="test", x = "", title = "Number of Incidents by Operation") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+
+
+df_Activity2 <- Homemade_Table %>%
+  group_by(Activity) %>%
+  summarise(counts = n()) 
+
+ggplot(df_Activity2, aes(x = Activity, y = counts)) +
+  geom_bar(aes(reorder(Activity, -counts), counts),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  labs(y = "Number of Incidents", fill="test", x = "", title = "Number of Homemade Vessel Incidents by Activity") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+```
+
+
