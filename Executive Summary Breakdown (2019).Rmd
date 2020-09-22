@@ -1,0 +1,342 @@
+---
+title: "Table 1_2019 Redux"
+author: "Andrew Iraola"
+date: "9/10/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Annual RBS Statistics: Executive Summary Breakdown (2019)
+
+```{r}
+library(readxl)
+library(ggplot2)
+library(dplyr)
+
+Overview_and_Vessel <- read_excel("table 1 redux.xlsx")
+```
+Notes:
+1. This analysis will exclude categories "Unknown" and "Other" as they are not definitively "Motorized", "Non-Motorized", or "Sail" (which will hereby encompass "Sail (only)", "Sail (unknown propulsion) and "Auxiliary sail" )
+2. Houseboat is herein defined as motorized. Though this could be changed if desired. 
+```{r}
+Motorized_Table <- Overview_and_Vessel %>%
+  filter(VesselType=="Airboat"|VesselType=="Cabin motorboat"|VesselType=="Houseboat"|VesselType=="open motorboat"|VesselType=="Open motorboat"|VesselType=="Open Motorboat"|VesselType=="Personal watercraft"|VesselType=="pontoon"|VesselType=="Pontoon") 
+```
+
+3. Decided that inflatables are non-motorized. However, we can change this anytime. 
+```{r}
+NonMotorized_Table <- Overview_and_Vessel %>%
+  filter(VesselType=="Canoe"|VesselType=="Inflatable"|VesselType=="Kayak"|VesselType=="Rowboat"|VesselType=="Standup paddleboard"|VesselType=="Standup Paddleboard")
+```
+
+```{r}
+Sail_Table <- Overview_and_Vessel %>%
+  filter(VesselType=="Auxiliary sail"|VesselType=="Sail (unknown propulsion)"|VesselType=="Sail (only)")
+```
+
+## 1. a. Let's begin by looking at motorized vessel accident causes
+```{r}
+df_MotorizedIncident1 <- Motorized_Table %>%
+  group_by(VesselCause1) %>%
+  summarise(counts = n()) %>%
+  filter(VesselCause1!="None; not at fault") %>%
+  filter(counts >=150)
+
+ggplot(df_MotorizedIncident1, aes(x = VesselCause1, y = counts)) +
+  geom_bar(aes(reorder(VesselCause1, -counts), counts),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  labs(y = "Total Incidents", fill="test", x = "", title = "Top Accident Causes for Motorized Vessels") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_y_continuous(limits = c(0,600)) 
+
+# Now, lets look at deaths 
+df_MotorizedIncident2 <- Motorized_Table %>%
+  group_by(VesselCause1) %>%
+   filter(NumberDeaths>0) %>%
+summarise(counts = sum(NumberDeaths)) %>%
+  filter(counts>=12)
+ 
+ggplot(df_MotorizedIncident2, aes(x = VesselCause1, y = counts)) +
+  geom_bar(aes(reorder(VesselCause1, -counts), counts),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  labs(y = "Total Incidents", fill="test", x = "", title = "Top Fatality Causes for Motorized Vessels") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_y_continuous(limits = c(0,100)) 
+
+# Now, lets look at injuries 
+df_MotorizedIncident3 <- Motorized_Table %>%
+  group_by(VesselCause1) %>%
+   filter(NumberInjured>0) %>%
+   summarise(counts = sum(NumberInjured)) %>%
+   filter(counts>=55)
+ 
+ggplot(df_MotorizedIncident3, aes(x = VesselCause1, y = counts)) +
+  geom_bar(aes(reorder(VesselCause1, -counts), counts),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  labs(y = "Total Incidents", fill="test", x = "", title = "Top Injury Causes for Motorized Vessels") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_y_continuous(limits = c(0,325)) 
+```
+
+## 1. b. Now, let's look at Motorized Events
+```{r}
+df_MotorizedIncident4 <- Motorized_Table %>%
+  group_by(VesselEvent1) %>%
+  summarise(counts = n()) %>%
+  filter(counts>=129)
+
+ggplot(df_MotorizedIncident4, aes(x = VesselEvent1, y = counts)) +
+  geom_bar(aes(reorder(VesselEvent1, -counts), counts),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  labs(y = "Total Incidents", fill="test", x = "", title = "Top 10 Accident Events for Motorized Vessels") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_y_continuous(limits = c(0,1500))
+
+# Now, lets look at deaths 
+df_MotorizedIncident5 <- Motorized_Table %>%
+  group_by(VesselEvent1) %>%
+   filter(NumberDeaths>0) %>%
+   summarise(counts = sum(NumberDeaths)) 
+ 
+ggplot(df_MotorizedIncident5, aes(x = VesselEvent1, y = counts)) +
+  geom_bar(aes(reorder(VesselEvent1, -counts), counts),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  labs(y = "Total Incidents", fill="test", x = "", title = "Top 10 Fatality Events for Motorized Vessels") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  +
+  scale_y_continuous(limits = c(0,150))
+
+# Now, lets look at injuries 
+df_MotorizedIncident6 <- Motorized_Table %>%
+  group_by(VesselEvent1) %>%
+   filter(NumberInjured>0) %>%
+summarise(counts = sum(NumberInjured))
+ 
+ggplot(df_MotorizedIncident6, aes(x = VesselEvent1, y = counts)) +
+  geom_bar(aes(reorder(VesselEvent1, -counts), counts),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  labs(y = "Total Incidents", fill="test", x = "", title = "Top 10 Injury Events for Motorized Vessels") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  +
+  scale_y_continuous(limits = c(0,500))
+```
+
+## 1. c. Lastly, lets get a handle on the numbers
+```{r}
+# Lets count up accidents, injuries, deaths, and drownings
+Motorized_Table %>%
+  count(NumberDeaths) 
+
+Motorized_Table %>%
+  count(NumberDrownings)
+
+Motorized_Table %>%
+  count(NumberInjured)
+
+Motorized_Table %>%
+  count(NumberNonDrownings)
+```
+
+# 2. a. Let's begin by looking at non-motorized accident causes
+```{r}
+df_NonMotorizedIncident1 <- NonMotorized_Table %>%
+  group_by(VesselCause1) %>%
+  summarise(counts = n()) %>%
+  filter(VesselCause1!="None; not at fault") %>%
+  filter(counts>=0)
+
+ggplot(df_NonMotorizedIncident1, aes(x = VesselCause1, y = counts)) +
+  geom_bar(aes(reorder(VesselCause1, -counts), counts),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  labs(y = "Total Incidents", fill="test", x = "", title = "Top Accident Causes for Non-Motorized Vessels") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_y_continuous(limits = c(0,100)) 
+
+# Now, lets look at deaths 
+df_NonMotorizedIncident2 <- NonMotorized_Table %>%
+  group_by(VesselCause1) %>%
+   filter(NumberDeaths>0) %>%
+ summarise(counts = sum(NumberDeaths)) %>%
+  filter(counts>=0)
+ 
+ggplot(df_NonMotorizedIncident2, aes(x = VesselCause1, y = counts)) +
+  geom_bar(aes(reorder(VesselCause1, -counts), counts),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  labs(y = "Total Incidents", fill="test", x = "", title = "Top Fatality Causes for Non-Motorized Vessels") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_y_continuous(limits = c(0,50)) 
+
+# Now, lets look at injuries 
+df_NonMotorizedIncident3 <- NonMotorized_Table %>%
+  group_by(VesselCause1) %>%
+   filter(NumberInjured>0) %>%
+   summarise(counts = sum(NumberInjured)) %>%
+   filter(counts>=0)
+ 
+ggplot(df_NonMotorizedIncident3, aes(x = VesselCause1, y = counts)) +
+  geom_bar(aes(reorder(VesselCause1, -counts), counts),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  labs(y = "Total Incidents", fill="test", x = "", title = "Top Injury Causes for Non-Motorized Vessels") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_y_continuous(limits = c(0,50)) 
+```
+
+# 2. b. Now, lets look at the main events during accidents
+```{r}
+df_NonMotorizedIncident4 <- NonMotorized_Table %>%
+  group_by(VesselEvent1) %>%
+  summarise(counts = n()) %>%
+  filter(counts>=0)
+
+ggplot(df_NonMotorizedIncident4, aes(x = VesselEvent1, y = counts)) +
+  geom_bar(aes(reorder(VesselEvent1, -counts), counts),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  labs(y = "Total Incidents", fill="test", x = "", title = "Top Accident Events for Non-Motorized Vessels") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_y_continuous(limits = c(0,150))
+
+# Now, lets look at deaths 
+df_NonMotorizedIncident5 <- NonMotorized_Table %>%
+  group_by(VesselEvent1) %>%
+   filter(NumberDeaths>0) %>%
+summarise(counts = sum(NumberDeaths)) 
+ 
+ggplot(df_NonMotorizedIncident5, aes(x = VesselEvent1, y = counts)) +
+  geom_bar(aes(reorder(VesselEvent1, -counts), counts),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  labs(y = "Total Incidents", fill="test", x = "", title = "Top Fatality Events for Non-Motorized Vessels") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  +
+  scale_y_continuous(limits = c(0,100))
+
+# Now, lets look at injuries 
+df_NonMotorizedIncident6 <- NonMotorized_Table %>%
+  group_by(VesselEvent1) %>%
+   filter(NumberInjured>0) %>%
+   summarise(counts = sum(NumberInjured)) 
+ 
+ggplot(df_NonMotorizedIncident6, aes(x = VesselEvent1, y = counts)) +
+  geom_bar(aes(reorder(VesselEvent1, -counts), counts),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  labs(y = "Total Incidents", fill="test", x = "", title = "Top Injury Events for Non-Motorized Vessels") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  +
+  scale_y_continuous(limits = c(0,100))
+```
+
+# 2. c. Lastly, lets get a handle on the numbers
+```{r}
+# Lets count up accidents, injuries, deaths, and drownings
+NonMotorized_Table %>%
+  count(NumberDeaths) 
+
+NonMotorized_Table %>%
+  count(NumberDrownings)
+
+NonMotorized_Table %>%
+  count(NumberInjured)
+
+NonMotorized_Table %>%
+  count(NumberNonDrownings)
+```
+
+# 3. a. Let's begin by looking at Sail vessel accident causes
+```{r}
+df_SailIncident1 <- Sail_Table %>%
+  group_by(VesselCause1) %>%
+  summarise(counts = n()) %>%
+  filter(VesselCause1!="None; not at fault") %>%
+  filter(counts >=0)
+
+ggplot(df_SailIncident1, aes(x = VesselCause1, y = counts)) +
+  geom_bar(aes(reorder(VesselCause1, -counts), counts),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  labs(y = "Total Incidents", fill="test", x = "", title = "Top Accident Causes for Sail Vessels") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_y_continuous(limits = c(0,50)) 
+
+# Now, lets look at deaths 
+df_SailIncident2 <- Sail_Table %>%
+  group_by(VesselCause1) %>%
+   filter(NumberDeaths>0) %>%
+summarise(counts = sum(NumberDeaths)) %>%
+filter(counts>=0)
+ 
+ggplot(df_SailIncident2, aes(x = VesselCause1, y = counts)) +
+  geom_bar(aes(reorder(VesselCause1, -counts), counts),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  labs(y = "Total Incidents", fill="test", x = "", title = "Top Fatality Causes for Sail Vessels") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_y_continuous(limits = c(0,10)) 
+
+# Now, lets look at injuries 
+df_SailIncident3 <- Sail_Table %>%
+  group_by(VesselCause1) %>%
+   filter(NumberInjured>0) %>%
+   summarise(counts = sum(NumberInjured)) %>%
+   filter(counts>=0)
+ 
+ggplot(df_SailIncident3, aes(x = VesselCause1, y = counts)) +
+  geom_bar(aes(reorder(VesselCause1, -counts), counts),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  labs(y = "Total Incidents", fill="test", x = "", title = "Top Injury Causes for Sail Vessels") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_y_continuous(limits = c(0,15)) 
+```
+
+## 3. b. Now, let's look at Sail Events
+```{r}
+df_SailIncident4 <- Sail_Table %>%
+  group_by(VesselEvent1) %>%
+  summarise(counts = n()) %>%
+  filter(counts>=0)
+
+ggplot(df_SailIncident4, aes(x = VesselEvent1, y = counts)) +
+  geom_bar(aes(reorder(VesselEvent1, -counts), counts),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  labs(y = "Total Incidents", fill="test", x = "", title = "Top Accident Events for Sail Vessels") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  +
+  scale_y_continuous(limits = c(0,70))
+
+# Now, lets look at deaths 
+df_SailIncident5 <- Sail_Table %>%
+  group_by(VesselEvent1) %>%
+   filter(NumberDeaths>0) %>%
+   summarise(counts = sum(NumberDeaths))
+ 
+ggplot(df_SailIncident5, aes(x = VesselEvent1, y = counts)) +
+  geom_bar(aes(reorder(VesselEvent1, -counts), counts),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  labs(y = "Total Incidents", fill="test", x = "", title = "Top Fatality Events for Sail Vessels") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  +
+  scale_y_continuous(limits = c(0,10))
+
+# Now, lets look at injuries 
+df_SailIncident6 <- Sail_Table %>%
+  group_by(VesselEvent1) %>%
+   filter(NumberInjured>0) %>%
+   summarise(Total = sum(NumberInjured)) 
+ 
+ggplot(df_SailIncident6, aes(x = VesselEvent1, y = Total)) +
+  geom_bar(aes(reorder(VesselEvent1, -Total), Total),fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = Total), vjust = -0.3) +
+  labs(y = "Total Incidents", fill="test", x = "", title = "Top Injury Events for Sail Vessels") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  +
+  scale_y_continuous(limits = c(0,20))
+```
+
+# 3. c. Lastly, lets get a handle on the numbers
+```{r}
+# Lets count up accidents, injuries, deaths, and drownings
+Sail_Table %>%
+  count(NumberDeaths) 
+
+Sail_Table %>%
+  count(NumberDrownings)
+
+Sail_Table %>%
+  count(NumberInjured)
+
+Sail_Table %>%
+  count(NumberNonDrownings)
+```
+
