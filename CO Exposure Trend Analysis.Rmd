@@ -1,0 +1,85 @@
+---
+title: "CO Exposure Trend Analysis"
+author: "Andrew Iraola"
+date: "4/6/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# A. 2014-2019
+
+## Wrangling our Vessel Table
+```{r warning=FALSE, echo=FALSE, message=FALSE}
+#Let's begin by loading in the necessary R packages. Then, we'll apply filters to divide our two groups: 
+library(tidyverse)
+library(readxl)
+library(dplyr)
+library(tinytex)
+
+Vessel_table1 <- read_excel("Vessel_2014-19.xlsx")
+```
+
+```{r echo=FALSE}
+# Go through OtherVesselEvent and OtherVesselCause to ensure there aren't any missing mentions of CO that are not captured by the below dataframe filtering. This should be done manually, as occassionally CO mentions are mispelled, or unique (ex. CO, carbon monixide poisening, etc)
+
+CO1 <- Vessel_table1 %>%
+  filter(VesselEvent1=="Carbon monoxide exposure") 
+
+CO2 <- Vessel_table1 %>%
+  filter(VesselEvent2=="Carbon monoxide exposure")
+
+CO3 <- Vessel_table1 %>%
+  filter(VesselEvent3=="Carbon monoxide exposure")
+
+CO4 <- Vessel_table1 %>%
+  filter(VesselCause1=="Carbon monoxide exposure")
+
+CO5 <- Vessel_table1 %>%
+  filter(VesselCause2=="Carbon monoxide exposure")
+
+CO6 <- Vessel_table1 %>%
+  filter(VesselCause3=="Carbon monoxide exposure")
+
+CO_Total1 <- rbind(CO1, CO2, CO3, CO4, CO5, CO6)
+
+# Now go through and delete duplicate BARDIDs
+CO_Vessel_Total1 <- unique(CO_Total1)
+
+#write_excel_csv(CO_Vessel_Total1,"CO_VesselTable_Totalmente.csv")
+```
+
+## Wrangling our Deceased Table
+```{r}
+Deceased_table1 <- read_excel("Deceased_2014-19.xlsx")
+
+CO_Deceased_Table1 <- Deceased_table1 %>%
+  filter(CauseofDeath=="Carbon monoxide poisoning")
+
+CO_Vessel_Total1 %>%
+  count(NumberDeaths)
+# Sums to 33 deaths over periods 2014-2019
+
+# This table is missing 8 deaths that are recorded in the dataframe (`CO_VesselTable_Table`) above.
+
+# Now my best guess on what to do, tells me to look at each BARDID for the 8 potentially missing CO deaths during this time. Although the Vessel table captures an additional 8 cases of CO exposure, it does not necessarily mean that it was the cause of death. Might be simply related to it. 
+# However, when Verne is asking for "CO related deaths", does he want the deaths where CO is the written cause....or simply those where a death occured related to CO directly or indirectly..
+```
+
+## Wrangling our Injuries Table
+```{r}
+Injured_table1 <- read_excel("Injured_2014-19.xlsx")
+
+CO_Injured_Table1 <- Injured_table1 %>%
+  filter(InjuryType=="Carbon monoxide")
+
+CO_Injured_Table1
+
+# Now, comparing to our vessel table mentions of CO as `Event` or `Cause`
+CO_Vessel_Total1 %>%
+  count(NumberInjured)
+
+# Injuries appear to be in-line with each other. All are accounted for across both tables for 2014-2019. 
+```
+
