@@ -1,0 +1,94 @@
+---
+title: "Fatality Forecasting"
+author: "Andrew Iraola"
+date: "4/30/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Fatality Forecasting
+```{r}
+# Loading in necessary packages
+library(readxl)
+library(forecast)
+```
+
+```{r}
+# Loading in our datasets
+filepath <- "Deaths2.xlsx"
+#Reading in our Excel file, disregarding column names and refering to sheet #1
+dataRaw <- read_excel(filepath, col_names = FALSE, sheet = 1)
+
+tsData=ts(dataRaw, start=c(1998, 10), end=c(2019, 12), frequency = 12)
+```
+
+```{r}
+training<- window(tsData,start=c(1998,10),end=c(2019,12), frequency = 12)
+
+test<- window(tsData,start=c(2018,1))
+
+df_test<-as.data.frame(test)
+orderSA=1
+
+plot(tsData)
+##Naive Forecasting Method
+naive_forecast<-naive(tsData,h=28)
+plot(naive_forecast, col="red", main="Naive" )
+print("Naive Forecast")
+print(naive_forecast)
+
+#Simple Exponential Smoothing
+SES_forecast<-ses(tsData,initial = "optimal",h=28)
+plot(SES_forecast, col="red", main="SES" )
+print("SES Forecast")
+print(SES_forecast)
+
+#Holt's Trending Method-Trend No Seasonality
+holt_forecast<-holt(tsData,initial = "optimal",h=28)
+plot(holt_forecast, col="red", main="Holt" )
+print("Holt Forecast")
+print(holt_forecast)
+
+#Holt Winters-Trend and Seasonality
+hw_forecast<-hw(tsData,initial = "optimal",h=28)
+plot(hw_forecast, col="red", main="Holt-Winters" )
+print("Holt-Winters Forecast")
+print(hw_forecast)
+
+#ARIMA
+arima_2<-auto.arima(tsData)
+arima_forecast<-forecast::forecast(arima_2,h=28)
+plot(arima_forecast, col="red", main="ARIMA" )
+print("ARIMA")
+print(arima_forecast)
+
+#Simple Moving Average
+MovingAverageModel_2<-ma(tsData,order = orderSA)
+SMA_forecast<-forecast(MovingAverageModel_2,h=28)
+plot(SMA_forecast, col="red", main="SMA" )
+print("SMA")
+print(SMA_forecast)
+
+# How many periods would wel ike to forecast outwardly into the future? 2026? 2028? 
+```
+
+Now, let's check MAPE scores for accuracy
+```{r}
+accuracy(naive_forecast)
+accuracy(SES_forecast)
+accuracy(holt_forecast)
+accuracy(hw_forecast)
+accuracy(arima_forecast)
+accuracy(SMA_forecast)
+# We can see from this that the Holt-Winters with seasonality has the best forecasting score based on lowest MAPE. 
+```
+
+
+
+
+
+
+
