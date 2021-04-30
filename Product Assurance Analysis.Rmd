@@ -1,0 +1,1235 @@
+---
+title: "Annual Product Assurance Analysis (2019)"
+author: "Coded by Andrew Iraola"
+date: "March 2021"
+output:
+  pdf_document: 
+  toc: true
+  toc_depth: 2
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r warning=FALSE, echo=FALSE, message=FALSE}
+#Let's begin by loading in the necessary R packages. Then, we'll apply filters to divide our two groups: 
+#Boats under 20', and boats from 20'-26'
+library(tidyverse)
+library(readxl)
+library(dplyr)
+library(tinytex)
+
+Vessel_table <- read_excel("2019_Vessel.xlsx")
+
+Boats_lessthan20 <- Vessel_table %>%
+  filter(Length<20, EngineType=="Outboard")
+
+Boats_20to26 <- Vessel_table %>%
+  filter(Length>=20,Length<=26, EngineType=="Outboard")
+```
+
+## I. Outboard Vessels Less Than 20 Feet in Length
+### A. Fire/Explosion (fuel) Related
+First, let's wrangle any cases that have `Fire/explosion (fuel)` listed as the first, second, or third `VesselEvent`. We'll name this group, `Fuel_related_under20`.
+```{r echo=FALSE}
+Fuel_related1 <- Boats_lessthan20 %>%
+  filter(VesselEvent1=="Fire/explosion (fuel)") 
+
+Fuel_related2 <- Boats_lessthan20 %>%
+  filter(VesselEvent2=="Fire/explosion (fuel)")
+
+Fuel_related3 <- Boats_lessthan20 %>%
+  filter(VesselEvent3=="Fire/explosion (fuel)")
+
+Fuel_related_under20 <- rbind(Fuel_related1, Fuel_related2, Fuel_related3)
+```
+
+Note: Taking a look at the R "Environment" window tells us how many total fire/explosion cases there were related to fuel during this period. Let's generate some basic descriptive statistics.
+```{r, echo=FALSE}
+df_VesselCause1_fuelunder20<- Fuel_related_under20 %>%
+  group_by(VesselCause1) %>%
+  summarise(counts = n()) 
+
+df_VesselCause2_fuelunder20<- Fuel_related_under20 %>%
+  group_by(VesselCause2) %>%
+  summarise(counts = n()) 
+
+df_VesselCause3_fuelunder20<- Fuel_related_under20 %>%
+  group_by(VesselCause3) %>%
+  summarise(counts = n()) 
+# If you summarize the values for each of the three dataframes above, you can get to how many total causes are mentioned for either cause1, cause2, or cause3
+df_VesselCause1_fuelunder20
+df_VesselCause2_fuelunder20
+df_VesselCause3_fuelunder20
+```
+
+```{r echo=FALSE}
+df_VesselCause1_fuelunder20 <- Fuel_related_under20 %>%
+  select(VesselCause1, VesselCause2, VesselCause3)
+
+df_VesselCause2_fuelunder20 <- Fuel_related_under20 %>%
+  select(VesselCause1,VesselCause2, VesselCause3) %>%
+  mutate("VesselCause1"=VesselCause2)
+
+df_VesselCause3_fuelunder20 <- Fuel_related_under20 %>%
+  select(VesselCause1,VesselCause3, VesselCause2) %>%
+  mutate("VesselCause1"=VesselCause3)
+
+Fuel_related_under20_CauseTally <- rbind(df_VesselCause1_fuelunder20, df_VesselCause2_fuelunder20, df_VesselCause3_fuelunder20)
+
+Fuel_related_under20_CauseTally1 <- Fuel_related_under20_CauseTally %>%
+  group_by(VesselCause1) %>%
+  filter(VesselCause1!="na") %>%
+  summarise(counts = n())
+
+# Now, lets graph it up! Finally..
+ggplot(Fuel_related_under20_CauseTally1, aes(x = VesselCause1, y= counts )) +
+  geom_bar(aes(reorder(VesselCause1, counts), counts), fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+    labs(y = "Number of Vessel Incidents", fill="test", x = "Incident Cause", title = "Number of Fire/Explosion (Fuel) Incidents by Causes Listed", subtitle = "For vessels under 20 feet") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) + 
+  scale_y_continuous(limits = c(0, 15)) 
+```
+
+
+
+
+```{r echo=FALSE}
+df_VesselMachineryFailure_fuelunder20 <- Fuel_related_under20 %>%
+  group_by(VesselMachineryFailure) %>%
+  filter(VesselMachineryFailure!="na") %>%
+  summarise(counts = n()) 
+
+ggplot(df_VesselMachineryFailure_fuelunder20, aes(x = VesselMachineryFailure, y = counts)) +
+  geom_bar(aes(reorder(VesselMachineryFailure, counts), counts), fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+    labs(y = "Number of Vessel Incidents", fill="test", x = "Machinery Failure (Type)", title = "Number of Fire/Explosion (Fuel) Incidents by\nMachinery Failure Reported", subtitle = "For vessels under 20 feet") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) +
+  scale_y_continuous(limits = c(0, 8))
+```
+
+
+
+
+Now, specifically focusing on equipment failures.
+```{r}
+df_VesselEquipmentFailure_fuelunder20 <- Fuel_related_under20 %>%
+  group_by(VesselEquipmentFailure) %>%
+  filter(VesselEquipmentFailure!="na") %>%
+  summarise(counts = n()) 
+#As we can see, there were no incidents, where a fire extinguisher failed..
+# However, if we did find any, this code section would detail it. 
+```
+
+
+Looking at this another way, what lengths under 20 feet had fire/explosion related accidents?
+
+```{r echo=FALSE}
+df_VesselLength_fuelunder20<- Fuel_related_under20 %>%
+  group_by(Length) %>%
+  summarise(counts = n()) 
+
+ggplot(df_VesselLength_fuelunder20, aes(x = Length, y = counts)) +
+  geom_bar(aes(reorder(Length, counts), counts), fill = "dodgerblue", stat = "identity") +
+    labs(y = "Number of Vessel Incidents", fill="test", x = "Length", title = "Number of Fire/Explosion (Fuel) Incidents by Vessel Length", subtitle = "For vessels under 20 feet") + 
+  theme(axis.text.x = element_text()) +
+  scale_y_continuous(limits = c(0, 8))
+```
+
+### Fire/Explosion (non-fuel) Related
+```{r echo=FALSE}
+NonFuel_related1 <- Boats_lessthan20 %>%
+  filter(VesselEvent1=="Fire/explosion (non-fuel)") 
+
+NonFuel_related2 <- Boats_lessthan20 %>%
+  filter(VesselEvent2=="Fire/explosion (non-fuel)")
+
+NonFuel_related3 <- Boats_lessthan20 %>%
+  filter(VesselEvent3=="Fire/explosion (non-fuel)")
+
+NonFuel_related_under20 <- rbind(NonFuel_related1, NonFuel_related2, NonFuel_related3)
+```
+
+
+```{r echo=FALSE}
+df_VesselCause1_Nonfuelunder20 <- NonFuel_related_under20 %>%
+  select(VesselCause1, VesselCause2, VesselCause3)
+
+df_VesselCause2_Nonfuelunder20 <- NonFuel_related_under20 %>%
+  select(VesselCause1,VesselCause2, VesselCause3) %>%
+  mutate("VesselCause1"=VesselCause2)
+
+df_VesselCause3_Nonfuelunder20 <- NonFuel_related_under20 %>%
+  select(VesselCause1,VesselCause3, VesselCause2) %>%
+  mutate("VesselCause1"=VesselCause3)
+
+NonFuel_related_under20_CauseTally <- rbind(df_VesselCause1_Nonfuelunder20, df_VesselCause2_Nonfuelunder20, df_VesselCause3_Nonfuelunder20)
+
+NonFuel_related_under20_CauseTally1 <- NonFuel_related_under20_CauseTally %>%
+  group_by(VesselCause1) %>%
+  filter(VesselCause1!="na") %>%
+  summarise(counts = n())
+
+# Now, lets graph it up! Finally..
+ggplot(NonFuel_related_under20_CauseTally1, aes(x = VesselCause1, y= counts )) +
+  geom_bar(aes(reorder(VesselCause1, counts), counts), fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+    labs(y = "Number of Vessel Incidents", fill="test", x = "Incident Cause", title = "Number of Fire/Explosion (Non-Fuel) Incidents by Causes Listed", subtitle = "For vessels under 20 feet") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) + 
+  scale_y_continuous(limits = c(0, 8)) 
+```
+
+
+
+
+```{r echo=FALSE}
+df_VesselMachineryFailure_Nonfuelunder20 <- NonFuel_related_under20 %>%
+  group_by(VesselMachineryFailure) %>%
+  filter(VesselMachineryFailure!="na") %>%
+  summarise(counts = n()) 
+
+ggplot(df_VesselMachineryFailure_Nonfuelunder20, aes(x = VesselMachineryFailure, y = counts)) +
+  geom_bar(aes(reorder(VesselMachineryFailure, counts), counts), fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+    labs(y = "Number of Vessel Incidents", fill="test", x = "Machinery Failure (Type)", title = "Number of Fire/Explosion (Non-Fuel) Incidents by\nMachinery Failure Reported", subtitle = "For vessels under 20 feet") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) +
+  scale_y_continuous(limits = c(0, 8))
+
+################################################################################################
+
+df_VesselEquipmentFailure_Nonfuelunder20 <- NonFuel_related_under20 %>%
+  group_by(VesselEquipmentFailure) %>%
+  filter(VesselEquipmentFailure!="na") %>%
+  summarise(counts = n()) 
+#As we can see, there were no incidents, where equipment failed.
+```
+
+
+```{r echo=FALSE}
+df_VesselLength_Nonfuelunder20<- NonFuel_related_under20 %>%
+  group_by(Length) %>%
+  summarise(counts = n()) 
+
+ggplot(df_VesselLength_Nonfuelunder20, aes(x = Length, y = counts)) +
+  geom_bar(aes(reorder(Length, counts), counts), fill = "dodgerblue", stat = "identity") +
+    labs(y = "Number of Vessel Incidents", fill="test", x = "Length", title = "Number of Fire/Explosion (Non-Fuel) Incidents by Vessel Length", subtitle = "For vessels under 20 feet") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) +
+  scale_y_continuous(limits = c(0, 8))
+```
+
+### Fire/Explosion (unknown origin)
+Firstly, we'll look into the cause of this type of fire/explosion. However, I don't think we'll gleam much of anything for this entire category...as if the origin is unknown, how would we know the cause? How could we place blame on machinery or electrical problems? Nonetheless, I'll run the code for completeness's sake. 
+
+```{r echo=FALSE}
+Unknown_related1 <- Boats_lessthan20 %>%
+  filter(VesselEvent1=="Fire/explosion (unknown origin)") 
+
+Unknown_related2 <- Boats_lessthan20 %>%
+  filter(VesselEvent2=="Fire/explosion (unknown origin)")
+
+Unknown_related3 <- Boats_lessthan20 %>%
+  filter(VesselEvent3=="Fire/explosion (unknown origin)")
+
+Unknown_related_under20 <- rbind(Unknown_related1, Unknown_related2, Unknown_related3)
+
+
+df_VesselCause1_Unknownunder20 <- Unknown_related_under20 %>%
+  select(VesselCause1, VesselCause2, VesselCause3)
+
+df_VesselCause2_Unknownunder20 <- Unknown_related_under20 %>%
+  select(VesselCause1,VesselCause2, VesselCause3) %>%
+  mutate("VesselCause1"=VesselCause2)
+
+df_VesselCause3_Unknownunder20 <- Unknown_related_under20 %>%
+  select(VesselCause1,VesselCause3, VesselCause2) %>%
+  mutate("VesselCause1"=VesselCause3)
+
+Unknown_related_under20_CauseTally <- rbind(df_VesselCause1_Unknownunder20, df_VesselCause2_Unknownunder20, df_VesselCause3_Unknownunder20)
+
+Unknown_related_under20_CauseTally1 <- Unknown_related_under20_CauseTally %>%
+  group_by(VesselCause1) %>%
+  filter(VesselCause1!="na") %>%
+  summarise(counts = n())
+
+# Now, lets graph it up! Finally..
+ggplot(Unknown_related_under20_CauseTally1, aes(x = VesselCause1, y= counts )) +
+  geom_bar(aes(reorder(VesselCause1, counts), counts), fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+    labs(y = "Number of Vessel Incidents", fill="test", x = "Incident Cause", title = "Number of Fire/Explosion (Unknown Origin) Incidents by Causes Listed", subtitle = "For vessels under 20 feet") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) + 
+  scale_y_continuous(limits = c(0, 5)) 
+```
+
+
+
+Now, machinery and equipment failures. Again, I don't expect we'll see any results captured. 
+```{r echo=FALSE}
+df_VesselMachineryFailure_Unknownunder20 <- Unknown_related_under20 %>%
+  group_by(VesselMachineryFailure) %>%
+  filter(VesselMachineryFailure!="na") %>%
+  summarise(counts = n()) 
+
+ggplot(df_VesselMachineryFailure_Unknownunder20, aes(x = VesselMachineryFailure, y = counts)) +
+  geom_bar(aes(reorder(VesselMachineryFailure, counts), counts), fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+    labs(y = "Number of Vessel Incidents", fill="test", x = "Machinery Failure (Type)", title = "Number of Fire/Explosion (Unknown Origin) Incidents by Machinery Failure", subtitle = "For vessels under 20 feet") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) +
+  scale_y_continuous(limits = c(0, 8))
+
+################################################################################################
+
+df_VesselEquipmentFailure_Unknownunder20 <- Unknown_related_under20 %>%
+  group_by(VesselEquipmentFailure) %>%
+  filter(VesselEquipmentFailure!="na") %>%
+  summarise(counts = n()) 
+#As we can see, there were no incidents, where a fire extinguisher failed..
+```
+
+What lengths under 20 feet, had fire/explosion (Unknown Origin) related accidents?
+This is a category we can gleam more information from. We may not know the origin, but we'll rest assured know the vessel lengths.
+```{r echo=FALSE}
+df_VesselLength_Unknownunder20<- Unknown_related_under20 %>%
+  group_by(Length) %>%
+  summarise(counts = n()) 
+
+ggplot(df_VesselLength_Unknownunder20, aes(x = Length, y = counts)) +
+  geom_bar(aes(reorder(Length, counts), counts), fill = "dodgerblue", stat = "identity") +
+    labs(y = "Number of Vessel Incidents", fill="test", x = "Length", title = "Number of Fire/Explosion (Unknown Origin) Incidents by Vessel Length", subtitle = "For vessels under 20 feet") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) +
+  scale_y_continuous(limits = c(0, 5))
+```
+
+### B. Electrical Problems 
+```{r echo=FALSE}
+# This query tells us more information about the __ incidents captured for outboard motor vessels under 20 feet in length. If anyone would like to know more information about these incidents, the data is there to look further into the issue (ex. narrative info)
+Electrical_under20 <- Boats_lessthan20 %>%
+  filter(VesselMachineryFailure!= "na", VesselMachineryFailure=="Electrical") %>%
+  select(BARDID, RegistrationNumber, HIN, VesselMachineryFailure, Manufacturer, VesselCause1, VesselCause2, VesselCause3) 
+
+Electrical_under20
+
+Boats_lessthan20 %>%
+  count(OtherMachineryFailure)
+#As we can see, none of these list an `other` machinery failure other than what's given as options above. 
+```
+
+```{r}
+df_VesselCause1_electricunder20<- Electrical_under20 %>%
+  group_by(VesselCause1) %>%
+  summarise(counts = n()) 
+
+df_VesselCause2_electricunder20<- Electrical_under20 %>%
+  group_by(VesselCause2) %>%
+  summarise(counts = n()) 
+
+df_VesselCause3_electricunder20<- Electrical_under20 %>%
+  group_by(VesselCause3) %>%
+  summarise(counts = n()) 
+# If you summarize the values for each of the three dataframes above, you can get to how many total causes are mentioned for either cause1, cause2, or cause3
+df_VesselCause1_electricunder20
+df_VesselCause2_electricunder20
+df_VesselCause3_electricunder20
+
+df_VesselCause1_electricunder20 <- Electrical_under20 %>%
+  select(VesselCause1, VesselCause2, VesselCause3)
+
+df_VesselCause2_electricunder20 <- Electrical_under20 %>%
+  select(VesselCause1,VesselCause2, VesselCause3) %>%
+  mutate("VesselCause1"=VesselCause2)
+
+df_VesselCause3_electricunder20 <- Electrical_under20 %>%
+  select(VesselCause1,VesselCause3, VesselCause2) %>%
+  mutate("VesselCause1"=VesselCause3)
+
+Electric_related_under20_CauseTally <- rbind(df_VesselCause1_electricunder20, df_VesselCause2_electricunder20, df_VesselCause3_electricunder20)
+
+Electric_related_under20_CauseTally1 <- Electric_related_under20_CauseTally %>%
+  group_by(VesselCause1) %>%
+  filter(VesselCause1!="na") %>%
+  summarise(counts = n())
+
+# Now, lets graph it up! Finally..
+ggplot(Electric_related_under20_CauseTally1, aes(x = VesselCause1, y= counts )) +
+  geom_bar(aes(reorder(VesselCause1, counts), counts), fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+    labs(y = "Number of Vessel Incidents", fill="test", x = "Incident Cause", title = "Number of Outboard Electrical Incidents by Causes Listed", subtitle = "For vessels under 20 feet") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) + 
+  scale_y_continuous(limits = c(0, 10)) 
+```
+
+
+
+
+
+
+
+
+
+
+
+### C. Sinking/Swamping/Capsizing
+In this section, we'll run descriptive statistics on outboard motor vessels under 20 feet in length, that had `Flooding/swamping`, `Capsizing`, or `Sinking` listed as `VesselEvent1`, `VesselEvent2`, or `VesselEvent3`. 
+```{r echo=FALSE}
+#Let's wrangle any cases that have `Capsizing`, `Flooding/swamping`, or `Sinking` listed as the #first, second, or third `VesselEvent`. We'll name this group, `Sink_related_under20`
+Sink_related1 <- Boats_lessthan20 %>%
+  filter(VesselEvent1=="Capsizing" | VesselEvent1=="Flooding/swamping" | VesselEvent1=="Sinking") 
+
+Sink_related2 <- Boats_lessthan20 %>%
+  filter(VesselEvent2=="Capsizing" | VesselEvent2=="Flooding/swamping" | VesselEvent2=="Sinking")
+
+Sink_related3 <- Boats_lessthan20 %>%
+  filter(VesselEvent3=="Capsizing" | VesselEvent3=="Flooding/swamping" | VesselEvent3=="Sinking")
+
+Sink_related_under20 <- rbind(Sink_related1, Sink_related2, Sink_related3)
+
+
+df_VesselCause1_Sinkunder20 <- Sink_related_under20 %>%
+  select(VesselCause1, VesselCause2, VesselCause3)
+
+df_VesselCause2_Sinkunder20 <- Sink_related_under20 %>%
+  select(VesselCause1,VesselCause2, VesselCause3) %>%
+  mutate("VesselCause1"=VesselCause2)
+
+df_VesselCause3_Sinkunder20 <- Sink_related_under20 %>%
+  select(VesselCause1,VesselCause3, VesselCause2) %>%
+  mutate("VesselCause1"=VesselCause3)
+
+Sink_related_under20_CauseTally <- rbind(df_VesselCause1_Sinkunder20, df_VesselCause2_Sinkunder20, df_VesselCause3_Sinkunder20)
+
+Sink_related_under20_CauseTally1 <- Sink_related_under20_CauseTally %>%
+  group_by(VesselCause1) %>%
+  filter(VesselCause1!="na") %>%
+  summarise(counts = n())
+
+# Now, lets graph it up! Finally..
+# Remember...we have 566 incidents whereby sinking/flooding/capsizing is mentioned for VesselEvent1, 2, or 3. 
+# When we look further into the causal breakdown, its going to be greater than 566 in total, because many "VesselEvents" have more than one cause listed. 
+ggplot(Sink_related_under20_CauseTally1, aes(x = VesselCause1, y= counts )) +
+  geom_bar(aes(reorder(VesselCause1, counts), counts), fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+    labs(y = "Number of Vessel Incidents", fill="test", x = "Incident Cause", title = "Number of Sink/Swamp/Capsizing Related Incidents by Causes Listed", subtitle = "For vessels under 20 feet") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) + 
+  scale_y_continuous(limits = c(0, 200)) 
+
+df_VesselMachineryFailure_Sinkunder20 <- Sink_related_under20 %>%
+  group_by(VesselMachineryFailure) %>%
+  filter(VesselMachineryFailure!="na", VesselMachineryFailure!="Unknown") %>%
+  summarise(counts = n()) 
+
+ggplot(df_VesselMachineryFailure_Sinkunder20, aes(x = VesselMachineryFailure, y = counts)) +
+  geom_bar(aes(reorder(VesselMachineryFailure, counts), counts), fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+    labs(y = "Number of Vessel Incidents", fill="test", x = "Machinery Failure (Type)", title = "Number of Sink/Swamp/Capsizing Related Incidents by\nMachinery Failure Reported", subtitle = "For vessels under 20 feet") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) +
+  scale_y_continuous(limits = c(0, 75))
+
+df_VesselEquipmentFailure_Sinkunder20 <- Sink_related_under20 %>%
+  group_by(VesselEquipmentFailure) %>%
+  filter(VesselEquipmentFailure!="na") %>%
+  summarise(counts = n()) 
+df_VesselEquipmentFailure_Sinkunder20
+```
+
+
+```{r echo=FALSE}
+df_VesselLength_Sinkunder20<- Sink_related_under20 %>%
+  group_by(Length) %>%
+  summarise(counts = n()) 
+
+ggplot(df_VesselLength_Sinkunder20, aes(x = Length, y = counts)) +
+  geom_bar(aes(reorder(Length, counts), counts), fill = "dodgerblue", stat = "identity") +
+    labs(y = "Number of Vessel Incidents", fill="test", x = "Length", title = "Number of Sink/Swamp/Capsizing Related Incidents by Vessel Length", subtitle = "For vessels under 20 feet") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) +
+  scale_y_continuous(limits = c(0, 250))
+```
+
+
+## II. Outboard Vessels 20-26 Feet in Length. 
+### A. Fire/Explosion (fuel) Related
+First, let's wrangle any cases that have `Fire/explosion (fuel)` listed as the first, second, or third `VesselEvent`. We'll name this group, `Fuel_related_20to26`.
+```{r echo=FALSE}
+Fuel_related1a <- Boats_20to26 %>%
+  filter(VesselEvent1=="Fire/explosion (fuel)") 
+
+Fuel_related2a <- Boats_20to26 %>%
+  filter(VesselEvent2=="Fire/explosion (fuel)")
+
+Fuel_related3a <- Boats_20to26 %>%
+  filter(VesselEvent3=="Fire/explosion (fuel)")
+
+Fuel_related_20to26 <- rbind(Fuel_related1a, Fuel_related2a, Fuel_related3a)
+
+# Let's run a few counts to ensure the numbers are adding up
+#Boats_20to26 %>%
+#  count(VesselEvent1)
+
+#Boats_20to26 %>%
+#  count(VesselEvent2)
+
+#Boats_20to26 %>%
+#  count(VesselEvent3)
+# Ensure the total count for these three above queries is equal toour dataframe, `Fuel_related_20to26`
+```
+Note: Taking a look at the "Environment" window tells us how many total fire/explosion cases there were related to fuel during this period. Let's generate some basic descriptive statistics.
+```{r echo=FALSE}
+# This is another way to accomplish the above code chunk. Count how many instances each VesselCause comes up
+df_VesselCause1_fuel20to26<- Fuel_related_20to26 %>%
+  group_by(VesselCause1) %>%
+  summarise(counts = n()) 
+
+df_VesselCause2_fuel20to26<- Fuel_related_20to26 %>%
+  group_by(VesselCause2) %>%
+  summarise(counts = n()) 
+
+df_VesselCause3_fuel20to26<- Fuel_related_20to26 %>%
+  group_by(VesselCause3) %>%
+  summarise(counts = n()) 
+
+# If you summarize the values for each of the three dataframes above, you can get to how many total causes are mentioned for either cause1, cause2, or cause3
+df_VesselCause1_fuel20to26
+df_VesselCause2_fuel20to26
+df_VesselCause3_fuel20to26
+```
+
+```{r echo=FALSE}
+df_VesselCause1_fuel20to26 <- Fuel_related_20to26 %>%
+  select(VesselCause1, VesselCause2, VesselCause3)
+
+df_VesselCause2_fuel20to26 <- Fuel_related_20to26 %>%
+  select(VesselCause1,VesselCause2, VesselCause3) %>%
+  mutate("VesselCause1"=VesselCause2)
+
+df_VesselCause3_fuel20to26 <- Fuel_related_20to26 %>%
+  select(VesselCause1,VesselCause3, VesselCause2) %>%
+  mutate("VesselCause1"=VesselCause3)
+
+Fuel_related_20to26_CauseTally <- rbind(df_VesselCause1_fuel20to26, df_VesselCause2_fuel20to26, df_VesselCause3_fuel20to26)
+
+Fuel_related_20to26_CauseTally1 <- Fuel_related_20to26_CauseTally %>%
+  group_by(VesselCause1) %>%
+  filter(VesselCause1!="na") %>%
+  summarise(counts = n())
+
+# Now, lets graph it up! Finally..
+ggplot(Fuel_related_20to26_CauseTally1, aes(x = VesselCause1, y= counts )) +
+  geom_bar(aes(reorder(VesselCause1, counts), counts), fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+    labs(y = "Number of Vessel Incidents", fill="test", x = "Incident Cause", title = "Number of Fire/Explosion (Fuel) Incidents by Causes Listed", subtitle = "For vessels 20'-26' in length") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) + 
+  scale_y_continuous(limits = c(0, 8)) 
+```
+
+
+```{r echo=FALSE}
+df_VesselMachineryFailure_fuel20to26 <- Fuel_related_20to26 %>%
+  group_by(VesselMachineryFailure) %>%
+  filter(VesselMachineryFailure!="na") %>%
+  summarise(counts = n()) 
+
+ggplot(df_VesselMachineryFailure_fuel20to26, aes(x = VesselMachineryFailure, y = counts)) +
+  geom_bar(aes(reorder(VesselMachineryFailure, counts), counts), fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+    labs(y = "Number of Vessel Incidents", fill="test", x = "Machinery Failure (Type)", title = "Number of Fire/Explosion (Fuel) Incidents by\nMachinery Failure Reported", subtitle = "For vessels 20'-26' in length") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) +
+  scale_y_continuous(limits = c(0, 8))
+```
+
+```{r}
+df_VesselEquipmentFailure_fuel20to26 <- Fuel_related_20to26 %>%
+  group_by(VesselEquipmentFailure) %>%
+  filter(VesselEquipmentFailure!="na") %>%
+  summarise(counts = n()) 
+#As we can see, there were no incidents.
+```
+
+```{r echo=FALSE}
+df_VesselLength_fuel20to26 <- Fuel_related_20to26 %>%
+  group_by(Length) %>%
+  summarise(counts = n()) 
+
+ggplot(df_VesselLength_fuel20to26, aes(x = Length, y = counts)) +
+  geom_bar(aes(reorder(Length, counts), counts), fill = "dodgerblue", stat = "identity") +
+    labs(y = "Number of Vessel Incidents", fill="test", x = "Length", title = "Number of Fire/Explosion (Fuel) Incidents by Vessel Length", subtitle = "For vessels 20'-26' in length") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) +
+  scale_y_continuous(limits = c(0, 8))
+```
+
+### Fire/Explosion (non-fuel) Related 
+```{r echo=FALSE}
+NonFuel_related1a <- Boats_20to26 %>%
+  filter(VesselEvent1=="Fire/explosion (non-fuel)") 
+
+NonFuel_related2a <- Boats_20to26 %>%
+  filter(VesselEvent2=="Fire/explosion (non-fuel)")
+
+NonFuel_related3a <- Boats_20to26 %>%
+  filter(VesselEvent3=="Fire/explosion (non-fuel)")
+
+NonFuel_related_20to26 <- rbind(NonFuel_related1a, NonFuel_related2a, NonFuel_related3a)
+
+
+df_VesselCause1_Nonfuel20to26 <- NonFuel_related_20to26 %>%
+  select(VesselCause1, VesselCause2, VesselCause3)
+
+df_VesselCause2_Nonfuel20to26 <- NonFuel_related_20to26 %>%
+  select(VesselCause1,VesselCause2, VesselCause3) %>%
+  mutate("VesselCause1"=VesselCause2)
+
+df_VesselCause3_Nonfuel20to26 <- NonFuel_related_20to26 %>%
+  select(VesselCause1,VesselCause3, VesselCause2) %>%
+  mutate("VesselCause1"=VesselCause3)
+
+NonFuel_related_20to26_CauseTally <- rbind(df_VesselCause1_Nonfuel20to26, df_VesselCause2_Nonfuel20to26, df_VesselCause3_Nonfuel20to26)
+
+NonFuel_related_20to26_CauseTally1 <- NonFuel_related_20to26_CauseTally %>%
+  group_by(VesselCause1) %>%
+  filter(VesselCause1!="na") %>%
+  summarise(counts = n())
+
+# Now, lets graph it up! Finally..
+ggplot(NonFuel_related_20to26_CauseTally1, aes(x = VesselCause1, y= counts )) +
+  geom_bar(aes(reorder(VesselCause1, counts), counts), fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+    labs(y = "Number of Vessel Incidents", fill="test", x = "Incident Cause", title = "Number of Fire/Explosion (Non-Fuel) Incidents by Causes Listed", subtitle = "For vessels 20'-26' in length") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) + 
+  scale_y_continuous(limits = c(0, 10)) 
+
+# Just to check that its correct...
+NonFuel_related_20to26 %>%
+  count(VesselCause1)
+
+df_VesselMachineryFailure_Nonfuel20to26 <- NonFuel_related_20to26 %>%
+  group_by(VesselMachineryFailure) %>%
+  filter(VesselMachineryFailure!="na") %>%
+  summarise(counts = n()) 
+
+ggplot(df_VesselMachineryFailure_Nonfuel20to26, aes(x = VesselMachineryFailure, y = counts)) +
+  geom_bar(aes(reorder(VesselMachineryFailure, counts), counts), fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+    labs(y = "Number of Vessel Incidents", fill="test", x = "Machinery Failure (Type)", title = "Number of Fire/Explosion (Non-Fuel) Incidents by\nMachinery Failure Reported", subtitle = "For vessels 20'-26' in length") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) +
+  scale_y_continuous(limits = c(0, 8))
+
+################################################################################################
+
+df_VesselEquipmentFailure_Nonfuel20to26 <- NonFuel_related_20to26 %>%
+  group_by(VesselEquipmentFailure) %>%
+  filter(VesselEquipmentFailure!="na") %>%
+  summarise(counts = n()) 
+#As we can see, there were no incidents, where a fire extinguisher failed..
+```
+
+```{r echo=FALSE}
+df_VesselLength_Nonfuel20to26<- NonFuel_related_20to26 %>%
+  group_by(Length) %>%
+  summarise(counts = n()) 
+
+ggplot(df_VesselLength_Nonfuel20to26, aes(x = Length, y = counts)) +
+  geom_bar(aes(reorder(Length, counts), counts), fill = "dodgerblue", stat = "identity") +
+    labs(y = "Number of Vessel Incidents", fill="test", x = "Length", title = "Number of Fire/Explosion (Non-Fuel) Incidents by Vessel Length", subtitle = "For vessels 20'-26' in length") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) +
+  scale_y_continuous(limits = c(0, 8))
+```
+
+### Fire/Explosion (unknown origin)
+Firstly, we'll look into the cause of this type of fire/explosion. However, I don't think we'll gleam much of anything for this entire category (same as in part I).
+
+```{r echo=FALSE}
+Unknown_related1a <- Boats_20to26 %>%
+  filter(VesselEvent1=="Fire/explosion (unknown origin)") 
+
+Unknown_related2a <- Boats_20to26 %>%
+  filter(VesselEvent2=="Fire/explosion (unknown origin)")
+
+Unknown_related3a <- Boats_20to26 %>%
+  filter(VesselEvent3=="Fire/explosion (unknown origin)")
+
+Unknown_related_20to26 <- rbind(Unknown_related1a, Unknown_related2a, Unknown_related3a)
+
+
+df_VesselCause1_Unknown20to26 <- Unknown_related_20to26 %>%
+  select(VesselCause1, VesselCause2, VesselCause3)
+
+df_VesselCause2_Unknown20to26 <- Unknown_related_20to26%>%
+  select(VesselCause1,VesselCause2, VesselCause3) %>%
+  mutate("VesselCause1"=VesselCause2)
+
+df_VesselCause3_Unknown20to26 <- Unknown_related_20to26 %>%
+  select(VesselCause1,VesselCause3, VesselCause2) %>%
+  mutate("VesselCause1"=VesselCause3)
+
+Unknown_related_20to26_CauseTally <- rbind(df_VesselCause1_Unknown20to26, df_VesselCause2_Unknown20to26, df_VesselCause3_Unknown20to26)
+
+Unknown_related_20to26_CauseTally1 <- Unknown_related_20to26_CauseTally %>%
+  group_by(VesselCause1) %>%
+  filter(VesselCause1!="na") %>%
+  summarise(counts = n())
+
+# Now, lets graph it up! Finally..
+ggplot(Unknown_related_20to26_CauseTally1, aes(x = VesselCause1, y= counts )) +
+  geom_bar(aes(reorder(VesselCause1, counts), counts), fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+    labs(y = "Number of Vessel Incidents", fill="test", x = "Incident Cause", title = "Number of Fire/Explosion (Unknown Origin) Incidents by Causes Listed", subtitle = "For vessels 20'-26' in length") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) + 
+  scale_y_continuous(limits = c(0, 8)) 
+```
+
+
+```{r echo=FALSE}
+df_VesselMachineryFailure_Unknown20to26 <- Unknown_related_20to26 %>%
+  group_by(VesselMachineryFailure) %>%
+  filter(VesselMachineryFailure!="na") %>%
+  summarise(counts = n()) 
+
+ggplot(df_VesselMachineryFailure_Unknown20to26, aes(x = VesselMachineryFailure, y = counts)) +
+  geom_bar(aes(reorder(VesselMachineryFailure, counts), counts), fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+    labs(y = "Number of Vessel Incidents", fill="test", x = "Machinery Failure (Type)", title = "Number of Fire/Explosion (Unknown Origin) Incidents by Machinery Failure", subtitle = "For vessels 20'-26' in length") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) +
+  scale_y_continuous(limits = c(0, 5))
+
+################################################################################################
+
+df_VesselEquipmentFailure_Unknown20to26 <- Unknown_related_20to26 %>%
+  group_by(VesselEquipmentFailure) %>%
+  filter(VesselEquipmentFailure!="na") %>%
+  summarise(counts = n()) 
+#As we can see, there were no incidents, where a fire extinguisher failed..
+```
+
+What lengths 20'-26', had fire/explosion (Unknown Origin) related accidents?
+This is a category we can gleam more information from. We may not know the origin, but we'll rest assured know the vessel lengths.
+```{r echo=FALSE}
+df_VesselLength_Unknown20to26 <- Unknown_related_20to26 %>%
+  group_by(Length) %>%
+  summarise(counts = n()) 
+
+ggplot(df_VesselLength_Unknown20to26, aes(x = Length, y = counts)) +
+  geom_bar(aes(reorder(Length, counts), counts), fill = "dodgerblue", stat = "identity") +
+    labs(y = "Number of Vessel Incidents", fill="test", x = "Length", title = "Number of Fire/Explosion (Unknown Origin) Incidents by Vessel Length", subtitle = "For vessels 20'-26' in length") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) +
+  scale_y_continuous(limits = c(0, 5))
+```
+
+### B. Electrical Problems 
+```{r echo=FALSE}
+# This query tells us more information about the __ incidents captured for outboard motor vessels under 20 feet in length. 
+#If anyone would like to know more information about these incidents, the data is there to look further into the issue (ex. narrative info)
+Electrical_20to26 <- Boats_20to26 %>%
+  filter(VesselMachineryFailure!= "na", VesselMachineryFailure=="Electrical") %>%
+  select(BARDID, RegistrationNumber, HIN, VesselMachineryFailure, Manufacturer, VesselCause1, VesselCause2, VesselCause3) 
+
+Electrical_20to26
+
+Boats_20to26 %>%
+  count(OtherMachineryFailure)
+#As we can see, none of these list an `other` machinery failure other than what's given as options above. 
+```
+
+```{r}
+df_VesselCause1_electric20to26<- Electrical_20to26 %>%
+  group_by(VesselCause1) %>%
+  summarise(counts = n()) 
+
+df_VesselCause2_electric20to26<- Electrical_20to26 %>%
+  group_by(VesselCause2) %>%
+  summarise(counts = n()) 
+
+df_VesselCause3_electric20to26<- Electrical_20to26 %>%
+  group_by(VesselCause3) %>%
+  summarise(counts = n()) 
+# If you summarize the values for each of the three dataframes above, you can get to how many total causes are mentioned for either cause1, cause2, or cause3
+df_VesselCause1_electric20to26
+df_VesselCause2_electric20to26
+df_VesselCause3_electric20to26
+
+df_VesselCause1_electric20to26 <- Electrical_20to26 %>%
+  select(VesselCause1, VesselCause2, VesselCause3)
+
+df_VesselCause2_electric20to26 <- Electrical_20to26 %>%
+  select(VesselCause1,VesselCause2, VesselCause3) %>%
+  mutate("VesselCause1"=VesselCause2)
+
+df_VesselCause3_electric20to26 <- Electrical_20to26 %>%
+  select(VesselCause1,VesselCause3, VesselCause2) %>%
+  mutate("VesselCause1"=VesselCause3)
+
+Electric_related_20to26_CauseTally <- rbind(df_VesselCause1_electric20to26, df_VesselCause2_electric20to26, df_VesselCause3_electric20to26)
+
+Electric_related_20to26_CauseTally1 <- Electric_related_20to26_CauseTally %>%
+  group_by(VesselCause1) %>%
+  filter(VesselCause1!="na") %>%
+  summarise(counts = n())
+
+# Now, lets graph it up! Finally..
+ggplot(Electric_related_20to26_CauseTally1, aes(x = VesselCause1, y= counts )) +
+  geom_bar(aes(reorder(VesselCause1, counts), counts), fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+    labs(y = "Number of Vessel Incidents", fill="test", x = "Incident Cause", title = "Number of Outboard Electrical Incidents by Causes Listed", subtitle = "For vessels 20'-26' in length") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) + 
+  scale_y_continuous(limits = c(0, 15)) 
+```
+
+
+
+
+### C. Sinking/Swamping/Capsizing
+In this section, we'll run descriptive statistics on outboard motor vessels 20'-26' in length, that had `Flooding/swamping`, `Capsizing`, or `Sinking` listed as `VesselEvent1`, `VesselEvent2`, or `VesselEvent3`. 
+
+```{r echo=FALSE}
+Sink_related1a <- Boats_20to26 %>%
+  filter(VesselEvent1=="Capsizing" | VesselEvent1=="Flooding/swamping" | VesselEvent1=="Sinking") 
+
+Sink_related2a <- Boats_20to26 %>%
+  filter(VesselEvent2=="Capsizing" | VesselEvent2=="Flooding/swamping" | VesselEvent2=="Sinking")
+
+Sink_related3a <- Boats_20to26 %>%
+  filter(VesselEvent3=="Capsizing" | VesselEvent3=="Flooding/swamping" | VesselEvent3=="Sinking")
+
+Sink_related_20to26 <- rbind(Sink_related1a, Sink_related2a, Sink_related3a)
+
+
+df_VesselCause1_Sink20to26 <- Sink_related_20to26 %>%
+  select(VesselCause1, VesselCause2, VesselCause3)
+
+df_VesselCause2_Sink20to26 <- Sink_related_20to26 %>%
+  select(VesselCause1,VesselCause2, VesselCause3) %>%
+  mutate("VesselCause1"=VesselCause2)
+
+df_VesselCause3_Sink20to26 <- Sink_related_20to26 %>%
+  select(VesselCause1,VesselCause3, VesselCause2) %>%
+  mutate("VesselCause1"=VesselCause3)
+
+Sink_related_20to26_CauseTally <- rbind(df_VesselCause1_Sink20to26, df_VesselCause2_Sink20to26, df_VesselCause3_Sink20to26)
+
+Sink_related_20to26_CauseTally1 <- Sink_related_20to26_CauseTally %>%
+  group_by(VesselCause1) %>%
+  filter(VesselCause1!="na") %>%
+  summarise(counts = n())
+
+# Now, lets graph it up! Finally..
+# Remember...we have 566 incidents whereby sinking/flooding/capsizing is mentioned for VesselEvent1, 2, or 3. 
+# When we look further into the causal breakdown, its going to be greater than 566 in total, because many "VesselEvents" have more than one cause listed. 
+ggplot(Sink_related_20to26_CauseTally1, aes(x = VesselCause1, y= counts )) +
+  geom_bar(aes(reorder(VesselCause1, counts), counts), fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+    labs(y = "Number of Vessel Incidents", fill="test", x = "Incident Cause", title = "Number of Sink/Swamp/Capsizing Related Incidents by Causes Listed", subtitle = "For vessels 20'-26' in length") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) + 
+  scale_y_continuous(limits = c(0, 200)) 
+```
+
+```{r echo=FALSE}
+df_VesselMachineryFailure_Sink20to26 <- Sink_related_20to26 %>%
+  group_by(VesselMachineryFailure) %>%
+  filter(VesselMachineryFailure!="na") %>%
+  summarise(counts = n()) 
+
+ggplot(df_VesselMachineryFailure_Sink20to26, aes(x = VesselMachineryFailure, y = counts)) +
+  geom_bar(aes(reorder(VesselMachineryFailure, counts), counts), fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+    labs(y = "Number of Vessel Incidents", fill="test", x = "Machinery Failure (Type)", title = "Number of Sink/Swamp/Capsizing Related Incidents by\nMachinery Failure Reported", subtitle = "For vessels 20'-26' in length") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) +
+  scale_y_continuous(limits = c(0, 75))
+
+################################################################################################
+
+df_VesselEquipmentFailure_Sink20to26 <- Sink_related_20to26 %>%
+  group_by(VesselEquipmentFailure) %>%
+  filter(VesselEquipmentFailure!="na") %>%
+  summarise(counts = n()) 
+
+df_VesselEquipmentFailure_Sink20to26
+```
+
+
+
+
+```{r echo=FALSE}
+df_VesselLength_Sink20to26<- Sink_related_20to26 %>%
+  group_by(Length) %>%
+  summarise(counts = n()) 
+
+ggplot(df_VesselLength_Sink20to26, aes(x = Length, y = counts)) +
+  geom_bar(aes(reorder(Length, counts), counts), fill = "dodgerblue", stat = "identity") +
+    labs(y = "Number of Vessel Incidents", fill="test", x = "Length", title = "Number of Sink/Swamp/Capsizing Related Incidents by Vessel Length", subtitle = "For vessels 20'-26' in length") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) +
+  scale_y_continuous(limits = c(0, 150))
+```
+
+## III. Pontoon Vessel Analysis
+
+```{r echo=FALSE}
+#However, before we generate descriptive statistics for this `VesselType`, perhaps we should have a #baseline group to compare it to. Let's make two charts for all vessels. Based on `VesselCause` (1, #2, and 3 summed) and `VesselEvent` (1, 2 and 3 summed).
+
+# This is also an important juncture to ensure that the Excel file we've been referencing, is reading in correctly. Because these dataframes will encompass all cases, we can ensure that the rest of this R file is reading in correctly. Check to ensure that there aren't multiple categories for the same VesselCause because of capitalization issues. Ex. R will mistakenly read "Hazardous Waters" and "Hazardous waters" as two separate categories. 
+df_AllCause1 <- Vessel_table %>%
+  group_by(VesselCause1) %>%
+  summarise(counts = n()) 
+
+df_AllCause2 <- Vessel_table %>%
+  group_by(VesselCause2) %>%
+  summarise(counts = n()) 
+
+df_AllCause3 <- Vessel_table %>%
+  group_by(VesselCause3) %>%
+  summarise(counts = n()) 
+```
+
+
+```{r echo=FALSE, eval=FALSE}
+df_AllCause1 <- Vessel_table %>%
+  select(VesselCause1, VesselCause2, VesselCause3)
+
+df_AllCause2 <- Vessel_table %>%
+  select(VesselCause1,VesselCause2, VesselCause3) %>%
+  mutate("VesselCause1"=VesselCause2)
+
+df_AllCause3 <- Vessel_table %>%
+  select(VesselCause1,VesselCause3, VesselCause2) %>%
+  mutate("VesselCause1"=VesselCause3)
+
+All_CauseTally <- rbind(df_AllCause1, df_AllCause2, df_AllCause3)
+
+All_CauseTally1 <- All_CauseTally %>%
+  group_by(VesselCause1) %>%
+  filter(VesselCause1!="na") %>%
+  summarise(counts = n()) %>%
+  filter(counts>100)
+
+# Now, lets graph it up! Finally..
+ggplot(All_CauseTally1, aes(x = VesselCause1, y= counts )) +
+  geom_bar(aes(reorder(VesselCause1, counts), counts), fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+    labs(y = "(n)", fill="test", x = "Incident Cause", title = "Total Incidents by Causes Listed") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) + 
+  scale_y_continuous(limits = c(0, 1500)) +
+theme(axis.title.y = element_text(angle = 0, vjust = .7))
+
+# Now, lets do it in percents with 9,801 cases that we know (with no NAs)
+
+All_CauseTally2 <- All_CauseTally %>%
+  group_by(VesselCause1) %>%
+  filter(VesselCause1!="na") %>%
+  summarise(counts = n())  %>%
+  mutate("percent"=counts/9801*100) %>%
+  filter(percent>=5)
+
+# Now, lets graph it up! Finally..
+ggplot(All_CauseTally2, aes(x = VesselCause1, y= percent )) +
+  geom_bar(aes(reorder(VesselCause1, percent), percent), fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = round(percent,2)), vjust=-0.5)  + 
+    labs(y = "%", fill="test", x = "Incident Cause", title = "Number of Total Incidents by Causes Listed", subtitle = "Where cause is known (%>5)") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) + 
+  scale_y_continuous(limits = c(0, 100)) 
+```
+
+```{r echo=FALSE}
+Pontoon <- Vessel_table %>%
+  filter(VesselType=="Pontoon")
+
+df_PontoonCause1 <- Pontoon %>%
+  group_by(VesselCause1) %>%
+  summarise(counts = n()) 
+
+df_PontoonCause2<- Pontoon %>%
+  group_by(VesselCause2) %>%
+  summarise(counts = n()) 
+
+df_PontoonCause3 <- Pontoon %>%
+  group_by(VesselCause3) %>%
+  summarise(counts = n()) 
+```
+
+```{r echo=FALSE}
+df_PontoonCause1 <- Pontoon %>%
+  select(VesselCause1, VesselCause2, VesselCause3)
+
+df_PontoonCause2 <- Pontoon %>%
+  select(VesselCause1,VesselCause2, VesselCause3) %>%
+  mutate("VesselCause1"=VesselCause2)
+
+df_PontoonCause3 <- Pontoon %>%
+  select(VesselCause1,VesselCause3, VesselCause2) %>%
+  mutate("VesselCause1"=VesselCause3)
+
+Pontoon_CauseTally <- rbind(df_PontoonCause1, df_PontoonCause2, df_PontoonCause3)
+
+Pontoon_CauseTally1 <- Pontoon_CauseTally %>%
+  group_by(VesselCause1) %>%
+  filter(VesselCause1!="na") %>%
+  summarise(counts = n()) %>%
+  filter(counts>=10) 
+
+# Now, lets graph it up! Finally..
+ggplot(Pontoon_CauseTally1, aes(x = VesselCause1, y= counts )) +
+  geom_bar(aes(reorder(VesselCause1, counts), counts), fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+    labs(y = "(n)", fill="test", x = "Incident Cause", title = "Pontoon Incidents by Causes Listed", subtitle="For categories with 10 or more incidents") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) + 
+  scale_y_continuous(limits = c(0, 150)) +
+theme(axis.title.y = element_text(angle = 0, vjust = .7))
+
+# Now, lets do it in percents with 1,290 cases that we know (with no NAs)
+Pontoon_CauseTally2 <- Pontoon_CauseTally %>%
+  group_by(VesselCause1) %>%
+  filter(VesselCause1!="na") %>%
+  summarise(counts = n())  %>%
+  mutate("percent"=counts/616*100) %>%
+  filter(percent>=5)
+
+# Now, lets graph it up! 
+ggplot(Pontoon_CauseTally2, aes(x = VesselCause1, y= percent )) +
+  geom_bar(aes(reorder(VesselCause1, percent), percent), fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = round(percent,2)), vjust=-0.5)  + 
+    labs(y = "%", fill="test", x = "Incident Cause", title = "Percentage of Pontoon Incident Causes Listed", subtitle="Where cause is known (%>5)") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) + 
+  scale_y_continuous(limits = c(0, 100)) +
+theme(axis.title.y = element_text(angle = 0, vjust = .7))
+```
+
+Now, let's analyze total `VesselEvent`s based on compiling `VesselEvent1`, `VesselEvent1`, and `VesselEvent3`.
+
+```{r echo=FALSE}
+df_PontoonEvent1 <- Pontoon %>%
+  select(VesselEvent1, VesselEvent2, VesselEvent3)
+
+df_PontoonEvent2 <- Pontoon %>%
+  select(VesselEvent1,VesselEvent2, VesselEvent3) %>%
+  mutate("VesselEvent1"=VesselEvent2)
+
+df_PontoonEvent3 <- Pontoon %>%
+  select(VesselEvent1,VesselEvent3, VesselEvent2) %>%
+  mutate("VesselEvent1"=VesselEvent3)
+
+Pontoon_EventTally <- rbind(df_PontoonEvent1, df_PontoonEvent2, df_PontoonEvent3)
+
+Pontoon_EventTally1 <- Pontoon_EventTally %>%
+  group_by(VesselEvent1) %>%
+  filter(VesselEvent1!="na") %>%
+  summarise(counts = n()) %>%
+  filter(counts>=10) 
+
+# Now, lets graph it up! Finally..
+ggplot(Pontoon_EventTally1, aes(x = VesselEvent1, y= counts )) +
+  geom_bar(aes(reorder(VesselEvent1, counts), counts), fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+    labs(y = "(n)", fill="test", x = "Incident Event", title = "Pontoon Incidents by Events Listed", subtitle="For categories with 10 or more incidents") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) + 
+  scale_y_continuous(limits = c(0, 150)) +
+theme(axis.title.y = element_text(angle = 0, vjust = .7))
+
+# Now, lets do it in percents with 1,290 cases that we know (with no NAs)
+Pontoon_EventTally2 <- Pontoon_EventTally %>%
+  group_by(VesselEvent1) %>%
+  filter(VesselEvent1!="na") %>%
+  summarise(counts = n())  %>%
+  mutate("percent"=counts/557*100) %>%
+  filter(percent>=5)
+
+# Now, lets graph it up! 
+ggplot(Pontoon_EventTally2, aes(x = VesselEvent1, y= percent )) +
+  geom_bar(aes(reorder(VesselEvent1, percent), percent), fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = round(percent,2)), vjust=-0.5)  + 
+    labs(y = "%", fill="test", x = "Incident Event", title = "Percentage of Pontoon Incidents by Events Listed", subtitle="Where event is known (%>5)") + 
+  theme(axis.text.x = element_text(angle = 40, hjust = 1)) + 
+  scale_y_continuous(limits = c(0, 100)) +
+theme(axis.title.y = element_text(angle = 0, vjust = .7))
+```
+
+
+## IV. PWC Vessel Analysis
+```{r echo=FALSE}
+PWC <- Vessel_table %>%
+  filter(VesselType=="Personal watercraft")
+
+df_PWCCause1 <- PWC %>%
+  group_by(VesselCause1) %>%
+  summarise(counts = n()) 
+
+df_PWCCause1<- PWC %>%
+  group_by(VesselCause2) %>%
+  summarise(counts = n()) 
+
+df_PWCCause1<- PWC %>%
+  group_by(VesselCause3) %>%
+  summarise(counts = n()) 
+```
+
+```{r echo=FALSE}
+df_PWCCause1 <- PWC %>%
+  select(VesselCause1, VesselCause2, VesselCause3)
+
+df_PWCCause2 <- PWC %>%
+  select(VesselCause1,VesselCause2, VesselCause3) %>%
+  mutate("VesselCause1"=VesselCause2)
+
+df_PWCCause3 <- PWC %>%
+  select(VesselCause1,VesselCause3, VesselCause2) %>%
+  mutate("VesselCause1"=VesselCause3)
+
+PWC_CauseTally <- rbind(df_PWCCause1, df_PWCCause2, df_PWCCause3)
+
+PWC_CauseTally1 <- PWC_CauseTally %>%
+  group_by(VesselCause1) %>%
+  filter(VesselCause1!="na") %>%
+  summarise(counts = n()) %>%
+  filter(counts>=10) 
+
+# Now, lets graph it up! Finally..
+ggplot(PWC_CauseTally1, aes(x = VesselCause1, y= counts )) +
+  geom_bar(aes(reorder(VesselCause1, counts), counts), fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+    labs(y = "(n)", fill="test", x = "Incident Cause", title = "PWC Incidents by Causes Listed", subtitle="For categories with 10 or more incidents") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) + 
+  scale_y_continuous(limits = c(0, 500)) +
+theme(axis.title.y = element_text(angle = 0, vjust = .7))
+
+# Now, lets do it in percents with 1,290 cases that we know (with no NAs)
+PWC_CauseTally2 <- PWC_CauseTally %>%
+  group_by(VesselCause1) %>%
+  filter(VesselCause1!="na") %>%
+  summarise(counts = n())  %>%
+  mutate("percent"=counts/1944*100) %>%
+  filter(percent>=5)
+
+# Now, lets graph it up! 
+ggplot(PWC_CauseTally2, aes(x = VesselCause1, y= percent )) +
+  geom_bar(aes(reorder(VesselCause1, percent), percent), fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = round(percent,2)), vjust=-0.5)  + 
+    labs(y = "%", fill="test", x = "Incident Cause", title = "Percentage of PWC Incident Causes Listed", subtitle="Where cause is known (%>5)") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) + 
+  scale_y_continuous(limits = c(0, 100)) +
+theme(axis.title.y = element_text(angle = 0, vjust = .7))
+```
+
+Now, lets analyze total `VesselEvent`s based on compiling `VesselEvent1`, `VesselEvent1`, and `VesselEvent3`.
+
+```{r echo=FALSE}
+df_PWCEvent1 <- PWC %>%
+  select(VesselEvent1, VesselEvent2, VesselEvent3)
+
+df_PWCEvent2 <- PWC %>%
+  select(VesselEvent1,VesselEvent2, VesselEvent3) %>%
+  mutate("VesselEvent1"=VesselEvent2)
+
+df_PWCEvent3 <- PWC %>%
+  select(VesselEvent1,VesselEvent3, VesselEvent2) %>%
+  mutate("VesselEvent1"=VesselEvent3)
+
+PWC_EventTally <- rbind(df_PWCEvent1, df_PWCEvent2, df_PWCEvent3)
+
+PWC_EventTally1 <- PWC_EventTally %>%
+  group_by(VesselEvent1) %>%
+  filter(VesselEvent1!="na") %>%
+  summarise(counts = n()) %>%
+  filter(counts>=10) 
+
+# Now, lets graph it up! Finally..
+ggplot(PWC_EventTally1, aes(x = VesselEvent1, y= counts )) +
+  geom_bar(aes(reorder(VesselEvent1, counts), counts), fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+    labs(y = "(n)", fill="test", x = "Incident Event", title = "PWC Incidents by Events Listed", subtitle="For categories with 10 or more incidents") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) + 
+  scale_y_continuous(limits = c(0, 800)) +
+theme(axis.title.y = element_text(angle = 0, vjust = .7))
+
+# Now, lets do it in percents with 1,290 cases that we know (with no NAs)
+PWC_EventTally2 <- PWC_EventTally %>%
+  group_by(VesselEvent1) %>%
+  filter(VesselEvent1!="na") %>%
+  summarise(counts = n())  %>%
+  mutate("percent"=counts/1768*100) %>%
+  filter(percent>=5)
+
+# Now, lets graph it up! 
+ggplot(PWC_EventTally2, aes(x = VesselEvent1, y= percent )) +
+  geom_bar(aes(reorder(VesselEvent1, percent), percent), fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = round(percent,2)), vjust=-0.5)  + 
+    labs(y = "%", fill="test", x = "Incident Event", title = "Percentage of PWC Incidents by Events Listed", subtitle="Where event is known (%>5)") + 
+  theme(axis.text.x = element_text(angle = 40, hjust = 1)) + 
+  scale_y_continuous(limits = c(0, 100)) +
+theme(axis.title.y = element_text(angle = 0, vjust = .7))
+```
+
+## V. Carbon Monoxide Poisoning Analysis
+```{r echo=FALSE}
+CO1 <- Vessel_table %>%
+  filter(VesselEvent1=="Carbon monoxide exposure") 
+
+CO2 <- Vessel_table %>%
+  filter(VesselEvent2=="Carbon monoxide exposure")
+
+CO3 <- Vessel_table %>%
+  filter(VesselEvent3=="Carbon monoxide exposure")
+
+CO_Total <- rbind(CO1, CO2, CO3)
+```
+Note: Taking a look at the R "Environment" window tells us how many total carbon monoxide explosure related cases there were related to fuel during this period. Let's generate some basic descriptive statistics.
+```{r, echo=FALSE}
+df_VesselCause1 <- CO_Total %>%
+  group_by(VesselCause1) %>%
+  summarise(counts = n()) 
+
+df_VesselCause2 <- CO_Total %>%
+  group_by(VesselCause2) %>%
+  summarise(counts = n()) 
+
+df_VesselCause3 <- CO_Total %>%
+  group_by(VesselCause3) %>%
+  summarise(counts = n()) 
+# If you summarize the values for each of the three dataframes above, you can get to how many total causes are mentioned for either cause1, cause2, or cause3
+df_VesselCause1
+df_VesselCause2
+df_VesselCause3
+```
+
+```{r echo=FALSE}
+df_VesselCause1 <- CO_Total %>%
+  select(VesselCause1, VesselCause2, VesselCause3)
+
+df_VesselCause2 <- CO_Total %>%
+  select(VesselCause1,VesselCause2, VesselCause3) %>%
+  mutate("VesselCause1"=VesselCause2)
+
+df_VesselCause3 <- CO_Total %>%
+  select(VesselCause1,VesselCause3, VesselCause2) %>%
+  mutate("VesselCause1"=VesselCause3)
+
+CO_CauseTally <- rbind(df_VesselCause1, df_VesselCause2, df_VesselCause3)
+
+CO_CauseTally1 <- CO_CauseTally %>%
+  group_by(VesselCause1) %>%
+  filter(VesselCause1!="na") %>%
+  summarise(counts = n())
+
+# Now, lets graph it up! Finally..
+ggplot(CO_CauseTally1, aes(x = VesselCause1, y= counts )) +
+  geom_bar(aes(reorder(VesselCause1, counts), counts), fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+    labs(y = "Number of Vessel Incidents", fill="test", x = "Incident Cause", title = "Number CO Exposure Incidents by Causes Listed") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) + 
+  scale_y_continuous(limits = c(0, 10)) 
+```
+
+```{r echo=FALSE}
+df_VesselMachineryFailure <- CO_Total %>%
+  group_by(VesselMachineryFailure) %>%
+  filter(VesselMachineryFailure!="na") %>%
+  summarise(counts = n()) 
+
+ggplot(df_VesselMachineryFailure, aes(x = VesselMachineryFailure, y = counts)) +
+  geom_bar(aes(reorder(VesselMachineryFailure, counts), counts), fill = "dodgerblue", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+    labs(y = "Number of Vessel Incidents", fill="test", x = "Machinery Failure (Type)", title = "Number of CO Exposure Incidents by Machinery Failure Reported") + 
+  theme(axis.text.x = element_text(angle = 50, hjust = 1)) +
+  scale_y_continuous(limits = c(0, 8))
+```
+
+Now, specifically focusing on equipment failures.
+There are none..
+```{r}
+df_VesselEquipmentFailure <- CO_Total %>%
+  group_by(VesselEquipmentFailure) %>%
+  filter(VesselEquipmentFailure!="na") %>%
+  summarise(counts = n()) 
+```
