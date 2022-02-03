@@ -62,8 +62,8 @@ Fatality_Coordinates_1$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_1
 Fatality_Coordinates_1$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_1$`Main Cause of Accident`=="Other" | Fatality_Coordinates_1$`Main Cause of Accident`=="Sudden medical condition" | Fatality_Coordinates_1$`Main Cause of Accident`=="Unknown" | Fatality_Coordinates_1$`Main Cause of Accident`=="Carbon monoxide exposure" | Fatality_Coordinates_1$`Main Cause of Accident`=="Ignition of fuel or vapor", paste("Miscellaneous"), Fatality_Coordinates_1$`Main Cause of Accident`)
 
 # Collapsing our AccidentEvent1 into broader categories
-# General collision/grounding
-Fatality_Coordinates_1$AccidentEvent1 <- ifelse(Fatality_Coordinates_1$AccidentEvent1=="Collision with fixed object" | Fatality_Coordinates_1$AccidentEvent1=="Collision with recreational vessel" | Fatality_Coordinates_1$AccidentEvent1=="Collision with submerged object" | Fatality_Coordinates_1$AccidentEvent1=="Grounding", paste("Collision/Grounding"), Fatality_Coordinates_1$AccidentEvent1)
+# General Collision/grounding
+Fatality_Coordinates_1$AccidentEvent1 <- ifelse(Fatality_Coordinates_1$AccidentEvent1=="Collision with fixed object" | Fatality_Coordinates_1$AccidentEvent1=="Collision with recreational vessel" | Fatality_Coordinates_1$AccidentEvent1=="Collision with submerged object" | Fatality_Coordinates_1$AccidentEvent1=="Grounding", paste("Collision/grounding"), Fatality_Coordinates_1$AccidentEvent1)
 
 # General departing/ejected from vessel
 Fatality_Coordinates_1$AccidentEvent1 <- ifelse(Fatality_Coordinates_1$AccidentEvent1=="Person departed vessel" | Fatality_Coordinates_1$AccidentEvent1=="Person ejected from vessel", paste("Person departed/ejected from vessel"), Fatality_Coordinates_1$AccidentEvent1)
@@ -116,8 +116,10 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18))
+
 
 ggplot(data=map_borders_1) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -133,8 +135,9 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18))
 
 ggplot(data=map_borders_1) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -150,8 +153,9 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18))
 
 ggplot(data=map_borders_1) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -167,8 +171,10 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18))
+
 
 ggplot(data=map_borders_1) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -184,8 +190,10 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18))
+
 
 ggplot(data=map_borders_1) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -201,8 +209,10 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18))
+
 
 ggplot(data=map_borders_1) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -219,9 +229,9 @@ ggplot() +
         axis.text = element_blank(),
         axis.ticks = element_blank(),
         legend.title = element_text(color="white")) +
-  scale_colour_hue(breaks=c("Under 10 hours", "10 to 100 hours", "101 to 500 hours", "Over 500 hours", "No operator", "Unknown"))
-
-
+  scale_colour_hue(breaks=c("Under 10 hours", "10 to 100 hours", "101 to 500 hours", "Over 500 hours", "No operator", "Unknown")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18))
 
 
 ggplot(data=map_borders_1) + 
@@ -238,7 +248,9 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
+        legend.title = element_text(color="white")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18))
 ```
 
 ### District 5
@@ -269,8 +281,8 @@ Fatality_Coordinates_5$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_5
 Fatality_Coordinates_5$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_5$`Main Cause of Accident`=="Other" | Fatality_Coordinates_5$`Main Cause of Accident`=="Sudden medical condition" | Fatality_Coordinates_5$`Main Cause of Accident`=="Unknown" | Fatality_Coordinates_5$`Main Cause of Accident`=="Carbon monoxide exposure" | Fatality_Coordinates_5$`Main Cause of Accident`=="Ignition of fuel or vapor", paste("Miscellaneous"), Fatality_Coordinates_5$`Main Cause of Accident`)
 
 # Collapsing our AccidentEvent1 into broader categories
-# General collision/grounding
-Fatality_Coordinates_5$AccidentEvent1 <- ifelse(Fatality_Coordinates_5$AccidentEvent1=="Collision with fixed object" | Fatality_Coordinates_5$AccidentEvent1=="Collision with recreational vessel" | Fatality_Coordinates_5$AccidentEvent1=="Collision with submerged object" | Fatality_Coordinates_5$AccidentEvent1=="Grounding", paste("Collision/Grounding"), Fatality_Coordinates_5$AccidentEvent1)
+# General Collision/grounding
+Fatality_Coordinates_5$AccidentEvent1 <- ifelse(Fatality_Coordinates_5$AccidentEvent1=="Collision with fixed object" | Fatality_Coordinates_5$AccidentEvent1=="Collision with recreational vessel" | Fatality_Coordinates_5$AccidentEvent1=="Collision with submerged object" | Fatality_Coordinates_5$AccidentEvent1=="Grounding", paste("Collision/grounding"), Fatality_Coordinates_5$AccidentEvent1)
 
 # General departing/ejected from vessel
 Fatality_Coordinates_5$AccidentEvent1 <- ifelse(Fatality_Coordinates_5$AccidentEvent1=="Person departed vessel" | Fatality_Coordinates_5$AccidentEvent1=="Person ejected from vessel", paste("Person departed/ejected from vessel"), Fatality_Coordinates_5$AccidentEvent1)
@@ -322,7 +334,9 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
+        legend.title = element_text(color="white")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18))
 
 
 ggplot(data=map_borders_5) + 
@@ -339,7 +353,9 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
+        legend.title = element_text(color="white")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18))
 
 ggplot(data=map_borders_5) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -355,8 +371,10 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18))
+
 
 ggplot(data=map_borders_5) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -372,8 +390,10 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18))
+
 
 ggplot(data=map_borders_5) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -389,8 +409,10 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18))
+
 
 ggplot(data=map_borders_5) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -406,8 +428,10 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18))
+
 
 ggplot(data=map_borders_5) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -424,7 +448,10 @@ ggplot() +
         axis.text = element_blank(),
         axis.ticks = element_blank(),
         legend.title = element_text(color="white")) +
-  scale_colour_hue(breaks=c("Under 10 hours", "10 to 100 hours", "101 to 500 hours", "Over 500 hours", "No operator", "Unknown"))
+  scale_colour_hue(breaks=c("Under 10 hours", "10 to 100 hours", "101 to 500 hours", "Over 500 hours", "No operator", "Unknown")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18))
+
 
 ggplot(data=map_borders_5) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -440,8 +467,9 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18))
 ```
 
 ### District 7
@@ -476,8 +504,8 @@ Fatality_Coordinates_7$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_7
 Fatality_Coordinates_7$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_7$`Main Cause of Accident`=="Other" | Fatality_Coordinates_7$`Main Cause of Accident`=="Sudden medical condition" | Fatality_Coordinates_7$`Main Cause of Accident`=="Unknown" | Fatality_Coordinates_7$`Main Cause of Accident`=="Carbon monoxide exposure" | Fatality_Coordinates_7$`Main Cause of Accident`=="Ignition of fuel or vapor", paste("Miscellaneous"), Fatality_Coordinates_7$`Main Cause of Accident`)
 
 # Collapsing our AccidentEvent1 into broader categories
-# General collision/grounding
-Fatality_Coordinates_7$AccidentEvent1 <- ifelse(Fatality_Coordinates_7$AccidentEvent1=="Collision with fixed object" | Fatality_Coordinates_7$AccidentEvent1=="Collision with recreational vessel" | Fatality_Coordinates_7$AccidentEvent1=="Collision with submerged object" | Fatality_Coordinates_7$AccidentEvent1=="Grounding"| Fatality_Coordinates_7$AccidentEvent1=="Collision with floating object", paste("Collision/Grounding"), Fatality_Coordinates_7$AccidentEvent1)
+# General Collision/grounding
+Fatality_Coordinates_7$AccidentEvent1 <- ifelse(Fatality_Coordinates_7$AccidentEvent1=="Collision with fixed object" | Fatality_Coordinates_7$AccidentEvent1=="Collision with recreational vessel" | Fatality_Coordinates_7$AccidentEvent1=="Collision with submerged object" | Fatality_Coordinates_7$AccidentEvent1=="Grounding"| Fatality_Coordinates_7$AccidentEvent1=="Collision with floating object", paste("Collision/grounding"), Fatality_Coordinates_7$AccidentEvent1)
 
 # General departing/ejected from vessel
 Fatality_Coordinates_7$AccidentEvent1 <- ifelse(Fatality_Coordinates_7$AccidentEvent1=="Person departed vessel" | Fatality_Coordinates_7$AccidentEvent1=="Person ejected from vessel", paste("Person departed/ejected from vessel"), Fatality_Coordinates_7$AccidentEvent1)
@@ -529,8 +557,12 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18)) +
+        guides(color = guide_legend(order = 1),
+         size = guide_legend(order = 2))
+
 
 ggplot(data=map_borders_7) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -546,8 +578,12 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18)) +
+        guides(color = guide_legend(order = 1),
+         size = guide_legend(order = 2))
+
 
 ggplot(data=map_borders_7) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -563,8 +599,12 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18)) +
+        guides(color = guide_legend(order = 1),
+         size = guide_legend(order = 2))
+
 
 ggplot(data=map_borders_7) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -580,8 +620,12 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18)) +
+        guides(color = guide_legend(order = 1),
+         size = guide_legend(order = 2))
+
 
 ggplot(data=map_borders_7) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -597,8 +641,12 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18)) +
+        guides(color = guide_legend(order = 1),
+         size = guide_legend(order = 2))
+
 
 ggplot(data=map_borders_7) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -614,8 +662,12 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18)) +
+        guides(color = guide_legend(order = 1),
+         size = guide_legend(order = 2))
+
 
 ggplot(data=map_borders_7) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -632,7 +684,11 @@ ggplot() +
         axis.text = element_blank(),
         axis.ticks = element_blank(),
         legend.title = element_text(color="white")) +
-  scale_colour_hue(breaks=c("Under 10 hours", "10 to 100 hours", "101 to 500 hours", "Over 500 hours", "No operator", "Unknown"))
+  scale_colour_hue(breaks=c("Under 10 hours", "10 to 100 hours", "101 to 500 hours", "Over 500 hours", "No operator", "Unknown")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18)) +
+        guides(color = guide_legend(order = 1),
+         size = guide_legend(order = 2))
 
 ggplot(data=map_borders_7) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -648,8 +704,11 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18)) +
+        guides(color = guide_legend(order = 1),
+         size = guide_legend(order = 2))
 ```
 
 ### District 8
@@ -685,8 +744,8 @@ Fatality_Coordinates_8$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_8
 Fatality_Coordinates_8$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_8$`Main Cause of Accident`=="Other" | Fatality_Coordinates_8$`Main Cause of Accident`=="Sudden medical condition" | Fatality_Coordinates_8$`Main Cause of Accident`=="Unknown" | Fatality_Coordinates_8$`Main Cause of Accident`=="Carbon monoxide exposure" | Fatality_Coordinates_8$`Main Cause of Accident`=="Ignition of fuel or vapor", paste("Miscellaneous"), Fatality_Coordinates_8$`Main Cause of Accident`)
 
 # Collapsing our AccidentEvent1 into broader categories
-# General collision/grounding
-Fatality_Coordinates_8$AccidentEvent1 <- ifelse(Fatality_Coordinates_8$AccidentEvent1=="Collision with fixed object" | Fatality_Coordinates_8$AccidentEvent1=="Collision with recreational vessel" | Fatality_Coordinates_8$AccidentEvent1=="Collision with submerged object" | Fatality_Coordinates_8$AccidentEvent1=="Grounding" | Fatality_Coordinates_8$AccidentEvent1=="Collision with floating object" | Fatality_Coordinates_8$AccidentEvent1=="Collision with commercial vessel", paste("Collision/Grounding"), Fatality_Coordinates_8$AccidentEvent1)
+# General Collision/grounding
+Fatality_Coordinates_8$AccidentEvent1 <- ifelse(Fatality_Coordinates_8$AccidentEvent1=="Collision with fixed object" | Fatality_Coordinates_8$AccidentEvent1=="Collision with recreational vessel" | Fatality_Coordinates_8$AccidentEvent1=="Collision with submerged object" | Fatality_Coordinates_8$AccidentEvent1=="Grounding" | Fatality_Coordinates_8$AccidentEvent1=="Collision with floating object" | Fatality_Coordinates_8$AccidentEvent1=="Collision with commercial vessel", paste("Collision/grounding"), Fatality_Coordinates_8$AccidentEvent1)
 
 # General departing/ejected from vessel
 Fatality_Coordinates_8$AccidentEvent1 <- ifelse(Fatality_Coordinates_8$AccidentEvent1=="Person departed vessel" | Fatality_Coordinates_8$AccidentEvent1=="Person ejected from vessel", paste("Person departed/ejected from vessel"), Fatality_Coordinates_8$AccidentEvent1)
@@ -722,7 +781,7 @@ ggplot() +
         axis.text = element_blank(),
         axis.ticks = element_blank(),
         legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+
 
 ggplot(data=map_borders_8) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -738,8 +797,10 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18))
+
 
 ggplot(data=map_borders_8) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -755,8 +816,10 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18))
+
 
 ggplot(data=map_borders_8) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -772,8 +835,12 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18)) +
+        guides(color = guide_legend(order = 1),
+         size = guide_legend(order = 2))
+
 
 ggplot(data=map_borders_8) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -789,8 +856,12 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18)) +
+        guides(color = guide_legend(order = 1),
+         size = guide_legend(order = 2))
+
 
 ggplot(data=map_borders_8) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -806,8 +877,10 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18))
+
 
 ggplot(data=map_borders_8) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -823,8 +896,10 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18))
+
 
 ggplot(data=map_borders_8) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -841,7 +916,10 @@ ggplot() +
         axis.text = element_blank(),
         axis.ticks = element_blank(),
         legend.title = element_text(color="white")) +
-  scale_colour_hue(breaks=c("Under 10 hours", "10 to 100 hours", "101 to 500 hours", "Over 500 hours", "No operator", "Unknown"))
+  scale_colour_hue(breaks=c("Under 10 hours", "10 to 100 hours", "101 to 500 hours", "Over 500 hours", "No operator", "Unknown")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18))
+
 
 ggplot(data=map_borders_8) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -857,8 +935,9 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18))
 ```
 
 ### District 9
@@ -893,8 +972,8 @@ Fatality_Coordinates_9$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_9
 Fatality_Coordinates_9$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_9$`Main Cause of Accident`=="Other" | Fatality_Coordinates_9$`Main Cause of Accident`=="Sudden medical condition" | Fatality_Coordinates_9$`Main Cause of Accident`=="Unknown" | Fatality_Coordinates_9$`Main Cause of Accident`=="Carbon monoxide exposure" | Fatality_Coordinates_9$`Main Cause of Accident`=="Ignition of fuel or vapor", paste("Miscellaneous"), Fatality_Coordinates_9$`Main Cause of Accident`)
 
 # Collapsing our AccidentEvent1 into broader categories
-# General collision/grounding
-Fatality_Coordinates_9$AccidentEvent1 <- ifelse(Fatality_Coordinates_9$AccidentEvent1=="Collision with fixed object" | Fatality_Coordinates_9$AccidentEvent1=="Collision with recreational vessel" | Fatality_Coordinates_9$AccidentEvent1=="Collision with submerged object" | Fatality_Coordinates_9$AccidentEvent1=="Grounding" | Fatality_Coordinates_9$AccidentEvent1=="Collision with floating object" | Fatality_Coordinates_9$AccidentEvent1=="Collision with commercial vessel", paste("Collision/Grounding"), Fatality_Coordinates_9$AccidentEvent1)
+# General Collision/grounding
+Fatality_Coordinates_9$AccidentEvent1 <- ifelse(Fatality_Coordinates_9$AccidentEvent1=="Collision with fixed object" | Fatality_Coordinates_9$AccidentEvent1=="Collision with recreational vessel" | Fatality_Coordinates_9$AccidentEvent1=="Collision with submerged object" | Fatality_Coordinates_9$AccidentEvent1=="Grounding" | Fatality_Coordinates_9$AccidentEvent1=="Collision with floating object" | Fatality_Coordinates_9$AccidentEvent1=="Collision with commercial vessel", paste("Collision/grounding"), Fatality_Coordinates_9$AccidentEvent1)
 
 # General departing/ejected from vessel
 Fatality_Coordinates_9$AccidentEvent1 <- ifelse(Fatality_Coordinates_9$AccidentEvent1=="Person departed vessel" | Fatality_Coordinates_9$AccidentEvent1=="Person ejected from vessel", paste("Person departed/ejected from vessel"), Fatality_Coordinates_9$AccidentEvent1)
@@ -946,8 +1025,10 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18))
+
 
 ggplot(data=map_borders_9) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -963,8 +1044,10 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18))
+
 
 ggplot(data=map_borders_9) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -980,8 +1063,12 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18)) +
+        guides(color = guide_legend(order = 1),
+         size = guide_legend(order = 2))
+
 
 ggplot(data=map_borders_9) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -997,8 +1084,12 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18)) +
+        guides(color = guide_legend(order = 1),
+         size = guide_legend(order = 2))
+
 
 ggplot(data=map_borders_9) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -1014,8 +1105,12 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18)) +
+        guides(color = guide_legend(order = 1),
+         size = guide_legend(order = 2))
+
 
 ggplot(data=map_borders_9) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -1031,8 +1126,12 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18)) +
+        guides(color = guide_legend(order = 1),
+         size = guide_legend(order = 2))
+
 
 ggplot(data=map_borders_9) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -1049,7 +1148,12 @@ ggplot() +
         axis.text = element_blank(),
         axis.ticks = element_blank(),
         legend.title = element_text(color="white")) +
-  scale_colour_hue(breaks=c("Under 10 hours", "10 to 100 hours", "101 to 500 hours", "Over 500 hours", "No operator", "Unknown"))
+  scale_colour_hue(breaks=c("Under 10 hours", "10 to 100 hours", "101 to 500 hours", "Over 500 hours", "No operator", "Unknown")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18)) +
+        guides(color = guide_legend(order = 1),
+         size = guide_legend(order = 2))
+
 
 ggplot(data=map_borders_9) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -1065,8 +1169,11 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18)) +
+        guides(color = guide_legend(order = 1),
+         size = guide_legend(order = 2))
 ```
 
 ### District 11
@@ -1098,8 +1205,8 @@ Fatality_Coordinates_11$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_
 Fatality_Coordinates_11$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_11$`Main Cause of Accident`=="Other" | Fatality_Coordinates_11$`Main Cause of Accident`=="Sudden medical condition" | Fatality_Coordinates_11$`Main Cause of Accident`=="Unknown" | Fatality_Coordinates_11$`Main Cause of Accident`=="Carbon monoxide exposure" | Fatality_Coordinates_11$`Main Cause of Accident`=="Ignition of fuel or vapor", paste("Miscellaneous"), Fatality_Coordinates_11$`Main Cause of Accident`)
 
 # Collapsing our AccidentEvent1 into broader categories
-# General collision/grounding
-Fatality_Coordinates_11$AccidentEvent1 <- ifelse(Fatality_Coordinates_11$AccidentEvent1=="Collision with fixed object" | Fatality_Coordinates_11$AccidentEvent1=="Collision with recreational vessel" | Fatality_Coordinates_11$AccidentEvent1=="Collision with submerged object" | Fatality_Coordinates_11$AccidentEvent1=="Grounding" | Fatality_Coordinates_11$AccidentEvent1=="Collision with floating object" | Fatality_Coordinates_11$AccidentEvent1=="Collision with commercial vessel", paste("Collision/Grounding"), Fatality_Coordinates_11$AccidentEvent1)
+# General Collision/grounding
+Fatality_Coordinates_11$AccidentEvent1 <- ifelse(Fatality_Coordinates_11$AccidentEvent1=="Collision with fixed object" | Fatality_Coordinates_11$AccidentEvent1=="Collision with recreational vessel" | Fatality_Coordinates_11$AccidentEvent1=="Collision with submerged object" | Fatality_Coordinates_11$AccidentEvent1=="Grounding" | Fatality_Coordinates_11$AccidentEvent1=="Collision with floating object" | Fatality_Coordinates_11$AccidentEvent1=="Collision with commercial vessel", paste("Collision/grounding"), Fatality_Coordinates_11$AccidentEvent1)
 
 # General departing/ejected from vessel
 Fatality_Coordinates_11$AccidentEvent1 <- ifelse(Fatality_Coordinates_11$AccidentEvent1=="Person departed vessel" | Fatality_Coordinates_11$AccidentEvent1=="Person ejected from vessel", paste("Person departed/ejected from vessel"), Fatality_Coordinates_11$AccidentEvent1)
@@ -1154,8 +1261,12 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white"))  +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18)) +
+        guides(color = guide_legend(order = 1),
+         size = guide_legend(order = 2))
+
 
 ggplot(data=map_borders_11) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -1171,8 +1282,12 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white"))  +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18)) +
+        guides(color = guide_legend(order = 1),
+         size = guide_legend(order = 2))
+
 
 ggplot(data=map_borders_11) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -1188,8 +1303,12 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white"))  +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18)) +
+        guides(color = guide_legend(order = 1),
+         size = guide_legend(order = 2))
+
 
 ggplot(data=map_borders_11) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -1205,8 +1324,12 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white"))  +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18)) +
+        guides(color = guide_legend(order = 1),
+         size = guide_legend(order = 2))
+
 
 ggplot(data=map_borders_11) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -1222,8 +1345,12 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white"))  +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18)) +
+        guides(color = guide_legend(order = 1),
+         size = guide_legend(order = 2))
+
 
 ggplot(data=map_borders_11) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -1239,8 +1366,12 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white"))  +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18)) +
+        guides(color = guide_legend(order = 1),
+         size = guide_legend(order = 2))
+
 
 ggplot(data=map_borders_11) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -1257,7 +1388,11 @@ ggplot() +
         axis.text = element_blank(),
         axis.ticks = element_blank(),
         legend.title = element_text(color="white")) +
-  scale_colour_hue(breaks=c("Under 10 hours", "10 to 100 hours", "101 to 500 hours", "Over 500 hours", "No operator", "Unknown"))
+  scale_colour_hue(breaks=c("Under 10 hours", "10 to 100 hours", "101 to 500 hours", "Over 500 hours", "No operator", "Unknown"))  +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18)) +
+        guides(color = guide_legend(order = 1),
+         size = guide_legend(order = 2))
 
 ggplot(data=map_borders_11) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -1273,8 +1408,11 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white"))  +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18)) +
+        guides(color = guide_legend(order = 1),
+         size = guide_legend(order = 2))
 ```
 
 ### District 13
@@ -1306,8 +1444,8 @@ Fatality_Coordinates_13$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_
 Fatality_Coordinates_13$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_13$`Main Cause of Accident`=="Other" | Fatality_Coordinates_13$`Main Cause of Accident`=="Sudden medical condition" | Fatality_Coordinates_13$`Main Cause of Accident`=="Unknown" | Fatality_Coordinates_13$`Main Cause of Accident`=="Carbon monoxide exposure" | Fatality_Coordinates_13$`Main Cause of Accident`=="Ignition of fuel or vapor", paste("Miscellaneous"), Fatality_Coordinates_13$`Main Cause of Accident`)
 
 # Collapsing our AccidentEvent1 into broader categories
-# General collision/grounding
-Fatality_Coordinates_13$AccidentEvent1 <- ifelse(Fatality_Coordinates_13$AccidentEvent1=="Collision with fixed object" | Fatality_Coordinates_13$AccidentEvent1=="Collision with recreational vessel" | Fatality_Coordinates_13$AccidentEvent1=="Collision with submerged object" | Fatality_Coordinates_13$AccidentEvent1=="Grounding" | Fatality_Coordinates_13$AccidentEvent1=="Collision with floating object" | Fatality_Coordinates_13$AccidentEvent1=="Collision with commercial vessel", paste("Collision/Grounding"), Fatality_Coordinates_13$AccidentEvent1)
+# General Collision/grounding
+Fatality_Coordinates_13$AccidentEvent1 <- ifelse(Fatality_Coordinates_13$AccidentEvent1=="Collision with fixed object" | Fatality_Coordinates_13$AccidentEvent1=="Collision with recreational vessel" | Fatality_Coordinates_13$AccidentEvent1=="Collision with submerged object" | Fatality_Coordinates_13$AccidentEvent1=="Grounding" | Fatality_Coordinates_13$AccidentEvent1=="Collision with floating object" | Fatality_Coordinates_13$AccidentEvent1=="Collision with commercial vessel", paste("Collision/grounding"), Fatality_Coordinates_13$AccidentEvent1)
 
 # General departing/ejected from vessel
 Fatality_Coordinates_13$AccidentEvent1 <- ifelse(Fatality_Coordinates_13$AccidentEvent1=="Person departed vessel" | Fatality_Coordinates_13$AccidentEvent1=="Person ejected from vessel", paste("Person departed/ejected from vessel"), Fatality_Coordinates_13$AccidentEvent1)
@@ -1359,8 +1497,12 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white"))  +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18)) +
+        guides(color = guide_legend(order = 1),
+         size = guide_legend(order = 2))
+
 
 ggplot(data=map_borders_13) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -1376,8 +1518,12 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white"))  +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18)) +
+        guides(color = guide_legend(order = 1),
+         size = guide_legend(order = 2))
+
 
 ggplot(data=map_borders_13) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -1393,8 +1539,12 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white"))  +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18)) +
+        guides(color = guide_legend(order = 1),
+         size = guide_legend(order = 2))
+
 
 ggplot(data=map_borders_13) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -1410,8 +1560,12 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white"))  +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18)) +
+        guides(color = guide_legend(order = 1),
+         size = guide_legend(order = 2))
+
 
 ggplot(data=map_borders_13) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -1427,8 +1581,12 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white"))  +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18)) +
+        guides(color = guide_legend(order = 1),
+         size = guide_legend(order = 2))
+
 
 ggplot(data=map_borders_13) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -1444,8 +1602,12 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white"))  +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18)) +
+        guides(color = guide_legend(order = 1),
+         size = guide_legend(order = 2))
+
 
 ggplot(data=map_borders_13) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -1462,7 +1624,11 @@ ggplot() +
         axis.text = element_blank(),
         axis.ticks = element_blank(),
         legend.title = element_text(color="white")) +
-  scale_colour_hue(breaks=c("Under 10 hours", "10 to 100 hours", "101 to 500 hours", "Over 500 hours", "No operator", "Unknown"))
+  scale_colour_hue(breaks=c("Under 10 hours", "10 to 100 hours", "101 to 500 hours", "Over 500 hours", "No operator", "Unknown"))  +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18)) +
+        guides(color = guide_legend(order = 1),
+         size = guide_legend(order = 2))
 
 ggplot(data=map_borders_13) + 
   geom_polygon(aes(x=long, y=lat, group=group), fill = "palegreen", color="black") + coord_fixed(1.3)
@@ -1478,8 +1644,11 @@ ggplot() +
         axis.title = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.title = element_text(color="white")) 
-#+ ggsave("District 1 Deaths Mapped.png")
+        legend.title = element_text(color="white"))  +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18)) +
+        guides(color = guide_legend(order = 1),
+         size = guide_legend(order = 2))
 ```
 
 ### District 14
@@ -1523,7 +1692,8 @@ Fatality_Coordinates_17 <- BARD_2019 %>%
          `Main Cause of Accident`, `AccidentEvent1`, `Type of Vessel`, `Operator Experience`, `Operator Education`) %>%
 filter(State %in% c("AK")) %>% 
   filter(`Number of Deaths`>0) %>%
-  filter(`PFD Worn?`!="NA") 
+  filter(`PFD Worn?`!="NA") %>%
+  filter(`Alcohol Involved?` !="NA")
 
 # Collapsing categories so that graphs are more readable with fewer colors to analyze
 
@@ -1543,8 +1713,8 @@ Fatality_Coordinates_17$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_
 Fatality_Coordinates_17$`Main Cause of Accident` <- ifelse(Fatality_Coordinates_17$`Main Cause of Accident`=="Other" | Fatality_Coordinates_17$`Main Cause of Accident`=="Sudden medical condition" | Fatality_Coordinates_17$`Main Cause of Accident`=="Unknown" | Fatality_Coordinates_17$`Main Cause of Accident`=="Carbon monoxide exposure" | Fatality_Coordinates_17$`Main Cause of Accident`=="Ignition of fuel or vapor", paste("Miscellaneous"), Fatality_Coordinates_17$`Main Cause of Accident`)
 
 # Collapsing our AccidentEvent1 into broader categories
-# General collision/grounding
-Fatality_Coordinates_17$AccidentEvent1 <- ifelse(Fatality_Coordinates_17$AccidentEvent1=="Collision with fixed object" | Fatality_Coordinates_17$AccidentEvent1=="Collision with recreational vessel" | Fatality_Coordinates_17$AccidentEvent1=="Collision with submerged object" | Fatality_Coordinates_17$AccidentEvent1=="Grounding" | Fatality_Coordinates_17$AccidentEvent1=="Collision with floating object" | Fatality_Coordinates_17$AccidentEvent1=="Collision with commercial vessel", paste("Collision/Grounding"), Fatality_Coordinates_17$AccidentEvent1)
+# General Collision/grounding
+Fatality_Coordinates_17$AccidentEvent1 <- ifelse(Fatality_Coordinates_17$AccidentEvent1=="Collision with fixed object" | Fatality_Coordinates_17$AccidentEvent1=="Collision with recreational vessel" | Fatality_Coordinates_17$AccidentEvent1=="Collision with submerged object" | Fatality_Coordinates_17$AccidentEvent1=="Grounding" | Fatality_Coordinates_17$AccidentEvent1=="Collision with floating object" | Fatality_Coordinates_17$AccidentEvent1=="Collision with commercial vessel", paste("Collision/grounding"), Fatality_Coordinates_17$AccidentEvent1)
 
 # General departing/ejected from vessel
 Fatality_Coordinates_17$AccidentEvent1 <- ifelse(Fatality_Coordinates_17$AccidentEvent1=="Person departed vessel" | Fatality_Coordinates_17$AccidentEvent1=="Person ejected from vessel", paste("Person departed/ejected from vessel"), Fatality_Coordinates_17$AccidentEvent1)
@@ -1598,8 +1768,12 @@ labs(title="Recreational Boating Deaths in District 17 Region (2019)", subtitle 
         axis.ticks = element_blank()) + 
       scale_size_continuous(breaks=c(1,2,3)) +
         guides(size = guide_legend(order=1),
-               color = guide_legend(order = 2))
-  # +ggsave("District 1  PFD Mapped.png")
+               color = guide_legend(order = 2))  +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18)) +
+        guides(color = guide_legend(order = 1),
+         size = guide_legend(order = 2))
+
 
 ggmap(District17_map) + geom_point(data=Fatality_Coordinates_17, mapping = aes(x=Longitude, y=Latitude, size=`Number of Deaths`, color=`Alcohol Involved?`)) +
 labs(title="Recreational Boating Deaths in District 17 Region (2019)", subtitle = "Alcohol was involved in 8 percent of cases") +
@@ -1609,9 +1783,11 @@ labs(title="Recreational Boating Deaths in District 17 Region (2019)", subtitle 
         axis.text = element_blank(),
         axis.ticks = element_blank()) + 
       scale_size_continuous(breaks=c(1,2,3)) +
-        guides(size = guide_legend(order=1),
-               color = guide_legend(order = 2))
-  #+ggsave("District 1  Alcohol Mapped.png")
+        guides(size = guide_legend(order=2),
+               color = guide_legend(order = 1)) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18))
+
 
 ggmap(District17_map) + geom_point(data=Fatality_Coordinates_17, mapping = aes(x=Longitude, y=Latitude, size=`Number of Deaths`, color=`Main Cause of Accident`)) +
 labs(title="Recreational Boating Deaths in District 17 Region (2019)", subtitle = "Operation of vessel was the primary cause of accident in 25 percent of cases") +
@@ -1621,9 +1797,11 @@ labs(title="Recreational Boating Deaths in District 17 Region (2019)", subtitle 
         axis.text = element_blank(),
         axis.ticks = element_blank()) + 
       scale_size_continuous(breaks=c(1,2,3)) +
-        guides(size = guide_legend(order=1),
-               color = guide_legend(order = 2))
-  #+ggsave("District 1  Accident Cause Mapped.png")
+        guides(size = guide_legend(order=2),
+               color = guide_legend(order = 1)) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18))
+
 
 ggmap(District17_map) + geom_point(data=Fatality_Coordinates_17, mapping = aes(x=Longitude, y=Latitude, size=`Number of Deaths`, color=`AccidentEvent1`)) +
 labs(title="Recreational Boating Deaths in District 17 Region (2019)", subtitle = "The primary accident event was listed as 'other' in 33 percent of cases") +
@@ -1633,9 +1811,11 @@ labs(title="Recreational Boating Deaths in District 17 Region (2019)", subtitle 
         axis.text = element_blank(),
         axis.ticks = element_blank()) + 
       scale_size_continuous(breaks=c(1,2,3)) +
-        guides(size = guide_legend(order=1),
-               color = guide_legend(order = 2))
-  #+ggsave("District 1  Accident Cause Mapped.png")
+        guides(size = guide_legend(order=2),
+               color = guide_legend(order = 1)) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18))
+
 
 ggmap(District17_map) + geom_point(data=Fatality_Coordinates_17, mapping = aes(x=Longitude, y=Latitude, size=`Number of Deaths`, color=`Cause of Death`)) +
 labs(title="Recreational Boating Deaths in District 17 Region (2019)", subtitle = "Drownings accounted for 83 percent of cases") +
@@ -1645,9 +1825,11 @@ labs(title="Recreational Boating Deaths in District 17 Region (2019)", subtitle 
         axis.text = element_blank(),
         axis.ticks = element_blank()) +
       scale_size_continuous(breaks=c(1,2,3)) +
-        guides(size = guide_legend(order=1),
-               color = guide_legend(order = 2)) 
-  # +ggsave("District 1 Deaths COD Mapped.png")
+        guides(size = guide_legend(order=2),
+               color = guide_legend(order = 1)) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18))
+
 
 ggmap(District17_map) + geom_point(data=Fatality_Coordinates_17, mapping = aes(x=Longitude, y=Latitude, size=`Number of Deaths`, color=`Type of Vessel`)) +
 labs(title="Recreational Boating Deaths in District 17 Region (2019)", subtitle = "Paddlecraft fatalities accounted for 67 percent of cases") +
@@ -1657,9 +1839,11 @@ labs(title="Recreational Boating Deaths in District 17 Region (2019)", subtitle 
         axis.text = element_blank(),
         axis.ticks = element_blank()) +
       scale_size_continuous(breaks=c(1,2,3)) +
-        guides(size = guide_legend(order=1),
-               color = guide_legend(order = 2)) 
-  # +ggsave("District 1 Deaths VesselType Mapped.png")
+        guides(size = guide_legend(order=2),
+               color = guide_legend(order = 1)) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18))
+
 
 ggmap(District17_map) + geom_point(data=Fatality_Coordinates_17, mapping = aes(x=Longitude, y=Latitude, size=`Number of Deaths`, color=`Operator Experience`)) +
 labs(title="Recreational Boating Deaths in District 17 Region (2019)", subtitle = "Operator experience was unknown in 92 percent of cases") +
@@ -1669,9 +1853,11 @@ labs(title="Recreational Boating Deaths in District 17 Region (2019)", subtitle 
         axis.text = element_blank(),
         axis.ticks = element_blank()) +
       scale_size_continuous(breaks=c(1,2,3)) +
-        guides(size = guide_legend(order=1),
-               color = guide_legend(order = 2)) +
-  scale_colour_hue(breaks=c("Under 10 hours", "10 to 100 hours", "101 to 500 hours", "Over 500 hours", "No operator", "Unknown"))
+        guides(size = guide_legend(order=2),
+               color = guide_legend(order = 1)) +
+  scale_colour_hue(breaks=c("Under 10 hours", "10 to 100 hours", "101 to 500 hours", "Over 500 hours", "No operator", "Unknown")) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18))
 
 ggmap(District17_map) + geom_point(data=Fatality_Coordinates_17, mapping = aes(x=Longitude, y=Latitude, size=`Number of Deaths`, color=`Operator Education`)) +
 labs(title="Recreational Boating Deaths in District 17 Region (2019)", subtitle = "Operator education was unknown in 75 percent of cases") +
@@ -1681,7 +1867,8 @@ labs(title="Recreational Boating Deaths in District 17 Region (2019)", subtitle 
         axis.text = element_blank(),
         axis.ticks = element_blank()) +
       scale_size_continuous(breaks=c(1,2,3)) +
-        guides(size = guide_legend(order=1),
-               color = guide_legend(order = 2)) 
-  # +ggsave("District 1 Deaths Experience Mapped.png")
+        guides(size = guide_legend(order=2),
+               color = guide_legend(order = 1)) +
+        theme(plot.title = element_text(size=22)) + 
+        theme(plot.subtitle = element_text(size=18))
 ```
