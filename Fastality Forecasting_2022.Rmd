@@ -1,0 +1,115 @@
+---
+title: "Fatality Forecasting_2022"
+author: "Andrew Iraola"
+date: '2022-06-16'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Fatality Forecasting: RBS 2022
+
+Okay, so last year we did not include 2020 in our 'training' dataset for the forecasts. It was wild...and instead of potentially changing the predictions too much, we left it out. This year, now that we have two years of data (2020 and 2021) to work with, we're going to begin by feeding R both these years of #s. 
+
+```{r}
+# Loading in necessary packages
+library(readxl)
+library(forecast)
+```
+
+```{r}
+#Reading in our Excel file, disregarding column names and refering to sheet #1
+dataRaw <- read_excel("RBS Forecast_2022.xlsx")
+#View(dataRaw)
+
+tsData=ts(dataRaw, start=c(1998, 10), end=c(2021, 12), frequency = 12)
+```
+
+```{r}
+training<- window(tsData,start=c(1998,10),end=c(2021,12), frequency = 12)
+
+test<- window(tsData,start=c(2019,1))
+
+df_test<-as.data.frame(test)
+orderSA=1
+
+plot(tsData)
+
+##Naive Forecasting Method
+naive_forecast<-naive(tsData,h=72)
+plot(naive_forecast, col="red", main="Naive" )
+print("Naive Forecast")
+print(naive_forecast)
+
+#Simple Exponential Smoothing
+SES_forecast<-ses(tsData,initial = "optimal",h=72)
+plot(SES_forecast, col="red", main="SES" )
+print("SES Forecast")
+print(SES_forecast)
+
+#Holt's Trending Method-Trend No Seasonality
+holt_forecast<-holt(tsData,initial = "optimal",h=72)
+plot(holt_forecast, col="red", main="Holt" )
+print("Holt Forecast")
+print(holt_forecast)
+
+#Holt Winters-Trend and Seasonality
+hw_forecast<-hw(tsData,initial = "optimal",h=72)
+plot(hw_forecast, col="red", main="Holt-Winters" )
+print("Holt-Winters Forecast")
+print(hw_forecast)
+
+#ARIMA
+arima_2<-auto.arima(tsData)
+arima_forecast<-forecast::forecast(arima_2,h=72)
+plot(arima_forecast, col="red", main="ARIMA" )
+print("ARIMA")
+print(arima_forecast)
+
+#Simple Moving Average
+MovingAverageModel_2<-ma(tsData,order = orderSA)
+SMA_forecast<-forecast(MovingAverageModel_2,h=72)
+plot(SMA_forecast, col="red", main="SMA" )
+print("SMA")
+print(SMA_forecast)
+```
+
+
+Now, let's check MAPE scores for accuracy
+```{r}
+accuracy(naive_forecast)
+accuracy(SES_forecast)
+accuracy(holt_forecast)
+accuracy(hw_forecast)
+accuracy(arima_forecast)
+accuracy(SMA_forecast)
+# We can see from this that the Holt-Winters with seasonality has the best forecasting score based on lowest MAPE. 
+```
+
+
+## Now, let's try different time intervals (Quarterly instead of monthly)
+```{r}
+filepath3 <- "Quarterly Fatalities.xlsx"
+#Reading in our Excel file, disregarding column names and refering to sheet #1
+dataRaw3 <- read_excel(filepath3, col_names = FALSE, sheet = 1)
+# Viewing as Time-Series data
+# Tells us what year and month to base the time-series data (Excel-referenced vector) on
+tsData3 = ts(dataRaw3, start=c(1998, 1), end=c(2022, 1), frequency = 4)
+
+# Taking our dataset `tsData` and applying the forecast function to it
+# Specifically, the holt-winters method
+
+# `initial` refers to the method for selecting the initial state values. If "optimal", the initial values are optimized along the smoothing parameters using `ets`, AKA, "exponential smoothing". If `simple`, the initial values are set to values obtained using simple calculations on the first few observations.
+
+# `h` refers to the number of periods we would like to forecast
+modelHW3 <- hw(tsData3, initial="optimal", h=23)
+
+# Let's see what it looks like in a graph
+plot(modelHW3)
+
+accuracy(modelHW3)
+# MAPE is slightly lower than the same forecasting model above with monthly. I believe that one was approx "16". 
+```
+
